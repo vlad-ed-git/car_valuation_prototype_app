@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">ACN</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="splash_bg_img_desc">splash background image</string>
+    <string name="splash_loading_txt">Getting up to speed…</string>
+    <string name="retry_txt">Retry</string>
+    <string name="login_fragment_lbl">Login</string>
+    <string name="home_fragment_lbl">ACN</string>
+    <string name="sign_in_title">Let\'s Sign You In</string>
+    <string name="country_txt">Country</string>
+    <string name="phone_number_txt">Phone number</string>
+    <string name="phone_number_helper_txt">*include country code</string>
+    <string name="verification_code_helper_txt">*verification code sent to your phone number</string>
+    <string name="verification_code_txt">Verification Code</string>
+    <string name="get_code_txt">Get Code</string>
+    <string name="verification_code_longer_hint">Enter your phone number then click get code to receive a verification code in your sms.</string>
+    <string name="sign_in_btn_txt">Sign In</string>
+    <string name="terms_agreeing_hint">By clicking sign in, you are agreeing to our terms and conditions of use. \nClick this message to review them first.</string>
+</resources>

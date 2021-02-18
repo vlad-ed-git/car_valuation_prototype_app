@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="std_space">8dp</dimen>
+    <dimen name="md_space">16dp</dimen>
+    <dimen name="std_clickable">48dp</dimen>
+</resources>
