@@ -1,146 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".views.auth.LoginFragment"
-    android:padding="@dimen/md_space">
+    android:padding="@dimen/md_space"
+    tools:context=".views.auth.LoginFragment">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/logo"
         android:layout_width="@dimen/std_clickable"
         android:layout_height="@dimen/std_clickable"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@mipmap/ic_launcher_round"
+        android:layout_marginTop="?actionBarSize"
         android:elevation="@dimen/std_space"
         android:scaleType="fitCenter"
-        android:layout_marginTop="?actionBarSize"/>
+        android:src="@mipmap/ic_launcher_round"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-     <com.google.android.material.textview.MaterialTextView
-         app:layout_constraintTop_toBottomOf="@id/logo"
-         app:layout_constraintStart_toStartOf="parent"
-         android:layout_marginTop="@dimen/md_space"
-         android:id="@+id/title"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:text="@string/sign_in_title"
-         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/md_space"
+        android:text="@string/sign_in_title"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/logo" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/country_picker"
-        android:layout_height="wrap_content"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
-        app:layout_constraintTop_toBottomOf="@id/title"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/md_space"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title">
 
-    <AutoCompleteTextView
-        android:layout_width="match_parent"
+        <AutoCompleteTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/country_txt"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/phone_code"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:inputType="none"
-        android:hint="@string/country_txt"
-        />
+        android:layout_marginTop="@dimen/md_space"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/country_picker"
+        app:layout_constraintWidth_percent=".25">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:hint="@string/country_code_txt"
+            android:inputType="none" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/phone_number"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        app:layout_constraintTop_toBottomOf="@id/country_picker"
-        app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="@dimen/md_space"
-        app:helperTextEnabled="true"
-        app:helperText="@string/phone_number_helper_txt"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/country_picker"
+        app:layout_constraintWidth_percent=".7">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="phone"
             android:hint="@string/phone_number_txt"
-            />
+            android:inputType="phone" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/verification_code"
-        android:layout_height="wrap_content"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
-        app:layout_constraintWidth_percent=".7"
-        app:layout_constraintTop_toBottomOf="@id/phone_number"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/md_space"
-        app:helperTextEnabled="true"
         app:helperText="@string/verification_code_helper_txt"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        app:helperTextEnabled="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/phone_number"
+        app:layout_constraintWidth_percent=".6">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
             android:hint="@string/verification_code_txt"
-            />
+            android:inputType="numberDecimal" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/get_verification_code"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="133dp"
         android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:layout_marginTop="@dimen/md_space"
         android:text="@string/get_code_txt"
-        app:layout_constraintWidth_percent=".25"
-        app:layout_constraintTop_toBottomOf="@id/phone_number"
-        app:layout_constraintEnd_toEndOf="parent"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+        app:layout_constraintWidth_percent=".35"
+        app:layout_constraintTop_toTopOf="@id/verification_code"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <com.google.android.material.textview.MaterialTextView
-        app:layout_constraintTop_toBottomOf="@id/verification_code"
         android:id="@+id/verification_code_hint"
-        android:text="@string/verification_code_longer_hint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/md_space"
         android:gravity="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"/>
+        android:text="@string/verification_code_longer_hint"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintTop_toBottomOf="@id/verification_code" />
 
     <com.google.android.material.button.MaterialButton
-        style="@style/TextAppearance.MaterialComponents.Button"
         android:id="@+id/sign_in"
+        style="@style/TextAppearance.MaterialComponents.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/md_space"
+        android:enabled="false"
         android:text="@string/sign_in_btn_txt"
         android:textColor="@color/accent"
-        app:layout_constraintTop_toBottomOf="@id/verification_code_hint"
-        android:layout_marginTop="@dimen/md_space"/>
+        app:layout_constraintTop_toBottomOf="@id/verification_code_hint" />
 
     <ProgressBar
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:id="@+id/loading_bar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sign_in"
         android:layout_centerHorizontal="true"
         android:indeterminate="true"
-        android:indeterminateTint="@color/accent"/>
+        android:indeterminateTint="@color/accent"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sign_in" />
 
     <com.google.android.material.textview.MaterialTextView
-        app:layout_constraintTop_toBottomOf="@id/sign_in"
         android:id="@+id/terms_hint"
-        android:text="@string/terms_agreeing_hint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/md_space"
         android:gravity="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"/>
+        android:text="@string/terms_agreeing_hint"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintTop_toBottomOf="@id/sign_in" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

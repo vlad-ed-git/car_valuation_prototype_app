@@ -13,7 +13,21 @@
     <string name="verification_code_helper_txt">*verification code sent to your phone number</string>
     <string name="verification_code_txt">Verification Code</string>
     <string name="get_code_txt">Get Code</string>
-    <string name="verification_code_longer_hint">Enter your phone number then click get code to receive a verification code in your sms.</string>
+    <string name="verification_code_longer_hint">Enter your phone number then click get code to receive a verification code in your sms.\nYou may be redirected to your browser during verification.</string>
     <string name="sign_in_btn_txt">Sign In</string>
     <string name="terms_agreeing_hint">By clicking sign in, you are agreeing to our terms and conditions of use. \nClick this message to review them first.</string>
+    <string name="country_code_txt">+</string>
+    <string name="sending_verification_code">"SENDING … "</string>
+    <string name="country_code_empty_err_txt">Please select your country</string>
+    <string name="phone_empty_err_txt">Please enter your phone number</string>
+    <string name="invalid_phone_err">Check your phone number and try again</string>
+    <string name="sms_quota_exceeded_err">Sorry, we are unable to verify your phone at the moment!</string>
+    <string name="verification_err_unknown">Failed to verify your number. Check your internet and retry</string>
+    <string name="verification_code_was_sent_txt">Check your sms inbox for a verification code</string>
+    <string name="resend_code_txt">RESEND CODE</string>
+    <string name="verified_txt">Verified!</string>
+    <string name="slow_or_no_internet">Slow or no internet connection</string>
+    <string name="verify_phone_first">"Please verify your phone number first "</string>
+    <string name="invalid_verification_code_err">Incorrect verification code</string>
+    <string name="failed_to_sign_in_err">Failed to sign in... check your info and retry</string>
 </resources>

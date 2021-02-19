@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "323856959339",
+    "project_id": "car-v-demo",
+    "storage_bucket": "car-v-demo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:323856959339:android:97e1a1d06f8cd5df29ee2e",
+        "android_client_info": {
+          "package_name": "com.dev_vlad.car_v"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "323856959339-vlvlru4glinkbofq4nr5ouun7mrqoc2t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dev_vlad.car_v",
+            "certificate_hash": "521558df7233ce5246a58045ce64471a1b0f1a64"
+          }
+        },
+        {
+          "client_id": "323856959339-374bgtp46us37lklhrdrah8h7sbeda3j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiD_DKQZ6jY2ssIRGr3LlJ3c70FOcfoSc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "323856959339-374bgtp46us37lklhrdrah8h7sbeda3j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

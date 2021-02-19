@@ -15,6 +15,9 @@ data class UserEntity(
     @ColumnInfo(name = "user_phone_number")
     val userPhone : String,
 
+    @ColumnInfo(name = "user_code")
+    val userCode : String,
+
     @ColumnInfo(name = "user_location_country")
     val userLocationCountry : String,
 
@@ -22,11 +25,11 @@ data class UserEntity(
     val userName: String = DEFAULT_USER_NAME,
 
     @ColumnInfo(name= "date_joined")
-    val date_joined: Long,
+    val dateJoined: Long = System.currentTimeMillis(),
 
     @ColumnInfo(name = "is_dealer")
-    val is_dealer: Boolean = false,
+    val isDealer: Boolean = false,
 
     @ColumnInfo(name = "is_seller")
-    val is_seller: Boolean = false
+    val isSeller: Boolean = false
 )
