@@ -63,5 +63,8 @@ class UserRepo
         }
     }
 
+    suspend fun getNonObservableUser() = userEntityDao.getNonObservableUser()
+
+
 
 }

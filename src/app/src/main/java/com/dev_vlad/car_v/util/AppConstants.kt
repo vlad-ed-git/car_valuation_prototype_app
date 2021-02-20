@@ -8,3 +8,4 @@ const val DEFAULT_USER_NAME = "anon"
 
 //FIREBASE
 const val USERS_COLLECTION_NAME = "users"
+const val UNSAVED_CAR_ID = "TMP_CAR"

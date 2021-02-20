@@ -27,7 +27,7 @@ class WelcomeFragment : Fragment() {
     private var _binding: FragmentWelcomeBinding? = null
     private val binding get() = _binding!!
     private val welcomeViewModel: WelcomeViewModel by viewModels {
-        WelcomeViewModelFactory((activity?.application as CarVApp).repository)
+        WelcomeViewModelFactory((activity?.application as CarVApp).userRepo)
     }
     private lateinit var internetChecker: InternetChecker
 
@@ -55,8 +55,15 @@ class WelcomeFragment : Fragment() {
                         doneBtn.isEnabled = false
                         loadingBar.isVisible = true
                     }
-                    val action = WelcomeFragmentDirections.actionWelcomeFragmentToHomeFragment()
-                    findNavController().navigate(action)
+
+                    if (userEntity.isSeller) {
+                        val action =
+                            WelcomeFragmentDirections.actionWelcomeFragmentToSellersHomeFragment()
+                        findNavController().navigate(action)
+                    }
+                    else{
+                        //TODO dealers home
+                    }
                 }
             }
         })

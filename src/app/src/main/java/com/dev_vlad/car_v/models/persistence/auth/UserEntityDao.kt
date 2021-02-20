@@ -8,6 +8,9 @@ interface UserEntityDao {
     @Query("SELECT * FROM users_table ORDER BY date_joined DESC LIMIT 1")
     fun getUser(): Flow<List<UserEntity>>
 
+    @Query("SELECT * FROM users_table ORDER BY date_joined DESC LIMIT 1")
+    suspend fun getNonObservableUser(): List<UserEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(user: UserEntity )
 

@@ -22,7 +22,6 @@ import com.dev_vlad.car_v.util.showSnackBarToUser
 import com.dev_vlad.car_v.view_models.auth.AuthViewModel
 import com.dev_vlad.car_v.view_models.auth.AuthViewModelFactory
 import com.dev_vlad.car_v.view_models.auth.SIGNINSTATE
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthOptions
@@ -42,7 +41,7 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private val authViewModel: AuthViewModel by viewModels {
-        AuthViewModelFactory((activity?.application as CarVApp).repository)
+        AuthViewModelFactory((activity?.application as CarVApp).userRepo)
     }
     private lateinit var internetChecker : InternetChecker
 

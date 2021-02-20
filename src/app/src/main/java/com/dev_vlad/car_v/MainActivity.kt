@@ -1,7 +1,6 @@
 package com.dev_vlad.car_v
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
@@ -11,6 +10,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.dev_vlad.car_v.databinding.ActivityMainBinding
+import com.dev_vlad.car_v.util.MyLogger
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.findNavController()
         //specify home fragments
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.homeFragment, R.id.splashFragment, R.id.loginFragment, R.id.welcomeFragment)
+            setOf(R.id.sellersHomeFragment, R.id.splashFragment, R.id.loginFragment, R.id.welcomeFragment)
         )
         setSupportActionBar(binding.toolbar)
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -46,6 +46,24 @@ class MainActivity : AppCompatActivity() {
                     binding.bottomNav.isVisible = false
                 }
 
+                R.id.sellersHomeFragment ->{
+                    binding.toolbar.title = getString(R.string.my_cars_txt)
+                    binding.toolbar.isVisible = true
+                    binding.bottomNav.isVisible = true
+                }
+
+               R.id.addCarFragment -> {
+                 binding.toolbar.title = getString(R.string.my_car_txt)
+                 binding.toolbar.isVisible = true
+                 binding.bottomNav.isVisible = false
+               }
+
+                R.id.addCarImagesFragment -> {
+                    binding.toolbar.title = getString(R.string.my_car_photos_txt)
+                    binding.toolbar.isVisible = true
+                    binding.bottomNav.isVisible = false
+                }
+
                 else -> {
                     binding.toolbar.isVisible = true
                     binding.bottomNav.isVisible = true
@@ -59,7 +77,9 @@ class MainActivity : AppCompatActivity() {
 
     //toolbar handle back navigation
     override fun onSupportNavigateUp(): Boolean {
+        MyLogger.logThis(TAG, "onSupportNavigateUp()", "called" )
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
+
 
 }

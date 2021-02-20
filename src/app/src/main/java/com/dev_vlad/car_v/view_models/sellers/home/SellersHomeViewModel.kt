@@ -1,8 +1,8 @@
-package com.dev_vlad.car_v.view_models.home
+package com.dev_vlad.car_v.view_models.sellers.home
 
 import androidx.lifecycle.ViewModel
 import com.dev_vlad.car_v.models.persistence.auth.UserRepo
 
-class HomeViewModel (private val repository: UserRepo) : ViewModel() {
+class SellersHomeViewModel (private val repository: UserRepo) : ViewModel() {
     // TODO: Implement the ViewModel
 }

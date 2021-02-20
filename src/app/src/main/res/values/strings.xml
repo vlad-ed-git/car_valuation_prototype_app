@@ -42,4 +42,43 @@
     <string name="seller_dealer_selection_terms_hint">Selecting Buy A Car will set your account as a Car Dealer. As a Car Dealer, you are subject to these terms and conditions (Click this message to review them before proceeding).</string>
     <string name="dismiss">Dismiss</string>
     <string name="select_dealer_or_seller_err">Long press to select one of the two choices</string>
+    <string name="my_cars_txt">My Cars</string>
+
+
+    <!-- ADD NEW CAR -->
+    <string name="add_a_new_car_txt">Add a new car</string>
+    <string name="save_txt">Save</string>
+    <string name="my_car_txt">My Car</string>
+    <string name="car_body_style_hint">Body Style</string>
+    <string name="car_make_hint">Make</string>
+    <string name="car_make_helper_txt">e.g. Toyota</string>
+    <string name="car_model_helper_txt">e.g. Camry</string>
+    <string name="car_model_hint">Model</string>
+    <string name="car_year_hint">Year</string>
+    <string name="car_color_hint">Color</string>
+    <string name="car_mileage_hint">Mileage</string>
+    <string name="car_if_accident_hint">Has been in an accident</string>
+    <string name="car_if_flood_damage_hint">Has flood damage</string>
+    <string name="car_if_flame_damage_hint">Has fire damage</string>
+    <string name="car_if_dashboard_issues_hint">Dashboard shows warning lights</string>
+    <string name="car_if_odometer_issues_hint">Has broken or replaced Odometer</string>
+    <string name="car_tyres_to_replace_num_hint">Tyres needing replacement</string>
+    <string name="add_car_extra_details">Extra info</string>
+    <string name="add_car_condition_hint">Condition</string>
+    <string name="add_car_condition_helper_txt">fair / good / excellent</string>
+    <string name="add_car_subtitle">Provide info about your car</string>
+    <string name="car_body_style_helper_txt">e.g. Sedan</string>
+    <string name="add_car_extra_details_helper">any extra information about your car</string>
+    <string name="saving_please_wait">Saving …</string>
+    <string name="car_if_has_customizations_hint">I have customized parts of it</string>
+    <string name="missing_required_car_info"><![CDATA[Car make, model, year, color, condition & mileage is required]]></string>
+    <string name="got_it_txt">Got It!</string>
+    <string name="car_saved_redirecting">Saved … redirecting</string>
+    <string name="add_car_images_subtitle">Please take photos of your car</string>
+    <string name="my_car_photos_txt">Car Photos</string>
+    <string name="add_photos_later_txt">Later</string>
+    <string name="add_photo_txt">Add Photo</string>
+    <string name="ok_txt">Okay</string>
+    <string name="cancel_adding_photos_later">Cancel</string>
+    <string name="add_photos_later_confirm_title">Click okay to add photos later. Your car info has been saved.</string>
 </resources>

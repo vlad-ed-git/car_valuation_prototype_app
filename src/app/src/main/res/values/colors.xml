@@ -7,4 +7,6 @@
     <color name="secondary">#175772</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="whitish">#f0f0f0</color>
+    <color name="offWhite">#dcd7d7</color>
 </resources>

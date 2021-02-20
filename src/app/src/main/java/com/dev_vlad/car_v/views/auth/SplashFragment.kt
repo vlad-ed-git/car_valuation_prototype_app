@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.dev_vlad.car_v.CarVApp
 import com.dev_vlad.car_v.R
 import com.dev_vlad.car_v.databinding.FragmentSplashBinding
+import com.dev_vlad.car_v.util.MyLogger
 import com.dev_vlad.car_v.view_models.auth.AuthViewModel
 import com.dev_vlad.car_v.view_models.auth.AuthViewModelFactory
 
@@ -25,7 +26,7 @@ class SplashFragment : Fragment() {
     private var _binding: FragmentSplashBinding? = null
     private val binding get() = _binding!!
     private val authViewModel: AuthViewModel by viewModels {
-        AuthViewModelFactory((activity?.application as CarVApp).repository)
+        AuthViewModelFactory((activity?.application as CarVApp).userRepo)
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,9 +51,13 @@ class SplashFragment : Fragment() {
                         findNavController().navigate(action)
                     }
 
-                    it[0].isDealer || it[0].isSeller -> {
-                        val action = SplashFragmentDirections.actionSplashFragmentToHomeFragment()
+                    it[0].isSeller -> {
+                        val action = SplashFragmentDirections.actionSplashFragmentToSellersHomeFragment()
                         findNavController().navigate(action)
+                    }
+
+                    it[0].isDealer -> {
+                        //TODO dealers home
                     }
 
                   else -> {
@@ -60,7 +65,16 @@ class SplashFragment : Fragment() {
                       findNavController().navigate(action)
                   }
                 }
+
             }
+        )
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        MyLogger.logThis(
+            TAG, "OnResume()", "Resumed!"
         )
     }
 
