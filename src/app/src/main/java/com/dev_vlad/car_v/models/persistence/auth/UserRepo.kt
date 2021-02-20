@@ -32,7 +32,7 @@ class UserRepo
 
     suspend fun saveUserInFireStore(user: UserEntity) : Boolean {
         return try {
-            Firebase.firestore.collection( USERS_COLLECTION_NAME).document(user.userId).set(user)
+            Firebase.firestore.collection( USERS_COLLECTION_NAME).document(user.userPhone).set(user)
                 .await()
             true
         }catch (e : Exception ){
@@ -44,6 +44,23 @@ class UserRepo
 
 
 
+    }
+
+     suspend fun updateUser(user: UserEntity) {
+        MyLogger.logThis(
+            TAG,
+            "updateUser()",
+            "updateUser -- $user"
+        )
+        try {
+            userEntityDao.updateUser(user)
+        }catch (e : Exception) {
+            MyLogger.logThis(
+                TAG,
+                "updateUser()",
+                "updateUser -- $user exception ${e.message}", e
+            )
+        }
     }
 
 

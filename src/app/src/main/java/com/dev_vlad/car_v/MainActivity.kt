@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.findNavController()
         //specify home fragments
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.homeFragment, R.id.splashFragment, R.id.loginFragment)
+            setOf(R.id.homeFragment, R.id.splashFragment, R.id.loginFragment, R.id.welcomeFragment)
         )
         setSupportActionBar(binding.toolbar)
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -40,7 +40,8 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
 
                 R.id.splashFragment,
-                R.id.loginFragment-> {
+                R.id.loginFragment,
+                R.id.welcomeFragment-> {
                     binding.toolbar.isVisible = false
                     binding.bottomNav.isVisible = false
                 }

@@ -42,12 +42,23 @@ class SplashFragment : Fragment() {
         authViewModel.userState.observe(
             viewLifecycleOwner,
             Observer {
-                if (it.isNullOrEmpty() || it.size != 1){
-                    val action = SplashFragmentDirections.actionSplashFragmentToLoginFragment()
-                    findNavController().navigate(action)
-                }else{
-                    val action = SplashFragmentDirections.actionSplashFragmentToHomeFragment()
-                    findNavController().navigate(action)
+
+                when{
+                    it.isNullOrEmpty()
+                            || it.size != 1 -> {
+                        val action = SplashFragmentDirections.actionSplashFragmentToLoginFragment()
+                        findNavController().navigate(action)
+                    }
+
+                    it[0].isDealer || it[0].isSeller -> {
+                        val action = SplashFragmentDirections.actionSplashFragmentToHomeFragment()
+                        findNavController().navigate(action)
+                    }
+
+                  else -> {
+                      val action = SplashFragmentDirections.actionSplashFragmentToWelcomeFragment()
+                      findNavController().navigate(action)
+                  }
                 }
             }
         )

@@ -1,9 +1,6 @@
 package com.dev_vlad.car_v.models.persistence.auth
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -16,4 +13,7 @@ interface UserEntityDao {
 
     @Query("DELETE FROM users_table")
     suspend fun deleteAll()
+
+    @Update
+    suspend fun updateUser(vararg users: UserEntity)
 }

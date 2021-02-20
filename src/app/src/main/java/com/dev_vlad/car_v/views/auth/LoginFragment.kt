@@ -18,6 +18,7 @@ import com.dev_vlad.car_v.R
 import com.dev_vlad.car_v.databinding.FragmentLoginBinding
 import com.dev_vlad.car_v.util.InternetChecker
 import com.dev_vlad.car_v.util.MyLogger
+import com.dev_vlad.car_v.util.showSnackBarToUser
 import com.dev_vlad.car_v.view_models.auth.AuthViewModel
 import com.dev_vlad.car_v.view_models.auth.AuthViewModelFactory
 import com.dev_vlad.car_v.view_models.auth.SIGNINSTATE
@@ -180,7 +181,7 @@ class LoginFragment : Fragment() {
 
                     SIGNINSTATE.STATE_SIGN_IN_SUCCESS -> {
                         resetViewsState()
-                        val action = LoginFragmentDirections.actionLoginFragmentToHomeFragment()
+                        val action = LoginFragmentDirections.actionLoginFragmentToWelcomeFragment()
                         findNavController().navigate(action)
                     }
 
@@ -222,8 +223,16 @@ class LoginFragment : Fragment() {
            return
        }
 
+        //situation - user types phone number asks for code changes phone clicks resend code
+        if(authViewModel.isUserPhoneInitialized()){
+            if (phone.trim() != authViewModel.userPhone){
+                //user has added a new phone number
+                authViewModel.resendToken = null //clear resend code
+            }
+        }
       authViewModel.userCode = code.trim()
       authViewModel.userPhone = phone.trim()
+
         val phoneNumber = code + phone
         val optionsBuilder = PhoneAuthOptions.newBuilder(auth)
                 .setPhoneNumber(phoneNumber)       // Phone number to verify
@@ -281,9 +290,11 @@ class LoginFragment : Fragment() {
     }
 
     private fun showSnackBar(errorRes: Int, isError: Boolean){
-        Snackbar
-                .make(binding.container, getString(errorRes), Snackbar.LENGTH_LONG)
-                .show()
+        binding.container.showSnackBarToUser(
+            msgResId = errorRes,
+            isErrorMsg = isError,
+            actionMessage = if (isError)R.string.dismiss else null
+        )
     }
 
     override fun onDestroyView() {

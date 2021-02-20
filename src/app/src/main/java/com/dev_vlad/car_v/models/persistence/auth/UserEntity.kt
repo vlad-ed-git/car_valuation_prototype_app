@@ -10,26 +10,33 @@ import com.dev_vlad.car_v.util.USER_TABLE_NAME
 data class UserEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "user_id")
-    val userId : String,
+    var userId : String,
 
     @ColumnInfo(name = "user_phone_number")
-    val userPhone : String,
+    var userPhone : String,
 
     @ColumnInfo(name = "user_code")
-    val userCode : String,
+    var userCode : String,
 
     @ColumnInfo(name = "user_location_country")
-    val userLocationCountry : String,
+    var userLocationCountry : String,
 
     @ColumnInfo(name= "user_name")
-    val userName: String = DEFAULT_USER_NAME,
+    var userName: String = DEFAULT_USER_NAME,
 
     @ColumnInfo(name= "date_joined")
-    val dateJoined: Long = System.currentTimeMillis(),
+    var dateJoined: Long = System.currentTimeMillis(),
+
+    @ColumnInfo(name= "date_updated")
+    var dateUpdated: Long = System.currentTimeMillis(),
 
     @ColumnInfo(name = "is_dealer")
-    val isDealer: Boolean = false,
+    var isDealer: Boolean,
 
     @ColumnInfo(name = "is_seller")
-    val isSeller: Boolean = false
-)
+    var isSeller: Boolean
+){
+    override fun toString(): String {
+        return "id $userId , phoneNumber $userCode - $userPhone , userName $userName , country $userLocationCountry, isDealer $isDealer, isSeller $isSeller"
+    }
+}

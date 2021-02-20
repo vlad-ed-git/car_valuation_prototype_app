@@ -21,6 +21,7 @@ class AuthViewModel (private val repository: UserRepo) : ViewModel() {
 
     /********** USER DATA ************/
     lateinit var userPhone: String
+    fun isUserPhoneInitialized() = (::userPhone.isInitialized)
     lateinit var userCode: String
     lateinit var userCountry: String
     /**************** COUNTRY CODES *******************/
@@ -118,7 +119,9 @@ class AuthViewModel (private val repository: UserRepo) : ViewModel() {
             userId = user.uid,
             userPhone = userPhone,
             userCode = userCode,
-            userLocationCountry = userCountry)
+            userLocationCountry = userCountry,
+            isDealer = false,
+        isSeller = false)
         userData.value = userEntity
         viewModelScope.launch {
             val isSaved = repository.saveUserInFireStore(userEntity)
@@ -140,6 +143,8 @@ class AuthViewModel (private val repository: UserRepo) : ViewModel() {
             "savingUser locally -- $user"
         )
     }
+
+
 }
 
 enum class SIGNINSTATE {

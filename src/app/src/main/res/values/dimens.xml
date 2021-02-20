@@ -3,4 +3,5 @@
     <dimen name="std_space">8dp</dimen>
     <dimen name="md_space">16dp</dimen>
     <dimen name="std_clickable">48dp</dimen>
+    <dimen name="std_icon">32dp</dimen>
 </resources>
