@@ -65,6 +65,7 @@ class MyCarDetailsFragment : Fragment() {
     private fun displayDetails(car: CarEntity) {
         binding.apply {
             carImagesAdapter.setNewImages(car.imageUrls)
+            swipeIndicator.isVisible = car.imageUrls.size > 1
             /* the details */
             val bodyStyleTxt =
                 getString(R.string.car_body_style_hint) + "\n" + car.bodyStyle.capitalize(Locale.getDefault())

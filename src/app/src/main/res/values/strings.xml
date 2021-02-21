@@ -96,4 +96,5 @@
     <string name="failed_to_upload_images">Failed to upload images. Check your internet connection</string>
     <string name="saving_unknown_err"><![CDATA[An error occurred. Check your internet & retry]]></string>
     <string name="failed_to_save_car"><![CDATA[Sending car info failed. Check your internet connection & retry]]></string>
+    <string name="swipe_right_for_more_images_desc">swipe right for more images</string>
 </resources>
