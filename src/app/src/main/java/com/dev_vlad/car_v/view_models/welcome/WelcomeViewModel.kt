@@ -24,18 +24,18 @@ class WelcomeViewModel(private val repository: UserRepo) : ViewModel() {
 
     fun updateUser(setAsBuyer: Boolean, setAsSeller: Boolean, userGivenName: String?) {
         MyLogger.logThis(
-                TAG, "updateUser()", "params isBuyer $setAsBuyer isSeller $setAsSeller"
+            TAG, "updateUser()", "params isBuyer $setAsBuyer isSeller $setAsSeller"
         )
         userEntity?.let {
             val newUserData = UserEntity(
-                    userId = it.userId,
-                    userLocationCountry = it.userLocationCountry,
-                    userCode = it.userCode,
-                    userPhone = it.userPhone,
-                    userName = userGivenName ?: DEFAULT_USER_NAME,
-                    dateJoined = it.dateJoined,
-                    isSeller = setAsSeller,
-                    isDealer = setAsBuyer
+                userId = it.userId,
+                userLocationCountry = it.userLocationCountry,
+                userCode = it.userCode,
+                userPhone = it.userPhone,
+                userName = userGivenName ?: DEFAULT_USER_NAME,
+                dateJoined = it.dateJoined,
+                isSeller = setAsSeller,
+                isDealer = setAsBuyer
             )
             viewModelScope.launch(Dispatchers.IO) {
                 repository.updateUser(user = newUserData)

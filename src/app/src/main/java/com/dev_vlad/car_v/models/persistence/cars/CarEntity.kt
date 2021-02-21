@@ -14,9 +14,9 @@ data class CarEntity(
         @ColumnInfo(name = "carId")
         var carId: String = "${UNSAVED_CAR_ID}_${System.currentTimeMillis()}",
 
-        var body_style: String,
+        var bodyStyle: String,
 
-        var extra_details: String,
+        var extraDetails: String,
 
         var year: String,
 
@@ -30,26 +30,26 @@ data class CarEntity(
 
         var mileage: String,
 
-        var has_been_in_accident: Boolean,
+        var hasBeenInAccident: Boolean,
 
-        var has_flood_damage: Boolean,
+        var hasFloodDamage: Boolean,
 
-        var has_flame_damage: Boolean,
+        var hasFlameDamage: Boolean,
 
-        var has_issues_on_dashboard: Boolean,
+        var hasIssuesOnDashboard: Boolean,
 
-        var has_broken_or_replaced_odometer: Boolean,
+        var hasBrokenOrReplacedOdometer: Boolean,
 
-        var no_of_tires_to_replace: Int,
+        var noOfTiresToReplace: Int,
 
-        var has_customizations: Boolean,
+        var hasCustomizations: Boolean,
 
-        var updated_at: Long = System.currentTimeMillis(),
+        var updatedAt: Long = System.currentTimeMillis(),
 
-        var created_at: Long = System.currentTimeMillis(),
+        var createdAt: Long = System.currentTimeMillis(),
 
-        var owner_id: String,
+        var ownerId: String,
 
-        var image_urls: List<String> = arrayListOf()
+        var imageUrls: List<String>
 
 ) : Parcelable

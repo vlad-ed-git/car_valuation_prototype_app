@@ -13,7 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AddOrEditCarViewModel(private val userRepo: UserRepo, private val carRepo: CarRepo) : ViewModel() {
+class AddOrEditCarViewModel(private val userRepo: UserRepo, private val carRepo: CarRepo) :
+    ViewModel() {
 
     init {
         setCurrentUser()
@@ -51,107 +52,109 @@ class AddOrEditCarViewModel(private val userRepo: UserRepo, private val carRepo:
     fun getCarBeingEdited(): LiveData<CarEntity> = carBeingEditedOrCreated
 
     fun saveCarInfo(
-            bodyStyle: String,
-            make: String,
-            model: String,
-            year: String,
-            color: String,
-            condition: String,
-            mileage: String,
-            extraDetails: String,
-            hasBeenInAccident: Boolean,
-            hasFloodDamage: Boolean,
-            hasFlameDamage: Boolean,
-            hasIssuesOnDashboard: Boolean,
-            hasBrokenOrReplacedOdometer: Boolean,
-            noOfTiresToReplace: String,
-            hasCustomizations: Boolean
+        bodyStyle: String,
+        make: String,
+        model: String,
+        year: String,
+        color: String,
+        condition: String,
+        mileage: String,
+        extraDetails: String,
+        hasBeenInAccident: Boolean,
+        hasFloodDamage: Boolean,
+        hasFlameDamage: Boolean,
+        hasIssuesOnDashboard: Boolean,
+        hasBrokenOrReplacedOdometer: Boolean,
+        noOfTiresToReplace: String,
+        hasCustomizations: Boolean
     ) {
 
         if (!isEditingCar) {
             addNewCar(
-                    bodyStyle,
-                    make,
-                    model,
-                    year,
-                    color,
-                    condition,
-                    mileage,
-                    extraDetails,
-                    hasBeenInAccident,
-                    hasFloodDamage,
-                    hasFlameDamage,
-                    hasIssuesOnDashboard,
-                    hasBrokenOrReplacedOdometer,
-                    noOfTiresToReplace,
-                    hasCustomizations
+                bodyStyle,
+                make,
+                model,
+                year,
+                color,
+                condition,
+                mileage,
+                extraDetails,
+                hasBeenInAccident,
+                hasFloodDamage,
+                hasFlameDamage,
+                hasIssuesOnDashboard,
+                hasBrokenOrReplacedOdometer,
+                noOfTiresToReplace,
+                hasCustomizations
             )
         } else if (carBeingEditedOrCreated.value != null) {
             updateExistingCar(
-                    bodyStyle,
-                    make,
-                    model,
-                    year,
-                    color,
-                    condition,
-                    mileage,
-                    extraDetails,
-                    hasBeenInAccident,
-                    hasFloodDamage,
-                    hasFlameDamage,
-                    hasIssuesOnDashboard,
-                    hasBrokenOrReplacedOdometer,
-                    noOfTiresToReplace,
-                    hasCustomizations
+                bodyStyle,
+                make,
+                model,
+                year,
+                color,
+                condition,
+                mileage,
+                extraDetails,
+                hasBeenInAccident,
+                hasFloodDamage,
+                hasFlameDamage,
+                hasIssuesOnDashboard,
+                hasBrokenOrReplacedOdometer,
+                noOfTiresToReplace,
+                hasCustomizations
             )
         } else {
             //bug
             //should not happen
             MyLogger.logThis(
-                    TAG,
-                    "saveCarInfo()",
-                    "bug | isEditingCar was true but the edited car is null"
+                TAG,
+                "saveCarInfo()",
+                "bug | isEditingCar was true but the edited car is null"
             )
         }
     }
 
 
     private fun updateExistingCar(
-            bodyStyle: String,
-            make: String,
-            model: String,
-            year: String,
-            color: String,
-            condition: String,
-            mileage: String,
-            extraDetails: String,
-            hasBeenInAccident: Boolean,
-            hasFloodDamage: Boolean,
-            hasFlameDamage: Boolean,
-            hasIssuesOnDashboard: Boolean,
-            hasBrokenOrReplacedOdometer: Boolean,
-            noOfTiresToReplace: String,
-            hasCustomizations: Boolean) {
+        bodyStyle: String,
+        make: String,
+        model: String,
+        year: String,
+        color: String,
+        condition: String,
+        mileage: String,
+        extraDetails: String,
+        hasBeenInAccident: Boolean,
+        hasFloodDamage: Boolean,
+        hasFlameDamage: Boolean,
+        hasIssuesOnDashboard: Boolean,
+        hasBrokenOrReplacedOdometer: Boolean,
+        noOfTiresToReplace: String,
+        hasCustomizations: Boolean
+    ) {
         val oldCar = carBeingEditedOrCreated.value!!
         val updatedCar = CarEntity(
-                carId = oldCar.carId,
-                body_style = bodyStyle,
-                make = make,
-                model = model,
-                year = year,
-                color = color,
-                condition = condition,
-                mileage = mileage,
-                extra_details = extraDetails,
-                has_been_in_accident = hasBeenInAccident,
-                has_flood_damage = hasFloodDamage,
-                has_flame_damage = hasFlameDamage,
-                has_issues_on_dashboard = hasIssuesOnDashboard,
-                has_broken_or_replaced_odometer = hasBrokenOrReplacedOdometer,
-                no_of_tires_to_replace = noOfTiresToReplace.toInt(),
-                has_customizations = hasCustomizations,
-                owner_id = oldCar.owner_id,
-                created_at = oldCar.created_at
+            carId = oldCar.carId,
+            bodyStyle = bodyStyle,
+            make = make,
+            model = model,
+            year = year,
+            color = color,
+            condition = condition,
+            mileage = mileage,
+            extraDetails = extraDetails,
+            hasBeenInAccident = hasBeenInAccident,
+            hasFloodDamage = hasFloodDamage,
+            hasFlameDamage = hasFlameDamage,
+            hasIssuesOnDashboard = hasIssuesOnDashboard,
+            hasBrokenOrReplacedOdometer = hasBrokenOrReplacedOdometer,
+            noOfTiresToReplace = noOfTiresToReplace.toInt(),
+            hasCustomizations = hasCustomizations,
+            ownerId = oldCar.ownerId,
+            createdAt = oldCar.createdAt,
+            imageUrls = oldCar.imageUrls
         )
         viewModelScope.launch(Dispatchers.IO) {
             carRepo.updateCar(updatedCar)
@@ -162,40 +165,41 @@ class AddOrEditCarViewModel(private val userRepo: UserRepo, private val carRepo:
     }
 
     private fun addNewCar(
-            bodyStyle: String,
-            make: String,
-            model: String,
-            year: String,
-            color: String,
-            condition: String,
-            mileage: String,
-            extraDetails: String,
-            hasBeenInAccident: Boolean,
-            hasFloodDamage: Boolean,
-            hasFlameDamage: Boolean,
-            hasIssuesOnDashboard: Boolean,
-            hasBrokenOrReplacedOdometer: Boolean,
-            noOfTiresToReplace: String,
-            hasCustomizations: Boolean
+        bodyStyle: String,
+        make: String,
+        model: String,
+        year: String,
+        color: String,
+        condition: String,
+        mileage: String,
+        extraDetails: String,
+        hasBeenInAccident: Boolean,
+        hasFloodDamage: Boolean,
+        hasFlameDamage: Boolean,
+        hasIssuesOnDashboard: Boolean,
+        hasBrokenOrReplacedOdometer: Boolean,
+        noOfTiresToReplace: String,
+        hasCustomizations: Boolean
     ) {
         //get a new car
         val car = CarEntity(
-                body_style = bodyStyle,
-                make = make,
-                model = model,
-                year = year,
-                color = color,
-                condition = condition,
-                mileage = mileage,
-                extra_details = extraDetails,
-                has_been_in_accident = hasBeenInAccident,
-                has_flood_damage = hasFloodDamage,
-                has_flame_damage = hasFlameDamage,
-                has_issues_on_dashboard = hasIssuesOnDashboard,
-                has_broken_or_replaced_odometer = hasBrokenOrReplacedOdometer,
-                no_of_tires_to_replace = noOfTiresToReplace.toInt(),
-                has_customizations = hasCustomizations,
-                owner_id = currentUser.userId
+            bodyStyle = bodyStyle,
+            make = make,
+            model = model,
+            year = year,
+            color = color,
+            condition = condition,
+            mileage = mileage,
+            extraDetails = extraDetails,
+            hasBeenInAccident = hasBeenInAccident,
+            hasFloodDamage = hasFloodDamage,
+            hasFlameDamage = hasFlameDamage,
+            hasIssuesOnDashboard = hasIssuesOnDashboard,
+            hasBrokenOrReplacedOdometer = hasBrokenOrReplacedOdometer,
+            noOfTiresToReplace = noOfTiresToReplace.toInt(),
+            hasCustomizations = hasCustomizations,
+            ownerId = currentUser.userId,
+            imageUrls = arrayListOf<String>()
         )
         viewModelScope.launch(Dispatchers.IO) {
             carRepo.addCar(car)

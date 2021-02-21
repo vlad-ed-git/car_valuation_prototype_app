@@ -17,8 +17,8 @@ import com.dev_vlad.car_v.databinding.MyCarsItemBinding
 import com.dev_vlad.car_v.models.persistence.cars.CarEntity
 import java.util.*
 
-class MyCarsAdapter(private val actionListener: MyCarsActionsListener)
-    : ListAdapter<CarEntity, MyCarsAdapter.MyCarsAdapterVH>(MyCarsAdapterDifUtil()) {
+class MyCarsAdapter(private val actionListener: MyCarsActionsListener) :
+    ListAdapter<CarEntity, MyCarsAdapter.MyCarsAdapterVH>(MyCarsAdapterDifUtil()) {
 
     companion object {
         private val TAG = MyCarsAdapter::class.java.simpleName
@@ -28,43 +28,45 @@ class MyCarsAdapter(private val actionListener: MyCarsActionsListener)
         fun onCarClicked(clickedCar: CarEntity)
     }
 
-    class MyCarsAdapterVH(private val binding: MyCarsItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    class MyCarsAdapterVH(private val binding: MyCarsItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(car: CarEntity, actionListener: MyCarsActionsListener) {
             binding.apply {
-                val titleTxt = car.make.capitalize(Locale.getDefault()) + " " + car.model.capitalize(Locale.getDefault())
+                val titleTxt =
+                    car.make.capitalize(Locale.getDefault()) + " " + car.model.capitalize(Locale.getDefault())
                 title.text = titleTxt
                 carCard.setOnClickListener {
                     actionListener.onCarClicked(car)
                 }
-                val imgUrl = car.image_urls[0] //todo car.image_urls is never empty?!
+                val imgUrl = car.imageUrls[0] //todo car.image_urls is never empty?!
                 Glide.with(itemView.context)
-                        .load(imgUrl)
-                        .placeholder(R.drawable.logo_grey)
-                        .listener(
-                                object : RequestListener<Drawable> {
-                                    override fun onLoadFailed(
-                                            e: GlideException?,
-                                            model: Any?,
-                                            target: Target<Drawable>?,
-                                            isFirstResource: Boolean
-                                    ): Boolean {
-                                        return false
-                                    }
+                    .load(imgUrl)
+                    .placeholder(R.drawable.logo_grey)
+                    .listener(
+                        object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                return false
+                            }
 
-                                    override fun onResourceReady(
-                                            resource: Drawable?,
-                                            model: Any?,
-                                            target: Target<Drawable>?,
-                                            dataSource: DataSource?,
-                                            isFirstResource: Boolean
-                                    ): Boolean {
-                                        featuredImage.scaleType = ImageView.ScaleType.CENTER_CROP
-                                        return false
-                                    }
+                            override fun onResourceReady(
+                                resource: Drawable?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                dataSource: DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                featuredImage.scaleType = ImageView.ScaleType.CENTER_CROP
+                                return false
+                            }
 
-                                }
-                        )
-                        .into(featuredImage)
+                        }
+                    )
+                    .into(featuredImage)
 
             }
         }
@@ -78,13 +80,14 @@ class MyCarsAdapter(private val actionListener: MyCarsActionsListener)
 
         override fun areContentsTheSame(oldItem: CarEntity, newItem: CarEntity): Boolean {
             return (oldItem.carId == newItem.carId) &&
-                    (oldItem.updated_at == newItem.updated_at)
+                    (oldItem.updatedAt == newItem.updatedAt)
         }
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyCarsAdapterVH {
-        val myCarsItemBinding = MyCarsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val myCarsItemBinding =
+            MyCarsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MyCarsAdapterVH(myCarsItemBinding)
     }
 

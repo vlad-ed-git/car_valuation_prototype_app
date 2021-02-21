@@ -25,11 +25,17 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
         //specify home fragments
         appBarConfiguration = AppBarConfiguration(
-                setOf(R.id.sellersHomeFragment, R.id.splashFragment, R.id.loginFragment, R.id.welcomeFragment)
+            setOf(
+                R.id.sellersHomeFragment,
+                R.id.splashFragment,
+                R.id.loginFragment,
+                R.id.welcomeFragment
+            )
         )
         setSupportActionBar(binding.toolbar)
         setupActionBarWithNavController(navController, appBarConfiguration)

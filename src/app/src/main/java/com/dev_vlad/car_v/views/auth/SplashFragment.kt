@@ -30,8 +30,8 @@ class SplashFragment : Fragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentSplashBinding.inflate(inflater, container, false)
@@ -42,32 +42,34 @@ class SplashFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         authViewModel.userState.observe(
-                viewLifecycleOwner,
-                Observer {
+            viewLifecycleOwner,
+            Observer {
 
-                    when {
-                        it.isNullOrEmpty()
-                                || it.size != 1 -> {
-                            val action = SplashFragmentDirections.actionSplashFragmentToLoginFragment()
-                            findNavController().navigate(action)
-                        }
-
-                        it[0].isSeller -> {
-                            val action = SplashFragmentDirections.actionSplashFragmentToSellersHomeFragment()
-                            findNavController().navigate(action)
-                        }
-
-                        it[0].isDealer -> {
-                            //TODO dealers home
-                        }
-
-                        else -> {
-                            val action = SplashFragmentDirections.actionSplashFragmentToWelcomeFragment()
-                            findNavController().navigate(action)
-                        }
+                when {
+                    it.isNullOrEmpty()
+                            || it.size != 1 -> {
+                        val action = SplashFragmentDirections.actionSplashFragmentToLoginFragment()
+                        findNavController().navigate(action)
                     }
 
+                    it[0].isSeller -> {
+                        val action =
+                            SplashFragmentDirections.actionSplashFragmentToSellersHomeFragment()
+                        findNavController().navigate(action)
+                    }
+
+                    it[0].isDealer -> {
+                        //TODO dealers home
+                    }
+
+                    else -> {
+                        val action =
+                            SplashFragmentDirections.actionSplashFragmentToWelcomeFragment()
+                        findNavController().navigate(action)
+                    }
                 }
+
+            }
         )
     }
 
@@ -75,7 +77,7 @@ class SplashFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         MyLogger.logThis(
-                TAG, "OnResume()", "Resumed!"
+            TAG, "OnResume()", "Resumed!"
         )
     }
 
@@ -83,8 +85,8 @@ class SplashFragment : Fragment() {
         binding.apply {
             retryBtn.isVisible = false
             Glide.with(requireContext())
-                    .load(R.drawable.yellow_vintage_car)
-                    .into(bgImg)
+                .load(R.drawable.yellow_vintage_car)
+                .into(bgImg)
             loadingTxt.text = getString(R.string.splash_loading_txt)
             loadingBar.isVisible = true
         }

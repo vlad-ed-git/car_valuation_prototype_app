@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,8 +11,8 @@
         android:id="@+id/subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
         android:layout_margin="@dimen/std_space"
         android:text="@string/add_car_images_subtitle"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
@@ -27,27 +27,26 @@
         android:indeterminate="true"
         android:indeterminateTint="@color/accent"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/subtitle" />
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="true"
+       android:layout_below="@id/subtitle" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/photos_rv"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/loading_bar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/later_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/loading_bar"
+        android:layout_above="@+id/later_btn"
         />
 
     <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        style="@style/Widget.MaterialComponents.Button"
         android:id="@+id/later_btn"
         android:text="@string/add_photos_later_txt"
-        android:layout_margin="@dimen/md_space"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="@dimen/std_space"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
@@ -58,11 +57,12 @@
         android:drawableStart="@drawable/ic_add_pic"
         android:textColor="@color/accent"
         android:text="@string/add_photo_txt"
-        android:layout_margin="@dimen/md_space"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="@dimen/std_space"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        tools:ignore="RelativeOverlap" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

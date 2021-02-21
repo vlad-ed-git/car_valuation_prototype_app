@@ -104,6 +104,7 @@
 
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                android:enabled="false"
                 android:id="@+id/has_been_in_accident"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
@@ -111,9 +112,11 @@
                 android:layout_marginTop="@dimen/smd_space"
                 android:text="@string/car_if_accident_hint"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/condition" />
+                app:layout_constraintTop_toBottomOf="@id/condition" 
+                 />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                android:enabled="false"
                 android:id="@+id/has_flood_damage"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
@@ -124,6 +127,7 @@
                 app:layout_constraintTop_toBottomOf="@id/has_been_in_accident" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                android:enabled="false"
                 android:id="@+id/has_flame_damage"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
@@ -134,6 +138,7 @@
                 app:layout_constraintTop_toBottomOf="@id/has_flood_damage" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                android:enabled="false"
                 android:id="@+id/has_issues_on_dashboard"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
@@ -144,6 +149,7 @@
                 app:layout_constraintTop_toBottomOf="@id/has_flame_damage" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                android:enabled="false"
                 android:id="@+id/has_broken_or_replaced_odometer"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
@@ -166,6 +172,7 @@
 
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                android:enabled="false"
                 android:id="@+id/has_customizations"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"

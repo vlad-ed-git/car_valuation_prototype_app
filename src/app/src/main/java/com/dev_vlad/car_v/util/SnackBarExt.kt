@@ -8,32 +8,42 @@ import com.google.android.material.snackbar.Snackbar
 
 
 fun View.showSnackBarToUser(
-        msgResId: Int,
-        isErrorMsg: Boolean = true,
-        actionMessage: Int? = null,
-        actionToTake: ((View) -> Unit) = {}
+    msgResId: Int,
+    isErrorMsg: Boolean = true,
+    actionMessage: Int? = null,
+    actionToTake: ((View) -> Unit) = {}
 ) {
 
     val showForTime =
-            if (actionMessage == null) Snackbar.LENGTH_LONG else Snackbar.LENGTH_INDEFINITE
+        if (actionMessage == null) Snackbar.LENGTH_LONG else Snackbar.LENGTH_INDEFINITE
     val snackBar = Snackbar.make(this, context.getString(msgResId), showForTime)
     val mainSnackBarTxt =
-            snackBar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+        snackBar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
     val actionTxt =
-            snackBar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_action)
+        snackBar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_action)
 
     //set background color
     snackBar.view.setBackgroundColor(
-            ContextCompat.getColor(
-                    this.context,
-                    R.color.white
-            )
+        ContextCompat.getColor(
+            this.context,
+            R.color.white
+        )
     )
 
     //set text color
     if (isErrorMsg) {
-        mainSnackBarTxt.setTextColor(ContextCompat.getColor(this.context, R.color.design_default_color_error))
-        actionTxt.setTextColor(ContextCompat.getColor(this.context, R.color.design_default_color_error))
+        mainSnackBarTxt.setTextColor(
+            ContextCompat.getColor(
+                this.context,
+                R.color.design_default_color_error
+            )
+        )
+        actionTxt.setTextColor(
+            ContextCompat.getColor(
+                this.context,
+                R.color.design_default_color_error
+            )
+        )
     } else {
         mainSnackBarTxt.setTextColor(ContextCompat.getColor(this.context, R.color.black))
         actionTxt.setTextColor(ContextCompat.getColor(this.context, R.color.black))

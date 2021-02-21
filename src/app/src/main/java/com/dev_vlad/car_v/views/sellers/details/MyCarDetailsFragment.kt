@@ -32,8 +32,8 @@ class MyCarDetailsFragment : Fragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentMyCarDetailsBinding.inflate(inflater, container, false)
@@ -60,15 +60,26 @@ class MyCarDetailsFragment : Fragment() {
         binding.apply {
 
             /* the details */
-            val bodyStyleTxt = getString(R.string.car_body_style_hint) + "\n" + car.body_style.capitalize(Locale.getDefault())
-            val makeTxt = getString(R.string.car_make_hint) + "\n" + car.make.capitalize(Locale.getDefault())
-            val modelTxt = getString(R.string.car_model_hint) + "\n" + car.model.capitalize(Locale.getDefault())
-            val yearTxt = getString(R.string.car_year_hint) + "\n" + car.year.capitalize(Locale.getDefault())
-            val colorTxt = getString(R.string.car_color_hint) + "\n" + car.color.capitalize(Locale.getDefault())
-            val conditionTxt = getString(R.string.add_car_condition_hint) + "\n" + car.condition.capitalize(Locale.getDefault())
-            val mileageTxt = getString(R.string.car_mileage_hint) + "\n" + car.mileage.capitalize(Locale.getDefault())
-            val extraDetailsTxt = getString(R.string.add_car_extra_details) + "\n" + car.extra_details.capitalize(Locale.getDefault())
-            val replaceTiresTxt = getString(R.string.car_tyres_to_replace_num_hint) + " " + car.no_of_tires_to_replace.toString()
+            val bodyStyleTxt =
+                getString(R.string.car_body_style_hint) + "\n" + car.bodyStyle.capitalize(Locale.getDefault())
+            val makeTxt =
+                getString(R.string.car_make_hint) + "\n" + car.make.capitalize(Locale.getDefault())
+            val modelTxt =
+                getString(R.string.car_model_hint) + "\n" + car.model.capitalize(Locale.getDefault())
+            val yearTxt =
+                getString(R.string.car_year_hint) + "\n" + car.year.capitalize(Locale.getDefault())
+            val colorTxt =
+                getString(R.string.car_color_hint) + "\n" + car.color.capitalize(Locale.getDefault())
+            val conditionTxt =
+                getString(R.string.add_car_condition_hint) + "\n" + car.condition.capitalize(Locale.getDefault())
+            val mileageTxt =
+                getString(R.string.car_mileage_hint) + "\n" + car.mileage.capitalize(Locale.getDefault())
+            val extraDetailsTxt =
+                getString(R.string.add_car_extra_details) + "\n" + car.extraDetails.capitalize(
+                    Locale.getDefault()
+                )
+            val replaceTiresTxt =
+                getString(R.string.car_tyres_to_replace_num_hint) + " " + car.noOfTiresToReplace.toString()
             bodyStyle.text = bodyStyleTxt
             make.text = makeTxt
             model.text = modelTxt
@@ -77,22 +88,22 @@ class MyCarDetailsFragment : Fragment() {
             condition.text = conditionTxt
             mileage.text = mileageTxt
             extraDetails.text = extraDetailsTxt
-            hasBeenInAccident.isChecked = car.has_been_in_accident
-            hasFloodDamage.isChecked = car.has_flood_damage
-            hasFlameDamage.isChecked = car.has_flame_damage
-            hasIssuesOnDashboard.isChecked = car.has_issues_on_dashboard
-            hasBrokenOrReplacedOdometer.isChecked = car.has_broken_or_replaced_odometer
+            hasBeenInAccident.isChecked = car.hasBeenInAccident
+            hasFloodDamage.isChecked = car.hasFloodDamage
+            hasFlameDamage.isChecked = car.hasFlameDamage
+            hasIssuesOnDashboard.isChecked = car.hasIssuesOnDashboard
+            hasBrokenOrReplacedOdometer.isChecked = car.hasBrokenOrReplacedOdometer
             noOfTiresToReplace.text = replaceTiresTxt
-            hasCustomizations.isChecked = car.has_customizations
+            hasCustomizations.isChecked = car.hasCustomizations
 
             /* the visibility */
-            noOfTiresToReplace.isVisible = (car.no_of_tires_to_replace > 0)
-            hasBeenInAccident.isVisible = car.has_been_in_accident
-            hasFloodDamage.isVisible = car.has_flood_damage
-            hasFlameDamage.isVisible = car.has_flame_damage
-            hasIssuesOnDashboard.isVisible = car.has_issues_on_dashboard
-            hasBrokenOrReplacedOdometer.isVisible = car.has_broken_or_replaced_odometer
-            hasCustomizations.isVisible = car.has_customizations
+            noOfTiresToReplace.isVisible = (car.noOfTiresToReplace > 0)
+            hasBeenInAccident.isVisible = car.hasBeenInAccident
+            hasFloodDamage.isVisible = car.hasFloodDamage
+            hasFlameDamage.isVisible = car.hasFlameDamage
+            hasIssuesOnDashboard.isVisible = car.hasIssuesOnDashboard
+            hasBrokenOrReplacedOdometer.isVisible = car.hasBrokenOrReplacedOdometer
+            hasCustomizations.isVisible = car.hasCustomizations
             loadingBar.isVisible = false
         }
     }
@@ -101,7 +112,10 @@ class MyCarDetailsFragment : Fragment() {
     private fun editCar() {
         val carId = myCarDetailsImgsVm.getCarId()
         if (carId != null) {
-            val action = MyCarDetailsFragmentDirections.actionMyCarDetailsFragmentToAddOrEditCarFragment(carId)
+            val action =
+                MyCarDetailsFragmentDirections.actionMyCarDetailsFragmentToAddOrEditCarFragment(
+                    carId
+                )
             findNavController().navigate(action)
         }
     }
@@ -131,7 +145,9 @@ class MyCarDetailsFragment : Fragment() {
                 deleteCar()
                 true
             }
-            else -> item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(item)
+            else -> item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(
+                item
+            )
         }
     }
 

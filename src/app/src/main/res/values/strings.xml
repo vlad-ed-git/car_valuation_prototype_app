@@ -74,9 +74,9 @@
     <string name="missing_required_car_info"><![CDATA[Car make, model, year, color, condition & mileage is required]]></string>
     <string name="got_it_txt">Got It!</string>
     <string name="car_saved_redirecting">Saved … redirecting</string>
-    <string name="add_car_images_subtitle">Please take photos of your car</string>
+    <string name="add_car_images_subtitle">Add photos of your car</string>
     <string name="my_car_photos_txt">Car Photos</string>
-    <string name="add_photos_later_txt">Later</string>
+    <string name="add_photos_later_txt">Skip this</string>
     <string name="add_photo_txt">Add Photo</string>
     <string name="ok_txt">Okay</string>
     <string name="cancel_adding_photos_later">Cancel</string>
@@ -84,4 +84,16 @@
     <string name="car_img_desc">Car Image</string>
     <string name="edit_my_car_txt">edit my car</string>
     <string name="delete_my_car_txt">Delete Car</string>
+    <string name="car_image_desc">Car Image</string>
+    <string name="no_camera_detected">No camera app was detected!</string>
+    <string name="select_photo_in_gallery_title">Select a photo of your car</string>
+    <string name="delete_image_menu_txt">Remove image</string>
+    <string name="select_imgs_to_delete">Click on the images to select them first</string>
+    <string name="yes_txt">Yes</string>
+    <string name="delete_selected_images">Delete selected images?</string>
+    <string name="cancel_action_txt">Cancel</string>
+    <string name="please_add_photos">Please add photos of your car</string>
+    <string name="failed_to_upload_images">Failed to upload images. Check your internet connection</string>
+    <string name="saving_unknown_err"><![CDATA[An error occurred. Check your internet & retry]]></string>
+    <string name="failed_to_save_car"><![CDATA[Sending car info failed. Check your internet connection & retry]]></string>
 </resources>

@@ -41,8 +41,8 @@ class InternetChecker(context: Context) : LiveData<Boolean>() {
     override fun onActive() {
         networkCallback = createNetworkCallback()
         val networkRequest = NetworkRequest.Builder()
-                .addCapability(NET_CAPABILITY_INTERNET)
-                .build()
+            .addCapability(NET_CAPABILITY_INTERNET)
+            .build()
         cm.registerNetworkCallback(networkRequest, networkCallback)
     }
 

@@ -6,23 +6,23 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CarEntityDao {
 
-    @Query("SELECT * FROM cars ORDER BY updated_at DESC LIMIT :limit OFFSET :offset")
+    @Query("SELECT * FROM cars ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset")
     fun getAllCars(limit: Int, offset: Int): Flow<List<CarEntity>>
 
-    @Query("SELECT * FROM cars WHERE owner_id =:userId ORDER BY updated_at DESC LIMIT :limit OFFSET :offset")
+    @Query("SELECT * FROM cars WHERE ownerId =:userId ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset")
     fun getAllCarsOfUser(userId: String, limit: Int, offset: Int): Flow<List<CarEntity>>
 
     @Query(
-            "SELECT * FROM cars WHERE owner_id =:userId AND " +
-                    "make LIKE :queryParam OR model LIKE :queryParam OR body_style LIKE :queryParam " +
-                    "OR year LIKE :queryParam OR color LIKE :queryParam" +
-                    " ORDER BY updated_at DESC LIMIT :limit OFFSET :offset"
+        "SELECT * FROM cars WHERE ownerId =:userId AND " +
+                "make LIKE :queryParam OR model LIKE :queryParam OR bodyStyle LIKE :queryParam " +
+                "OR year LIKE :queryParam OR color LIKE :queryParam" +
+                " ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset"
     )
     fun searchAllCarsOfUserByQuery(
-            userId: String,
-            limit: Int,
-            offset: Int,
-            queryParam: String
+        userId: String,
+        limit: Int,
+        offset: Int,
+        queryParam: String
     ): Flow<List<CarEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

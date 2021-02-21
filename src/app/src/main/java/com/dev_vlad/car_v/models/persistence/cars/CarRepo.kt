@@ -1,10 +1,18 @@
 package com.dev_vlad.car_v.models.persistence.cars
 
+import androidx.core.net.toUri
+import com.dev_vlad.car_v.util.CARS_COLLECTION_NAME
 import com.dev_vlad.car_v.util.MyLogger
+import com.dev_vlad.car_v.util.UNSAVED_CAR_ID
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.tasks.await
 
 class CarRepo(
-        private val carEntityDao: CarEntityDao
+    private val carEntityDao: CarEntityDao
 ) {
 
     companion object {
@@ -26,6 +34,7 @@ class CarRepo(
     }
 
     fun getAllCarsByUser(pageNo: Int = 1, userId: String, query: String?): Flow<List<CarEntity>> {
+
         val page = if (pageNo < 1) 1 else pageNo //safety
         val limit = PAGE_SIZE
         val offset = if (page == 1) {
@@ -33,11 +42,35 @@ class CarRepo(
         } else {
             PAGE_SIZE * (page - 1)
         }
-        MyLogger.logThis(TAG, "getAllCarsByUser()", "page : $pageNo userId $userId")
-        return if (query.isNullOrBlank())
-            carEntityDao.getAllCarsOfUser(userId, limit, offset)
-        else
-            carEntityDao.searchAllCarsOfUserByQuery(userId, limit, offset, queryParam = "%${query.replace(' ', '%')}%")
+
+
+        try {
+            return if (query.isNullOrBlank()) {
+                MyLogger.logThis(TAG, "getAllCarsByUser()", "page : $pageNo userId $userId")
+                carEntityDao.getAllCarsOfUser(userId, limit, offset)
+            } else {
+                MyLogger.logThis(
+                    TAG,
+                    "getAllCarsByUser()",
+                    "page : $pageNo userId $userId query $query"
+                )
+                carEntityDao.searchAllCarsOfUserByQuery(
+                    userId,
+                    limit,
+                    offset,
+                    queryParam = "%${query.replace(' ', '%')}%"
+                )
+            }
+        } catch (e: Exception) {
+            MyLogger.logThis(
+                TAG,
+                "getAllCarsByUser()",
+                "exc ${e.message}",
+                e
+            )
+            return emptyFlow()
+        }
+
     }
 
     suspend fun addCar(car: CarEntity) {
@@ -51,7 +84,7 @@ class CarRepo(
     }
 
     suspend fun updateCar(car: CarEntity) {
-        MyLogger.logThis(TAG, "updateCar()", "car : $car")
+        MyLogger.logThis(TAG, "updateCar()", "carId : ${car.carId}")
         carEntityDao.updateCar(car)
     }
 
@@ -59,5 +92,56 @@ class CarRepo(
         MyLogger.logThis(TAG, "getNonObservableCarDetailsById()", "carId $carId")
         return carEntityDao.getCarByIdNotObserved(carId)
     }
+
+
+    /******************************* FIRE STORE *************************************/
+    suspend fun addMyCarToFireStore(car: CarEntity): String? {
+        return try {
+            val carDoc = Firebase.firestore.collection(CARS_COLLECTION_NAME).document()
+            if (car.carId.substring(0, UNSAVED_CAR_ID.length) == UNSAVED_CAR_ID) {
+                car.carId = carDoc.id
+                MyLogger.logThis(
+                    TAG, "addMyCarToFireStore()", "saving an unsaved new car"
+                )
+            }
+            carDoc.set(car)
+                .await()
+            car.carId
+        } catch (e: Exception) {
+            MyLogger.logThis(
+                TAG, "addMyCarToFireStore()", "${e.message} --exc", e
+            )
+            null
+        }
+
+
+    }
+
+
+    suspend fun uploadImages(photosToUpload: List<String>, ownerId: String): List<String>? {
+        try {
+            val storageRef = Firebase.storage.reference
+            val imagesRef = storageRef.child("$CARS_COLLECTION_NAME/$ownerId/")
+            val uploadedPhotoUrls = ArrayList<String>()
+            for (photos in photosToUpload) {
+                val uri = photos.toUri()
+                imagesRef.child("${uri.lastPathSegment}")
+                val uploadTask = imagesRef.putFile(uri)
+                val downloadUrl = uploadTask.await()
+                    .storage
+                    .downloadUrl
+                    .await()
+                    .toString()
+                uploadedPhotoUrls.add(downloadUrl)
+                MyLogger.logThis(TAG, "UploadImages()", "image added at ${uri.lastPathSegment}")
+
+            }
+            return uploadedPhotoUrls
+        } catch (exception: java.lang.Exception) {
+            MyLogger.logThis(TAG, "UploadImages()", "exception thrown $exception", exception)
+            return null
+        }
+    }
+
 
 }

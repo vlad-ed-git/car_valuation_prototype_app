@@ -32,8 +32,8 @@ class SellersHomeFragment : Fragment(), MyCarsAdapter.MyCarsActionsListener {
     }
     private val myCarsAdapter = MyCarsAdapter(this)
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentSellersHomeBinding.inflate(inflater, container, false)
@@ -46,33 +46,33 @@ class SellersHomeFragment : Fragment(), MyCarsAdapter.MyCarsActionsListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         sellersHomeViewModel.getCurrentUser().observe(
-                viewLifecycleOwner, Observer {
-            if (it != null) {
-                observeMyCars()
-            }
+            viewLifecycleOwner, Observer {
+                if (it != null) {
+                    observeMyCars()
+                }
 
-        }
+            }
         )
     }
 
     private fun observeMyCars() {
         sellersHomeViewModel.observeMyCarsState().observe(
-                viewLifecycleOwner, Observer {
-            if (it == null) {
-                MyLogger.logThis(
+            viewLifecycleOwner, Observer {
+                if (it == null) {
+                    MyLogger.logThis(
                         TAG,
                         "observeMyCars()",
                         "My Cars List Is Null"
-                )
-            } else {
-                MyLogger.logThis(
+                    )
+                } else {
+                    MyLogger.logThis(
                         TAG,
                         "observeMyCars()",
-                        "Found ${it.size} cars"
-                )
-                myCarsAdapter.submitList(it)
+                        "Found ${it.size} cars ${it[0].imageUrls}"
+                    )
+                    myCarsAdapter.submitList(it)
+                }
             }
-        }
         )
     }
 
@@ -80,7 +80,10 @@ class SellersHomeFragment : Fragment(), MyCarsAdapter.MyCarsActionsListener {
         binding.apply {
 
             addCarFab.setOnClickListener {
-                val action = SellersHomeFragmentDirections.actionSellersHomeFragmentToAddOrEditCarFragment(null)
+                val action =
+                    SellersHomeFragmentDirections.actionSellersHomeFragmentToAddOrEditCarFragment(
+                        null
+                    )
                 findNavController().navigate(action)
             }
             myCars.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -103,12 +106,15 @@ class SellersHomeFragment : Fragment(), MyCarsAdapter.MyCarsActionsListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         //todo menu? -- about, profile, etc
-        return item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(item)
+        return item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(
+            item
+        )
     }
 
     override fun onCarClicked(clickedCar: CarEntity) {
         MyLogger.logThis(TAG, "onCarClicked()", "car ${clickedCar.carId}")
-        val action = SellersHomeFragmentDirections.actionSellersHomeFragmentToMyCarDetailsFragment(clickedCar.carId)
+        val action =
+            SellersHomeFragmentDirections.actionSellersHomeFragmentToMyCarDetailsFragment(clickedCar.carId)
         findNavController().navigate(action)
     }
 

@@ -7,5 +7,9 @@ const val DATABASE_NAME = "car_v_db"
 const val DEFAULT_USER_NAME = "anon"
 
 //FIREBASE
+const val CARS_COLLECTION_NAME = "cars"
 const val USERS_COLLECTION_NAME = "users"
 const val UNSAVED_CAR_ID = "TMP_CAR"
+
+//IMAGES STUFF
+const val REQUEST_IMAGE_CAPTURE = 11

@@ -5,14 +5,17 @@ import com.dev_vlad.car_v.models.persistence.auth.UserEntity
 import com.dev_vlad.car_v.models.persistence.auth.UserRepo
 import com.dev_vlad.car_v.models.persistence.cars.CarEntity
 import com.dev_vlad.car_v.models.persistence.cars.CarRepo
+import com.dev_vlad.car_v.util.MyLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SellersHomeViewModel(private val userRepo: UserRepo,
-                           private val carRepo: CarRepo) : ViewModel() {
+class SellersHomeViewModel(
+    private val userRepo: UserRepo,
+    private val carRepo: CarRepo
+) : ViewModel() {
     init {
         setCurrentUser()
     }
@@ -33,13 +36,28 @@ class SellersHomeViewModel(private val userRepo: UserRepo,
     private val postsState = MutableLiveData<PostsStateModifiers>(PostsStateModifiers())
 
     fun observeMyCarsState() = postsState.switchMap {
-        refreshPosts(query = it.query, page = it.page)
+        try {
+            refreshPosts(query = it.query, page = it.page)
                 .asLiveData()
+        } catch (e: Exception) {
+            MyLogger.logThis(
+                TAG,
+                " observeMyCarsState()",
+                "exc ${e.message}",
+                e
+            )
+            emptyFlow<List<CarEntity>>().asLiveData()
+        }
+
     }
 
     private fun refreshPosts(query: String?, page: Int = 1): Flow<List<CarEntity>> {
         if (currentUser.value == null) return emptyFlow()
-        return carRepo.getAllCarsByUser(pageNo = page, userId = currentUser.value!!.userId, query = query)
+        return carRepo.getAllCarsByUser(
+            pageNo = page,
+            userId = currentUser.value!!.userId,
+            query = query
+        )
     }
 
 
@@ -48,8 +66,8 @@ class SellersHomeViewModel(private val userRepo: UserRepo,
         viewModelScope.launch(Dispatchers.IO) {
             //modify query and page
             val newState = PostsStateModifiers(
-                    query = query,
-                    page = 1
+                query = query,
+                page = 1
             )
             postsState.postValue(newState)
         }
@@ -58,10 +76,13 @@ class SellersHomeViewModel(private val userRepo: UserRepo,
     //TODO
     fun clearQuery() = searchPosts(null)
 
+    companion object {
+        private val TAG = SellersHomeViewModel::class.java.simpleName
+    }
 
 }
 
 data class PostsStateModifiers(
-        var query: String? = null,
-        var page: Int = 1
+    var query: String? = null,
+    var page: Int = 1
 )
