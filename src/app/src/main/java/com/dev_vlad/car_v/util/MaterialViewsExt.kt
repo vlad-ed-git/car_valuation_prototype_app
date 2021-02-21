@@ -6,6 +6,6 @@ fun TextInputLayout.myTxt(v: TextInputLayout): String? {
     return v.editText?.text?.toString()
 }
 
-fun TextInputLayout.setTxt(v: TextInputLayout, txt : String) {
+fun TextInputLayout.setTxt(v: TextInputLayout, txt: String) {
     v.editText?.setText(txt)
 }

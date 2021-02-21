@@ -13,7 +13,7 @@ import com.dev_vlad.car_v.util.DATABASE_NAME
 
 @Database(entities = [UserEntity::class, CarEntity::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
-public abstract class LocalDatabase : RoomDatabase() {
+abstract class LocalDatabase : RoomDatabase() {
 
     abstract fun userEntityDao(): UserEntityDao
     abstract fun carEntityDao(): CarEntityDao
@@ -29,9 +29,9 @@ public abstract class LocalDatabase : RoomDatabase() {
             // if it is, then create the database
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    LocalDatabase::class.java,
-                    DATABASE_NAME
+                        context.applicationContext,
+                        LocalDatabase::class.java,
+                        DATABASE_NAME
                 ).build()
                 INSTANCE = instance
                 // return instance

@@ -12,7 +12,7 @@ interface UserEntityDao {
     suspend fun getNonObservableUser(): List<UserEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(user: UserEntity )
+    suspend fun insert(user: UserEntity)
 
     @Query("DELETE FROM users_table")
     suspend fun deleteAll()

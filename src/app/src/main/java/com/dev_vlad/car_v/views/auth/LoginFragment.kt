@@ -43,7 +43,7 @@ class LoginFragment : Fragment() {
     private val authViewModel: AuthViewModel by viewModels {
         AuthViewModelFactory((activity?.application as CarVApp).userRepo)
     }
-    private lateinit var internetChecker : InternetChecker
+    private lateinit var internetChecker: InternetChecker
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -65,7 +65,7 @@ class LoginFragment : Fragment() {
         binding.apply {
             val adapter = ArrayAdapter(requireContext(), R.layout.country_item, authViewModel.getCountries())
             val countryInput = (countryPicker.editText as? AutoCompleteTextView)
-                    countryInput?.setAdapter(adapter)
+            countryInput?.setAdapter(adapter)
             countryInput?.onItemClickListener =
                     OnItemClickListener { _, _, position, _ ->
                         val selectedCountry: String? = adapter.getItem(position)
@@ -85,7 +85,7 @@ class LoginFragment : Fragment() {
         binding.getVerificationCode.setOnClickListener {
             onGetCodeClicked()
         }
-        binding.signIn.setOnClickListener{
+        binding.signIn.setOnClickListener {
             signInWithCode()
         }
 
@@ -102,22 +102,22 @@ class LoginFragment : Fragment() {
         observeAuthState()
     }
 
-    private fun observeInternetAccess(){
+    private fun observeInternetAccess() {
         internetChecker = InternetChecker(requireContext())
         internetChecker.observe(
-            viewLifecycleOwner, Observer {  hasInternet ->
-                if (!hasInternet){
-                    Toast.makeText(
+                viewLifecycleOwner, Observer { hasInternet ->
+            if (!hasInternet) {
+                Toast.makeText(
                         requireContext(), R.string.slow_or_no_internet, Toast.LENGTH_LONG
-                    ).show()
-                }
+                ).show()
             }
+        }
         )
     }
 
-    private fun observeUserData(){
+    private fun observeUserData() {
         authViewModel.getUserData().observe(viewLifecycleOwner, Observer {
-            if (it != null){
+            if (it != null) {
                 binding.apply {
                     val countryInput = (countryPicker.editText as? AutoCompleteTextView)
                     countryInput?.setText(it.userLocationCountry)
@@ -128,74 +128,76 @@ class LoginFragment : Fragment() {
         })
     }
 
-    private fun observeAuthState(){
+    private fun observeAuthState() {
         authViewModel.userState.observe(
-            viewLifecycleOwner,
-            Observer {
-                if (it.isNullOrEmpty() || it.size != 1) {
-                    authViewModel.setSignInState(SIGNINSTATE.IDLE)
-                } else {
-                    authViewModel.setSignInState(SIGNINSTATE.STATE_SIGN_IN_SUCCESS)
+                viewLifecycleOwner,
+                Observer {
+                    if (it.isNullOrEmpty() || it.size != 1) {
+                        authViewModel.setSignInState(SIGNINSTATE.IDLE)
+                    } else {
+                        authViewModel.setSignInState(SIGNINSTATE.STATE_SIGN_IN_SUCCESS)
+                    }
                 }
-            }
         )
     }
 
-    private fun observeSignInProcess(){
+    private fun observeSignInProcess() {
         authViewModel.getLoginState().observe(
-            viewLifecycleOwner, Observer {
-                when (it) {
-                    SIGNINSTATE.VERIFICATION_IN_PROGRESS -> {
-                        binding.loadingBar.isVisible = true
-                    }
-                    SIGNINSTATE.STATE_VERIFY_SUCCESS -> {
-                        //auto verified
-                        binding.getVerificationCode.setText(R.string.verified_txt)
-                        binding.verificationCode.isEnabled = true
-                        disableActions()
-                        signInWithCredentials()
-                    }
-                    SIGNINSTATE.STATE_VERIFY_FAILED -> {
-                        binding.getVerificationCode.setText(R.string.resend_code_txt)
-                        binding.getVerificationCode.isEnabled = true
-                        binding.loadingBar.isVisible = false
-                        val errRes = authViewModel.signInErrRes ?: R.string.verification_err_unknown
-                        authViewModel.signInErrRes = null //clear after user
-                        showSnackBar(errRes, true)
-                    }
-                    SIGNINSTATE.STATE_CODE_SENT -> {
-                        binding.getVerificationCode.setText(R.string.resend_code_txt)
-                        binding.getVerificationCode.isEnabled = true
-                        binding.loadingBar.isVisible = false
-                        showSnackBar(errorRes = R.string.verification_code_was_sent_txt, isError = false)
-                        binding.signIn.isEnabled = true
-                    }
-                    SIGNINSTATE.STATE_SIGN_IN_FAILED -> {
-                        //reset everything
-                        resetViewsState()
-                        val errorRes = authViewModel.signInErrRes?:R.string.failed_to_sign_in_err
-                        authViewModel.signInErrRes = null //clear
-                        showSnackBar(errorRes, isError = true)
-                    }
+                viewLifecycleOwner, Observer {
+            when (it) {
+                SIGNINSTATE.VERIFICATION_IN_PROGRESS -> {
+                    binding.loadingBar.isVisible = true
+                }
+                SIGNINSTATE.STATE_VERIFY_SUCCESS -> {
+                    //auto verified
+                    binding.getVerificationCode.setText(R.string.verified_txt)
+                    binding.verificationCode.isEnabled = true
+                    disableActions()
+                    signInWithCredentials()
+                }
+                SIGNINSTATE.STATE_VERIFY_FAILED -> {
+                    binding.getVerificationCode.setText(R.string.resend_code_txt)
+                    binding.getVerificationCode.isEnabled = true
+                    binding.loadingBar.isVisible = false
+                    val errRes = authViewModel.signInErrRes ?: R.string.verification_err_unknown
+                    authViewModel.signInErrRes = null //clear after user
+                    showSnackBar(errRes, true)
+                }
+                SIGNINSTATE.STATE_CODE_SENT -> {
+                    binding.getVerificationCode.setText(R.string.resend_code_txt)
+                    binding.getVerificationCode.isEnabled = true
+                    binding.loadingBar.isVisible = false
+                    showSnackBar(errorRes = R.string.verification_code_was_sent_txt, isError = false)
+                    binding.signIn.isEnabled = true
+                }
+                SIGNINSTATE.STATE_SIGN_IN_FAILED -> {
+                    //reset everything
+                    resetViewsState()
+                    val errorRes = authViewModel.signInErrRes ?: R.string.failed_to_sign_in_err
+                    authViewModel.signInErrRes = null //clear
+                    showSnackBar(errorRes, isError = true)
+                }
 
-                    SIGNINSTATE.STATE_SIGN_IN_SUCCESS -> {
-                        resetViewsState()
-                        val action = LoginFragmentDirections.actionLoginFragmentToWelcomeFragment()
-                        findNavController().navigate(action)
-                    }
+                SIGNINSTATE.STATE_SIGN_IN_SUCCESS -> {
+                    resetViewsState()
+                    val action = LoginFragmentDirections.actionLoginFragmentToWelcomeFragment()
+                    findNavController().navigate(action)
+                }
 
-                    SIGNINSTATE.IDLE -> { resetViewsState() }
+                SIGNINSTATE.IDLE -> {
+                    resetViewsState()
+                }
 
-                    else -> {
-                    }
+                else -> {
                 }
             }
+        }
         )
 
     }
 
     /******** reset views state ********/
-    private fun resetViewsState(){
+    private fun resetViewsState() {
         binding.getVerificationCode.setText(R.string.get_code_txt)
         binding.getVerificationCode.isEnabled = true
         binding.signIn.isEnabled = false
@@ -205,32 +207,32 @@ class LoginFragment : Fragment() {
     }
 
     /********** VERIFICATION *************/
-    private fun onGetCodeClicked(){
+    private fun onGetCodeClicked() {
         binding.getVerificationCode.isEnabled = false
         binding.getVerificationCode.setText(R.string.sending_verification_code)
         val code = binding.phoneCode.editText?.text.toString()
-        if (code.isBlank()){
+        if (code.isBlank()) {
             showSnackBar(R.string.country_code_empty_err_txt, true)
             binding.getVerificationCode.isEnabled = true
             return
         }
 
-       val phone = binding.phoneNumber.editText?.text.toString()
-       if (phone.isBlank()){
-           showSnackBar(R.string.phone_empty_err_txt, true)
-           binding.getVerificationCode.isEnabled = true
-           return
-       }
+        val phone = binding.phoneNumber.editText?.text.toString()
+        if (phone.isBlank()) {
+            showSnackBar(R.string.phone_empty_err_txt, true)
+            binding.getVerificationCode.isEnabled = true
+            return
+        }
 
         //situation - user types phone number asks for code changes phone clicks resend code
-        if(authViewModel.isUserPhoneInitialized()){
-            if (phone.trim() != authViewModel.userPhone){
+        if (authViewModel.isUserPhoneInitialized()) {
+            if (phone.trim() != authViewModel.userPhone) {
                 //user has added a new phone number
                 authViewModel.resendToken = null //clear resend code
             }
         }
-      authViewModel.userCode = code.trim()
-      authViewModel.userPhone = phone.trim()
+        authViewModel.userCode = code.trim()
+        authViewModel.userPhone = phone.trim()
 
         val phoneNumber = code + phone
         val optionsBuilder = PhoneAuthOptions.newBuilder(auth)
@@ -248,51 +250,53 @@ class LoginFragment : Fragment() {
 
 
     /********** SIGN IN *************/
-    private fun disableActions(){
+    private fun disableActions() {
         binding.getVerificationCode.isEnabled = false
         binding.signIn.isEnabled = false
         binding.loadingBar.isVisible = true
     }
-    private fun signInWithCredentials(){
+
+    private fun signInWithCredentials() {
         val credentials = authViewModel.phoneAuthCredential
-        if (credentials == null){
+        if (credentials == null) {
             authViewModel.setSignInState(SIGNINSTATE.STATE_SIGN_IN_FAILED)
             showSnackBar(errorRes = R.string.verify_phone_first, isError = true)
             return
         }
         auth.signInWithCredential(credentials)
-            .addOnCompleteListener(requireActivity()) { task ->
-                if (task.isSuccessful && (task.result?.user) != null) {
+                .addOnCompleteListener(requireActivity()) { task ->
+                    if (task.isSuccessful && (task.result?.user) != null) {
 
-                    MyLogger.logThis(TAG, "signInWithCredentials()", "Success")
+                        MyLogger.logThis(TAG, "signInWithCredentials()", "Success")
 
-                    authViewModel.storeUserInFireStore(task.result?.user!!)
-                } else {
-                    // Sign in failed, display a message and update the UI
-                    MyLogger.logThis(TAG, "signInWithCredentials()", "failed ${task.exception?.message}", task.exception)
-                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                        // The verification code entered was invalid
-                        authViewModel.signInErrRes = R.string.invalid_verification_code_err
+                        authViewModel.storeUserInFireStore(task.result?.user!!)
+                    } else {
+                        // Sign in failed, display a message and update the UI
+                        MyLogger.logThis(TAG, "signInWithCredentials()", "failed ${task.exception?.message}", task.exception)
+                        if (task.exception is FirebaseAuthInvalidCredentialsException) {
+                            // The verification code entered was invalid
+                            authViewModel.signInErrRes = R.string.invalid_verification_code_err
+                        }
+                        authViewModel.setSignInState(SIGNINSTATE.STATE_SIGN_IN_FAILED)
                     }
-                    authViewModel.setSignInState(SIGNINSTATE.STATE_SIGN_IN_FAILED)
                 }
-            }
     }
-    private fun signInWithCode(){
+
+    private fun signInWithCode() {
         disableActions()
         val code = binding.verificationCode.editText?.text
         if (authViewModel.storedVerificationId != null
-            && !code.isNullOrBlank()){
+                && !code.isNullOrBlank()) {
             authViewModel.phoneAuthCredential = PhoneAuthProvider.getCredential(authViewModel.storedVerificationId!!, code.toString())
             signInWithCredentials()
         }
     }
 
-    private fun showSnackBar(errorRes: Int, isError: Boolean){
+    private fun showSnackBar(errorRes: Int, isError: Boolean) {
         binding.container.showSnackBarToUser(
-            msgResId = errorRes,
-            isErrorMsg = isError,
-            actionMessage = if (isError)R.string.dismiss else null
+                msgResId = errorRes,
+                isErrorMsg = isError,
+                actionMessage = if (isError) R.string.dismiss else null
         )
     }
 

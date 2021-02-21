@@ -12,34 +12,34 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class WelcomeViewModel (private val repository: UserRepo) : ViewModel() {
+class WelcomeViewModel(private val repository: UserRepo) : ViewModel() {
 
-    companion object{
-       private val TAG = WelcomeViewModel::class.java.simpleName
+    companion object {
+        private val TAG = WelcomeViewModel::class.java.simpleName
     }
 
     val userState: LiveData<List<UserEntity>> = repository.user.asLiveData()
 
     private var userEntity: UserEntity? = null
 
-    fun updateUser(setAsBuyer: Boolean, setAsSeller: Boolean, userGivenName : String?) {
+    fun updateUser(setAsBuyer: Boolean, setAsSeller: Boolean, userGivenName: String?) {
         MyLogger.logThis(
-            TAG, "updateUser()", "params isBuyer $setAsBuyer isSeller $setAsSeller"
+                TAG, "updateUser()", "params isBuyer $setAsBuyer isSeller $setAsSeller"
         )
         userEntity?.let {
             val newUserData = UserEntity(
-                userId = it.userId,
-                userLocationCountry = it.userLocationCountry,
-                userCode = it.userCode,
-                userPhone = it.userPhone,
-                userName = userGivenName?: DEFAULT_USER_NAME,
-                dateJoined = it.dateJoined,
-                isSeller = setAsSeller,
-                isDealer = setAsBuyer
+                    userId = it.userId,
+                    userLocationCountry = it.userLocationCountry,
+                    userCode = it.userCode,
+                    userPhone = it.userPhone,
+                    userName = userGivenName ?: DEFAULT_USER_NAME,
+                    dateJoined = it.dateJoined,
+                    isSeller = setAsSeller,
+                    isDealer = setAsBuyer
             )
-             viewModelScope.launch(Dispatchers.IO) {
-                 repository.updateUser(user = newUserData)
-             }
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.updateUser(user = newUserData)
+            }
         }
 
 

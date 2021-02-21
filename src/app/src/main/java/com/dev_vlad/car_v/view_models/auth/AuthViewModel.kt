@@ -1,21 +1,23 @@
 package com.dev_vlad.car_v.view_models.auth
 
 import androidx.lifecycle.*
+import com.dev_vlad.car_v.R
 import com.dev_vlad.car_v.models.persistence.auth.UserEntity
 import com.dev_vlad.car_v.models.persistence.auth.UserRepo
 import com.dev_vlad.car_v.util.MyLogger
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
-import kotlinx.coroutines.launch
-import com.dev_vlad.car_v.R
-import com.google.firebase.auth.*
-import com.google.firebase.firestore.auth.User
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthProvider
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class AuthViewModel (private val repository: UserRepo) : ViewModel() {
+class AuthViewModel(private val repository: UserRepo) : ViewModel() {
 
     companion object {
-        private val TAG =  AuthViewModel::class.java.simpleName
+        private val TAG = AuthViewModel::class.java.simpleName
     }
 
 
@@ -24,41 +26,43 @@ class AuthViewModel (private val repository: UserRepo) : ViewModel() {
     fun isUserPhoneInitialized() = (::userPhone.isInitialized)
     lateinit var userCode: String
     lateinit var userCountry: String
+
     /**************** COUNTRY CODES *******************/
     private val countries = arrayListOf<String>()
     private val countryCodes = arrayListOf<String>()
     fun initCountryAndCodes(countryNCodes: Array<String>) {
         if (countries.isNotEmpty()) return
-        for (country_n_code in countryNCodes){
+        for (country_n_code in countryNCodes) {
             countries.add(country_n_code.substringBefore(" "))
             countryCodes.add(country_n_code.substringAfter(" "))
         }
     }
+
     fun getCountries() = countries
-    fun setCountryAndGetCode(country : String?) : String{
+    fun setCountryAndGetCode(country: String?): String {
         MyLogger.logThis(
-                TAG,  "getCountryCode()", "country $country"
+                TAG, "getCountryCode()", "country $country"
         )
         if (country.isNullOrBlank()) return ""
         userCountry = country //set country
         val index = countries.indexOf(country)
-        return if(index < 0) "" else countryCodes[index]
+        return if (index < 0) "" else countryCodes[index]
     }
 
 
     /******************* VERIFICATION PROCESS ***********/
     private val signInState = MutableLiveData<SIGNINSTATE>()
-    fun getLoginState() : LiveData<SIGNINSTATE> = signInState
+    fun getLoginState(): LiveData<SIGNINSTATE> = signInState
     fun setSignInState(state: SIGNINSTATE) {
         signInState.value = state
     }
 
-    var phoneAuthCredential : PhoneAuthCredential? = null
-    var signInErrRes : Int? = null
+    var phoneAuthCredential: PhoneAuthCredential? = null
+    var signInErrRes: Int? = null
     var storedVerificationId: String? = null
     var resendToken: PhoneAuthProvider.ForceResendingToken? = null
     val onVerificationStateChangedCallbacks = object :
-        PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         override fun onVerificationCompleted(credential: PhoneAuthCredential) {
             // This callback will be invoked in two situations:
             // 1 - Instant verification. In some cases the phone number can be instantly
@@ -74,7 +78,7 @@ class AuthViewModel (private val repository: UserRepo) : ViewModel() {
         override fun onVerificationFailed(e: FirebaseException) {
             // This callback is invoked in an invalid request for verification is made,
             // for instance if the the phone number format is not valid.
-            MyLogger.logThis(TAG, "onVerificationFailed", e.message?:" no message")
+            MyLogger.logThis(TAG, "onVerificationFailed", e.message ?: " no message")
 
             if (e is FirebaseAuthInvalidCredentialsException) {
                 // Invalid request
@@ -82,7 +86,7 @@ class AuthViewModel (private val repository: UserRepo) : ViewModel() {
             } else if (e is FirebaseTooManyRequestsException) {
                 // The SMS quota for the project has been exceeded
                 //TODO log
-                    signInErrRes = R.string.sms_quota_exceeded_err
+                signInErrRes = R.string.sms_quota_exceeded_err
             }
 
             setSignInState(SIGNINSTATE.STATE_VERIFY_FAILED)
@@ -90,8 +94,8 @@ class AuthViewModel (private val repository: UserRepo) : ViewModel() {
         }
 
         override fun onCodeSent(
-            verificationId: String,
-            token: PhoneAuthProvider.ForceResendingToken
+                verificationId: String,
+                token: PhoneAuthProvider.ForceResendingToken
         ) {
             // The SMS verification code has been sent to the provided phone number, we
             // now need to ask the user to enter the code and then construct a credential
@@ -109,25 +113,25 @@ class AuthViewModel (private val repository: UserRepo) : ViewModel() {
 
     /*************** SIGN IN PROCESS **********/
     private val userData = MutableLiveData<UserEntity>()
-    fun getUserData() : LiveData<UserEntity> = userData
+    fun getUserData(): LiveData<UserEntity> = userData
     fun storeUserInFireStore(user: FirebaseUser) {
         setSignInState(SIGNINSTATE.SAVING_USER_IN_SERVER)
         MyLogger.logThis(
-            TAG, "storeUserInFireStore()", "user id $user.uid"
+                TAG, "storeUserInFireStore()", "user id $user.uid"
         )
         val userEntity = UserEntity(
-            userId = user.uid,
-            userPhone = userPhone,
-            userCode = userCode,
-            userLocationCountry = userCountry,
-            isDealer = false,
-        isSeller = false)
+                userId = user.uid,
+                userPhone = userPhone,
+                userCode = userCode,
+                userLocationCountry = userCountry,
+                isDealer = false,
+                isSeller = false)
         userData.value = userEntity
         viewModelScope.launch {
             val isSaved = repository.saveUserInFireStore(userEntity)
-            if (!isSaved){
+            if (!isSaved) {
                 setSignInState(SIGNINSTATE.STATE_SIGN_IN_FAILED)
-            }else{
+            } else {
                 saveUser(userEntity)
             }
         }
@@ -138,9 +142,9 @@ class AuthViewModel (private val repository: UserRepo) : ViewModel() {
     private fun saveUser(user: UserEntity) = viewModelScope.launch(Dispatchers.IO) {
         repository.insertUser(user)
         MyLogger.logThis(
-            TAG,
-            "saveUser()",
-            "savingUser locally -- $user"
+                TAG,
+                "saveUser()",
+                "savingUser locally -- $user"
         )
     }
 

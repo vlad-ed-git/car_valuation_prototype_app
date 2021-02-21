@@ -15,12 +15,12 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromString(string: String): List<String>{
+    fun fromString(string: String): List<String> {
         return string.split(",")
     }
 
     @TypeConverter
-    fun listToString(stringList: List<String> ) : String{
+    fun listToString(stringList: List<String>): String {
         return stringList.joinToString(",")
     }
 }

@@ -81,4 +81,7 @@
     <string name="ok_txt">Okay</string>
     <string name="cancel_adding_photos_later">Cancel</string>
     <string name="add_photos_later_confirm_title">Click okay to add photos later. Your car info has been saved.</string>
+    <string name="car_img_desc">Car Image</string>
+    <string name="edit_my_car_txt">edit my car</string>
+    <string name="delete_my_car_txt">Delete Car</string>
 </resources>

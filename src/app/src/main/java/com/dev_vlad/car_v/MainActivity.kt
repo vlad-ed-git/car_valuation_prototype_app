@@ -13,7 +13,7 @@ import com.dev_vlad.car_v.databinding.ActivityMainBinding
 import com.dev_vlad.car_v.util.MyLogger
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding : ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.findNavController()
         //specify home fragments
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.sellersHomeFragment, R.id.splashFragment, R.id.loginFragment, R.id.welcomeFragment)
+                setOf(R.id.sellersHomeFragment, R.id.splashFragment, R.id.loginFragment, R.id.welcomeFragment)
         )
         setSupportActionBar(binding.toolbar)
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -41,22 +41,28 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.splashFragment,
                 R.id.loginFragment,
-                R.id.welcomeFragment-> {
+                R.id.welcomeFragment -> {
                     binding.toolbar.isVisible = false
                     binding.bottomNav.isVisible = false
                 }
 
-                R.id.sellersHomeFragment ->{
+                R.id.sellersHomeFragment -> {
                     binding.toolbar.title = getString(R.string.my_cars_txt)
                     binding.toolbar.isVisible = true
                     binding.bottomNav.isVisible = true
                 }
 
-               R.id.addCarFragment -> {
-                 binding.toolbar.title = getString(R.string.my_car_txt)
-                 binding.toolbar.isVisible = true
-                 binding.bottomNav.isVisible = false
-               }
+                R.id.addOrEditCarFragment -> {
+                    binding.toolbar.title = getString(R.string.my_car_txt)
+                    binding.toolbar.isVisible = true
+                    binding.bottomNav.isVisible = false
+                }
+
+                R.id.myCarDetailsFragment -> {
+                    binding.toolbar.title = getString(R.string.my_car_txt)
+                    binding.toolbar.isVisible = true
+                    binding.bottomNav.isVisible = false
+                }
 
                 R.id.addCarImagesFragment -> {
                     binding.toolbar.title = getString(R.string.my_car_photos_txt)
@@ -77,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
     //toolbar handle back navigation
     override fun onSupportNavigateUp(): Boolean {
-        MyLogger.logThis(TAG, "onSupportNavigateUp()", "called" )
+        MyLogger.logThis(TAG, "onSupportNavigateUp()", "called")
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
