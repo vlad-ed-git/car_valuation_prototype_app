@@ -38,7 +38,8 @@ class MyCarsAdapter(private val actionListener: MyCarsActionsListener) :
                 carCard.setOnClickListener {
                     actionListener.onCarClicked(car)
                 }
-                val imgUrl = car.imageUrls[0] //todo car.image_urls is never empty?!
+                val imgUrl =  if(car.imageUrls.isNotEmpty() && car.imageUrls[0].length > 4) car.imageUrls[0]
+                else ""
                 Glide.with(itemView.context)
                     .load(imgUrl)
                     .placeholder(R.drawable.logo_grey)

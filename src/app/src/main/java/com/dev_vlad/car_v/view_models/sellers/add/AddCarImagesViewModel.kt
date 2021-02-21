@@ -108,6 +108,7 @@ class AddCarImagesViewModel(private val carRepo: CarRepo) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             carData?.let { car ->
 
+                val oldId = car.carId
                 val photosToUpload = carImages.value!!
                 val uploadedImages = carRepo.uploadImages(photosToUpload, car.ownerId)
                 if (uploadedImages.isNullOrEmpty()) {
@@ -128,14 +129,13 @@ class AddCarImagesViewModel(private val carRepo: CarRepo) : ViewModel() {
                         savingState.postValue(SavingState.ERROR)
 
                     } else {
-
                         car.carId = carId
                         //save locally
                         MyLogger.logThis(
                             TAG, "savingCarLocally() --- ",
-                            "car ${car.imageUrls}"
+                            "car ${car.imageUrls} old id $oldId"
                         )
-                        carRepo.updateCar(car)
+                        carRepo.deleteTmpCarAndSaveCar(car, oldId=oldId)
                         withContext(Dispatchers.Main) {
                             savingState.value = SavingState.SAVED
                         }

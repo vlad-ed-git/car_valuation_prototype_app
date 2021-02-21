@@ -1,9 +1,11 @@
 package com.dev_vlad.car_v.views.welcome
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -29,7 +31,6 @@ class WelcomeFragment : Fragment() {
     private val welcomeViewModel: WelcomeViewModel by viewModels {
         WelcomeViewModelFactory((activity?.application as CarVApp).userRepo)
     }
-    private lateinit var internetChecker: InternetChecker
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -91,6 +92,7 @@ class WelcomeFragment : Fragment() {
 
 
             doneBtn.setOnClickListener {
+                hideKeyBoard()
                 MyLogger.logThis(
                     TAG,
                     "setOnClickListener()",
@@ -145,6 +147,11 @@ class WelcomeFragment : Fragment() {
             isErrorMsg = isError,
             actionMessage = actionMsgRes
         )
+    }
+
+    private fun hideKeyBoard() {
+        val imm = context?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
+        imm?.hideSoftInputFromWindow(binding.container.windowToken, 0)
     }
 
     override fun onDestroyView() {

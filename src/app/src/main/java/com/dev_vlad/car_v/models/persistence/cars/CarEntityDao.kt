@@ -37,4 +37,7 @@ interface CarEntityDao {
     @Query("SELECT * FROM cars WHERE carId =:carId LIMIT 1")
     suspend fun getCarByIdNotObserved(carId: String): CarEntity?
 
+    @Query("DELETE FROM cars WHERE carId =:oldId")
+    fun deleteCarById(oldId: String)
+
 }

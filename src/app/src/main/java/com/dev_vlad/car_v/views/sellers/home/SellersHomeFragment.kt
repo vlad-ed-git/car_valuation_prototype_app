@@ -68,7 +68,7 @@ class SellersHomeFragment : Fragment(), MyCarsAdapter.MyCarsActionsListener {
                     MyLogger.logThis(
                         TAG,
                         "observeMyCars()",
-                        "Found ${it.size} cars ${it[0].imageUrls}"
+                        "Found ${it.size} cars"
                     )
                     myCarsAdapter.submitList(it)
                 }

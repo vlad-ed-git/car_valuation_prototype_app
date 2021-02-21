@@ -46,13 +46,13 @@ class CarRepo(
 
         try {
             return if (query.isNullOrBlank()) {
-                MyLogger.logThis(TAG, "getAllCarsByUser()", "page : $pageNo userId $userId")
-                carEntityDao.getAllCarsOfUser(userId, limit, offset)
+                MyLogger.logThis(TAG, "getAllCarsByUser()", "page : $pageNo userId $userId offset $offset")
+                  carEntityDao.getAllCarsOfUser(userId, limit, offset)
             } else {
                 MyLogger.logThis(
                     TAG,
                     "getAllCarsByUser()",
-                    "page : $pageNo userId $userId query $query"
+                    "page : $pageNo userId $userId query $query offset $offset"
                 )
                 carEntityDao.searchAllCarsOfUserByQuery(
                     userId,
@@ -83,15 +83,22 @@ class CarRepo(
         carEntityDao.deleteCar(car)
     }
 
-    suspend fun updateCar(car: CarEntity) {
-        MyLogger.logThis(TAG, "updateCar()", "carId : ${car.carId}")
-        carEntityDao.updateCar(car)
+    suspend fun deleteTmpCarAndSaveCar(car: CarEntity, oldId: String) {
+        MyLogger.logThis(TAG, "deleteTmpCarAndSaveCar()", "carId : ${car.carId} oldCar $oldId")
+        carEntityDao.deleteCarById(oldId)
+        carEntityDao.insert(car)
     }
 
     suspend fun getNonObservableCarDetailsById(carId: String): CarEntity? {
         MyLogger.logThis(TAG, "getNonObservableCarDetailsById()", "carId $carId")
         return carEntityDao.getCarByIdNotObserved(carId)
     }
+
+
+    suspend fun updateCar(updatedCar: CarEntity) {
+        carEntityDao.updateCar(updatedCar)
+    }
+
 
 
     /******************************* FIRE STORE *************************************/
@@ -121,12 +128,16 @@ class CarRepo(
     suspend fun uploadImages(photosToUpload: List<String>, ownerId: String): List<String>? {
         try {
             val storageRef = Firebase.storage.reference
-            val imagesRef = storageRef.child("$CARS_COLLECTION_NAME/$ownerId/")
+            val folderRef = storageRef.child(CARS_COLLECTION_NAME).child(ownerId)
             val uploadedPhotoUrls = ArrayList<String>()
             for (photos in photosToUpload) {
+                if(photos.startsWith("https")){
+                    uploadedPhotoUrls.add(photos)
+                    continue
+                    }
                 val uri = photos.toUri()
-                imagesRef.child("${uri.lastPathSegment}")
-                val uploadTask = imagesRef.putFile(uri)
+                val fileRef = folderRef.child("${uri.lastPathSegment}")
+                val uploadTask = fileRef.putFile(uri)
                 val downloadUrl = uploadTask.await()
                     .storage
                     .downloadUrl

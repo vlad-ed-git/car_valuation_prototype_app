@@ -5,7 +5,6 @@ import com.dev_vlad.car_v.models.persistence.auth.UserEntity
 import com.dev_vlad.car_v.models.persistence.auth.UserRepo
 import com.dev_vlad.car_v.models.persistence.cars.CarEntity
 import com.dev_vlad.car_v.models.persistence.cars.CarRepo
-import com.dev_vlad.car_v.util.MyLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -35,30 +34,17 @@ class SellersHomeViewModel(
     /*************** POSTS AND QUERIES ***************/
     private val postsState = MutableLiveData<PostsStateModifiers>(PostsStateModifiers())
 
-    fun observeMyCarsState() = postsState.switchMap {
-        try {
-            refreshPosts(query = it.query, page = it.page)
-                .asLiveData()
-        } catch (e: Exception) {
-            MyLogger.logThis(
-                TAG,
-                " observeMyCarsState()",
-                "exc ${e.message}",
-                e
-            )
-            emptyFlow<List<CarEntity>>().asLiveData()
-        }
-
+    fun observeMyCarsState() : LiveData<List<CarEntity>> = postsState.switchMap {
+        refreshPosts(query = it.query, page = it.page).asLiveData()
     }
 
-    private fun refreshPosts(query: String?, page: Int = 1): Flow<List<CarEntity>> {
-        if (currentUser.value == null) return emptyFlow()
-        return carRepo.getAllCarsByUser(
+    private fun refreshPosts(query: String?, page: Int = 1): Flow<List<CarEntity>> =
+        if (currentUser.value == null) emptyFlow()
+        else carRepo.getAllCarsByUser(
             pageNo = page,
             userId = currentUser.value!!.userId,
             query = query
         )
-    }
 
 
     //TODO
