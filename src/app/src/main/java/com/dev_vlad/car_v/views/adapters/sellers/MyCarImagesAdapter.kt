@@ -14,7 +14,7 @@ import com.dev_vlad.car_v.R
 import com.dev_vlad.car_v.databinding.MyCarImageItemBinding
 
 
-class MyCarImagesAdapter(private val actionsListener: MyCarImagesAdapter.ImageActionsListeners) :
+class MyCarImagesAdapter(private val actionsListener: MyCarImagesAdapter.ImageActionsListeners? = null) :
     RecyclerView.Adapter<MyCarImagesAdapter.MyCarImagesViewHolder>() {
 
     private val images = ArrayList<String>()
@@ -26,7 +26,7 @@ class MyCarImagesAdapter(private val actionsListener: MyCarImagesAdapter.ImageAc
 
     class MyCarImagesViewHolder(private val binding: MyCarImageItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(imgUrl: String, actionsListener: ImageActionsListeners) {
+        fun bind(imgUrl: String, actionsListener: ImageActionsListeners?) {
             binding.apply {
                 Glide.with(itemView.context)
                     .load(imgUrl)
@@ -56,12 +56,16 @@ class MyCarImagesAdapter(private val actionsListener: MyCarImagesAdapter.ImageAc
                         }
                     )
                     .into(img)
-                imgCard.setOnClickListener {
-                    imgCard.isChecked = !imgCard.isChecked
-                    if (imgCard.isChecked)
-                        actionsListener.onSelectImage(imgUrl)
-                    else
-                        actionsListener.onUnSelectImage(imgUrl)
+
+                //if listening for actions
+                actionsListener?.let { listener ->
+                    imgCard.setOnClickListener {
+                        imgCard.isChecked = !imgCard.isChecked
+                        if (imgCard.isChecked)
+                            listener.onSelectImage(imgUrl)
+                        else
+                            listener.onUnSelectImage(imgUrl)
+                    }
                 }
             }
         }

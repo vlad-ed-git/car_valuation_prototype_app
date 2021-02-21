@@ -9,13 +9,16 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.onNavDestinationSelected
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.dev_vlad.car_v.CarVApp
 import com.dev_vlad.car_v.R
 import com.dev_vlad.car_v.databinding.FragmentMyCarDetailsBinding
 import com.dev_vlad.car_v.models.persistence.cars.CarEntity
+import com.dev_vlad.car_v.util.VerticalSpacingItemDecorator
 
 import com.dev_vlad.car_v.view_models.sellers.details.MyCarDetailsViewModel
 import com.dev_vlad.car_v.view_models.sellers.details.MyCarDetailsViewModelFactory
+import com.dev_vlad.car_v.views.adapters.sellers.MyCarImagesAdapter
 import java.util.*
 
 class MyCarDetailsFragment : Fragment() {
@@ -30,7 +33,7 @@ class MyCarDetailsFragment : Fragment() {
         val carApp = (activity?.application as CarVApp)
         MyCarDetailsViewModelFactory(carApp.carRepo)
     }
-
+    private val carImagesAdapter = MyCarImagesAdapter()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,6 +41,9 @@ class MyCarDetailsFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentMyCarDetailsBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
+        binding.imagesRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.imagesRv.adapter = carImagesAdapter
+        binding.imagesRv.addItemDecoration(VerticalSpacingItemDecorator(30))
         return binding.root
     }
 
@@ -58,7 +64,7 @@ class MyCarDetailsFragment : Fragment() {
 
     private fun displayDetails(car: CarEntity) {
         binding.apply {
-
+            carImagesAdapter.setNewImages(car.imageUrls)
             /* the details */
             val bodyStyleTxt =
                 getString(R.string.car_body_style_hint) + "\n" + car.bodyStyle.capitalize(Locale.getDefault())
