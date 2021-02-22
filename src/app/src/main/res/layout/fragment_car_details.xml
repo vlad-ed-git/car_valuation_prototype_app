@@ -8,6 +8,25 @@
     android:orientation="vertical"
     tools:context=".views.sellers.details.MyCarDetailsFragment">
 
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/std_space"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:textStyle="bold"
+        android:fontFamily="monospace"/>
+
+    <ProgressBar
+        android:id="@+id/loading_bar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/accent"
+        android:visibility="gone" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/images_rv"
         android:layout_width="match_parent"
@@ -23,14 +42,6 @@
         android:src="@drawable/ic_arrow_right"
         android:visibility="gone"/>
 
-    <ProgressBar
-        android:id="@+id/loading_bar"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminate="true"
-        android:indeterminateTint="@color/accent" />
 
     <ScrollView
         android:layout_width="match_parent"

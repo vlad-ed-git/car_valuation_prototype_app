@@ -12,6 +12,7 @@ const val PHONE_NUMBER_FIELD = "userPhone"
 const val CAR_OWNER_FIELD = "ownerId"
 const val CARS_COLLECTION_NAME = "cars"
 const val USERS_COLLECTION_NAME = "users"
+const val OFFERS_COLLECTION_NAME = "offers"
 const val UNSAVED_CAR_ID = "TMP_CAR"
 
 //IMAGES STUFF

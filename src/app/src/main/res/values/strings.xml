@@ -103,4 +103,17 @@
     <string name="car_deleted_redirecting">Delete successfully … redirecting</string>
     <string name="msg_seller_menu_txt">Message seller</string>
     <string name="fragment_dealer_car_details_lbl">Car Info</string>
+    <string name="interested_in_this_car_txt">Interested in this car?</string>
+    <string name="initial_offer_helper_txt">*you can negotiate this in the chat</string>
+    <string name="initial_offer_hint_txt">Initial Offer USD</string>
+    <string name="initial_offer_subtitle">To protect sellers from spam offers, we review the initial offer before connecting you to the buyer where you can chat and negotiate further.</string>
+    <string name="send_offer_btn_txt">Send Offer</string>
+    <string name="send_offer_later_btn_txt">Later</string>
+    <string name="sending_initial_offer_txt">Sending offer…</string>
+    <string name="unknown_err_occurred">An error occurred! Check your internet connection</string>
+    <string name="initial_offer_sent_success">Your offer has been sent! The seller should reach out to you shortly after receiving your offer</string>
+    <string name="optional_txt">*optional</string>
+    <string name="initial_offer_message_hint">Message</string>
+    <string name="initial_offer_zero_err">Initial offer cannot be zero</string>
+    <string name="default_inital_offer_message">Hello there. I am interested in buying your car</string>
 </resources>

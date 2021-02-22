@@ -29,7 +29,7 @@ class MyCarDetailsFragment : Fragment() {
 
     private var _binding: FragmentMyCarDetailsBinding? = null
     private val binding get() = _binding!!
-    private val myCarDetailsImgsVm: MyCarDetailsViewModel by viewModels {
+    private val myCarDetailsVm: MyCarDetailsViewModel by viewModels {
         val carApp = (activity?.application as CarVApp)
         MyCarDetailsViewModelFactory(carApp.carRepo)
     }
@@ -50,12 +50,12 @@ class MyCarDetailsFragment : Fragment() {
     private val args: MyCarDetailsFragmentArgs by navArgs()
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        myCarDetailsImgsVm.fetchCarDetails(args.CarId)
+        myCarDetailsVm.fetchCarDetails(args.CarId)
         observeCarData()
     }
 
     private fun observeCarData() {
-        myCarDetailsImgsVm.observeCar().observe(viewLifecycleOwner, Observer {
+        myCarDetailsVm.observeCar().observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 displayDetails(it)
             }
@@ -117,7 +117,7 @@ class MyCarDetailsFragment : Fragment() {
 
 
     private fun editCar() {
-        val carId = myCarDetailsImgsVm.getCarId()
+        val carId = myCarDetailsVm.getCarId()
         if (carId != null) {
             val action =
                 MyCarDetailsFragmentDirections.actionMyCarDetailsFragmentToAddOrEditCarFragment(

@@ -38,6 +38,7 @@ data class UserEntity(
         var isSeller: Boolean
 ) {
     //empty constructor for fire store
+
     constructor() : this(
             userId = "",
             userPhone = "",
