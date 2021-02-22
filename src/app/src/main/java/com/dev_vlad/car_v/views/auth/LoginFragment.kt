@@ -18,6 +18,7 @@ import com.dev_vlad.car_v.R
 import com.dev_vlad.car_v.databinding.FragmentLoginBinding
 import com.dev_vlad.car_v.util.InternetChecker
 import com.dev_vlad.car_v.util.MyLogger
+import com.dev_vlad.car_v.util.hideKeyBoard
 import com.dev_vlad.car_v.util.showSnackBarToUser
 import com.dev_vlad.car_v.view_models.auth.AuthViewModel
 import com.dev_vlad.car_v.view_models.auth.AuthViewModelFactory
@@ -84,9 +85,11 @@ class LoginFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         auth = Firebase.auth
         binding.getVerificationCode.setOnClickListener {
+            hideKeyBoard(requireContext(), binding.container)
             onGetCodeClicked()
         }
         binding.signIn.setOnClickListener {
+            hideKeyBoard(requireContext(), binding.container)
             signInWithCode()
         }
 
@@ -273,7 +276,7 @@ class LoginFragment : Fragment() {
 
                     MyLogger.logThis(TAG, "signInWithCredentials()", "Success")
 
-                    authViewModel.storeUserInFireStore(task.result?.user!!)
+                    authViewModel.storeUserInFireStoreIfNotExist(task.result?.user!!)
                 } else {
                     // Sign in failed, display a message and update the UI
                     MyLogger.logThis(

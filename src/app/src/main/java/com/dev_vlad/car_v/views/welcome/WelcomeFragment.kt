@@ -1,11 +1,9 @@
 package com.dev_vlad.car_v.views.welcome
 
-import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,8 +12,8 @@ import androidx.navigation.fragment.findNavController
 import com.dev_vlad.car_v.CarVApp
 import com.dev_vlad.car_v.R
 import com.dev_vlad.car_v.databinding.FragmentWelcomeBinding
-import com.dev_vlad.car_v.util.InternetChecker
 import com.dev_vlad.car_v.util.MyLogger
+import com.dev_vlad.car_v.util.hideKeyBoard
 import com.dev_vlad.car_v.util.showSnackBarToUser
 import com.dev_vlad.car_v.view_models.welcome.WelcomeViewModel
 import com.dev_vlad.car_v.view_models.welcome.WelcomeViewModelFactory
@@ -33,8 +31,8 @@ class WelcomeFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentWelcomeBinding.inflate(inflater, container, false)
@@ -46,6 +44,19 @@ class WelcomeFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        welcomeViewModel.errorOccurred.observe(viewLifecycleOwner, Observer {
+            errorOccurred ->
+            if (errorOccurred){
+                binding.apply {
+                    doneBtn.isEnabled = true
+                    loadingBar.isVisible = false
+                    container.showSnackBarToUser(
+                            msgResId = R.string.updating_user_status_failed,
+                            isErrorMsg = true
+                    )
+                }
+            }
+        })
         welcomeViewModel.userState.observe(viewLifecycleOwner, Observer {
             if (!it.isNullOrEmpty()) {
                 val userEntity = it[0]
@@ -59,10 +70,11 @@ class WelcomeFragment : Fragment() {
 
                     if (userEntity.isSeller) {
                         val action =
-                            WelcomeFragmentDirections.actionWelcomeFragmentToSellersHomeFragment()
+                                WelcomeFragmentDirections.actionWelcomeFragmentToSellersHomeFragment()
                         findNavController().navigate(action)
-                    } else {
-                        //TODO dealers home
+                    } else if (userEntity.isDealer) {
+                        val action = WelcomeFragmentDirections.actionWelcomeFragmentToDealersHomeFragment()
+                        findNavController().navigate(action)
                     }
                 }
             }
@@ -92,33 +104,33 @@ class WelcomeFragment : Fragment() {
 
 
             doneBtn.setOnClickListener {
-                hideKeyBoard()
+                hideKeyBoard(requireContext(), binding.container)
                 MyLogger.logThis(
-                    TAG,
-                    "setOnClickListener()",
-                    "params isBuyer ${buyerCard.isChecked} isSeller ${sellerCard.isChecked}"
+                        TAG,
+                        "setOnClickListener()",
+                        "params isBuyer ${buyerCard.isChecked} isSeller ${sellerCard.isChecked}"
                 )
                 if (buyerCard.isChecked || sellerCard.isChecked) {
                     val userName = userName.editText?.text?.toString()
                     if (buyerCard.isChecked) {
                         welcomeViewModel.updateUser(
-                            setAsBuyer = true,
-                            setAsSeller = false,
-                            userGivenName = userName
+                                setAsBuyer = true,
+                                setAsSeller = false,
+                                userGivenName = userName
                         )
                     } else {
                         welcomeViewModel.updateUser(
-                            setAsBuyer = false,
-                            setAsSeller = true,
-                            userGivenName = userName
+                                setAsBuyer = false,
+                                setAsSeller = true,
+                                userGivenName = userName
                         )
                     }
                     binding.doneBtn.isEnabled = false
                     binding.loadingBar.isVisible = true
                 } else {
                     showSnackBar(
-                        errorRes = R.string.select_dealer_or_seller_err,
-                        isError = false
+                            errorRes = R.string.select_dealer_or_seller_err,
+                            isError = false
                     )
                 }
             }
@@ -143,16 +155,12 @@ class WelcomeFragment : Fragment() {
 
     private fun showSnackBar(errorRes: Int, isError: Boolean, actionMsgRes: Int? = null) {
         binding.container.showSnackBarToUser(
-            msgResId = errorRes,
-            isErrorMsg = isError,
-            actionMessage = actionMsgRes
+                msgResId = errorRes,
+                isErrorMsg = isError,
+                actionMessage = actionMsgRes
         )
     }
 
-    private fun hideKeyBoard() {
-        val imm = context?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
-        imm?.hideSoftInputFromWindow(binding.container.windowToken, 0)
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

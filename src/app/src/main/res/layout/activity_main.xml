@@ -35,7 +35,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="@drawable/bottom_nav_bg"
-        app:menu="@menu/sellers_bottom_nav"
         app:itemIconTint="@color/bottom_nav_icons_color"
         app:itemTextColor="@color/bottom_nav_icons_color"/>
 

@@ -13,6 +13,7 @@ data class UserEntity(
         var userId: String,
 
         @ColumnInfo(name = "user_phone_number")
+        //MATCH CONSTANT PHONE_NUMBER_FIELD
         var userPhone: String,
 
         @ColumnInfo(name = "user_code")
@@ -36,6 +37,18 @@ data class UserEntity(
         @ColumnInfo(name = "is_seller")
         var isSeller: Boolean
 ) {
+    //empty constructor for fire store
+    constructor() : this(
+            userId = "",
+            userPhone = "",
+            userCode = "",
+            userLocationCountry = "",
+            userName = "",
+            dateJoined = System.currentTimeMillis(),
+            dateUpdated = System.currentTimeMillis(),
+            isDealer = false,
+            isSeller = false
+    )
     override fun toString(): String {
         return "id $userId , phoneNumber $userCode - $userPhone , userName $userName , country $userLocationCountry, isDealer $isDealer, isSeller $isSeller"
     }

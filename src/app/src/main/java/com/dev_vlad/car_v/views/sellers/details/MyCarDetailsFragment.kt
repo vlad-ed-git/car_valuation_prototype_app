@@ -127,10 +127,6 @@ class MyCarDetailsFragment : Fragment() {
         }
     }
 
-    private fun deleteCar() {
-        //TODO alert to confirm
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -146,10 +142,6 @@ class MyCarDetailsFragment : Fragment() {
         return when (item.itemId) {
             R.id.action_edit -> {
                 editCar()
-                true
-            }
-            R.id.action_delete -> {
-                deleteCar()
                 true
             }
             else -> item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(

@@ -24,6 +24,11 @@
             app:destination="@id/sellersHomeFragment"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_dealersHomeFragment"
+            app:destination="@id/dealersHomeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -58,6 +63,11 @@
             app:destination="@id/sellersHomeFragment"
             app:popUpTo="@id/welcomeFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_dealersHomeFragment"
+            app:destination="@id/dealersHomeFragment"
+            app:popUpTo="@id/welcomeFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/addOrEditCarFragment"
@@ -70,6 +80,11 @@
             android:name="CarId"
             app:argType="string"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_addOrEditCarFragment_to_sellersHomeFragment"
+            app:destination="@id/sellersHomeFragment"
+            app:popUpTo="@id/addOrEditCarFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/addCarImagesFragment"
@@ -97,4 +112,9 @@
             android:id="@+id/action_myCarDetailsFragment_to_addOrEditCarFragment"
             app:destination="@id/addOrEditCarFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/dealersHomeFragment"
+        android:name="com.dev_vlad.car_v.views.dealers.home.DealersHomeFragment"
+        android:label="@string/cars_txt"
+        tools:layout="@layout/fragment_dealers_home" />
 </navigation>

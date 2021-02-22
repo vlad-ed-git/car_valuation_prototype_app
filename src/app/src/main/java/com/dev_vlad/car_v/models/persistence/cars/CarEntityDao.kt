@@ -25,6 +25,14 @@ interface CarEntityDao {
         queryParam: String
     ): Flow<List<CarEntity>>
 
+    @Query(
+            "SELECT * FROM cars WHERE " +
+                    "make LIKE :queryParam OR model LIKE :queryParam OR bodyStyle LIKE :queryParam " +
+                    "OR year LIKE :queryParam OR color LIKE :queryParam" +
+                    " ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset"
+    )
+    fun searchAllCarsByQuery(limit: Int, offset: Int, queryParam: String): Flow<List<CarEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(carEntity: CarEntity)
 

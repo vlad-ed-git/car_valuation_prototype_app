@@ -33,8 +33,9 @@ class AuthViewModel(private val repository: UserRepo) : ViewModel() {
     fun initCountryAndCodes(countryNCodes: Array<String>) {
         if (countries.isNotEmpty()) return
         for (country_n_code in countryNCodes) {
-            countries.add(country_n_code.substringBefore(" "))
-            countryCodes.add(country_n_code.substringAfter(" "))
+            countries.add(country_n_code.substringBefore("+"))
+            val aCode = "+" + country_n_code.substringAfter("+")
+            countryCodes.add(aCode)
         }
     }
 
@@ -114,11 +115,13 @@ class AuthViewModel(private val repository: UserRepo) : ViewModel() {
     /*************** SIGN IN PROCESS **********/
     private val userData = MutableLiveData<UserEntity>()
     fun getUserData(): LiveData<UserEntity> = userData
-    fun storeUserInFireStore(user: FirebaseUser) {
+    fun storeUserInFireStoreIfNotExist(user: FirebaseUser) {
         setSignInState(SIGNINSTATE.SAVING_USER_IN_SERVER)
         MyLogger.logThis(
             TAG, "storeUserInFireStore()", "user id $user.uid"
         )
+
+
         val userEntity = UserEntity(
             userId = user.uid,
             userPhone = userPhone,
@@ -129,18 +132,27 @@ class AuthViewModel(private val repository: UserRepo) : ViewModel() {
         )
         userData.value = userEntity
         viewModelScope.launch {
-            val isSaved = repository.saveUserInFireStore(userEntity)
-            if (!isSaved) {
-                setSignInState(SIGNINSTATE.STATE_SIGN_IN_FAILED)
-            } else {
-                saveUser(userEntity)
+            var existingUser = repository.getUserFromServerIfExists(userPhone)
+            if (existingUser == null){
+                //save first
+                val isSaved = repository.saveUserInFireStore(userEntity)
+                if(!isSaved) {
+                    //still not saved
+                    setSignInState(SIGNINSTATE.STATE_SIGN_IN_FAILED)
+                }
+                existingUser = userEntity
+                saveUserLocally(existingUser)
+            }else{
+                saveUserLocally(existingUser)
             }
+
+
         }
 
     }
 
     val userState: LiveData<List<UserEntity>> = repository.user.asLiveData()
-    private fun saveUser(user: UserEntity) = viewModelScope.launch(Dispatchers.IO) {
+    private fun saveUserLocally(user: UserEntity) = viewModelScope.launch(Dispatchers.IO) {
         repository.insertUser(user)
         MyLogger.logThis(
             TAG,
@@ -148,7 +160,6 @@ class AuthViewModel(private val repository: UserRepo) : ViewModel() {
             "savingUser locally -- $user"
         )
     }
-
 
 }
 

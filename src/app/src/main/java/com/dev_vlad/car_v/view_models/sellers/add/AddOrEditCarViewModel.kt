@@ -16,13 +16,11 @@ import kotlinx.coroutines.withContext
 class AddOrEditCarViewModel(private val userRepo: UserRepo, private val carRepo: CarRepo) :
     ViewModel() {
 
+
+    /** ////////////////// AUTHENTICATION ///////////////////////// */
     init {
         setCurrentUser()
     }
-
-
-    var savingInProgress: Boolean = false
-    var isEditingCar: Boolean = false
     private lateinit var currentUser: UserEntity
 
     private fun setCurrentUser() {
@@ -35,6 +33,7 @@ class AddOrEditCarViewModel(private val userRepo: UserRepo, private val carRepo:
             }
         }
     }
+    /** ////////////////// AUTH END ///////////////////////// */
 
     private val carBeingEditedOrCreated = MutableLiveData<CarEntity>()
     fun initCarForEditing(carId: String) {
@@ -42,14 +41,26 @@ class AddOrEditCarViewModel(private val userRepo: UserRepo, private val carRepo:
             val car = carRepo.getNonObservableCarDetailsById(carId)
             withContext(Dispatchers.Main) {
                 car?.let {
-                    isEditingCar = true
+                    isEditingCarNotAdding = true
                     carBeingEditedOrCreated.value = it
                 }
             }
         }
     }
+    fun observeCarData(): LiveData<CarEntity> = carBeingEditedOrCreated
+    fun getCarId() = carBeingEditedOrCreated.value?.carId
 
-    fun getCarBeingEdited(): LiveData<CarEntity> = carBeingEditedOrCreated
+
+    private var carDataState = MutableLiveData<DATA_STATE>(DATA_STATE.IDLE)
+    fun getCarDataState() : LiveData<DATA_STATE>  = carDataState
+    fun isOperationOnGoing(): Boolean {
+        return carDataState.value == DATA_STATE.SAVING || carDataState.value == DATA_STATE.DELETING
+    }
+
+
+    var isEditingCarNotAdding: Boolean = false
+
+
 
     fun saveCarInfo(
         bodyStyle: String,
@@ -68,8 +79,8 @@ class AddOrEditCarViewModel(private val userRepo: UserRepo, private val carRepo:
         noOfTiresToReplace: String,
         hasCustomizations: Boolean
     ) {
-
-        if (!isEditingCar) {
+        carDataState.value  = DATA_STATE.SAVING
+        if (!isEditingCarNotAdding) {
             addNewCar(
                 bodyStyle,
                 make,
@@ -113,6 +124,7 @@ class AddOrEditCarViewModel(private val userRepo: UserRepo, private val carRepo:
                 "saveCarInfo()",
                 "bug | isEditingCar was true but the edited car is null"
             )
+            carDataState.value = DATA_STATE.ERROR
         }
     }
 
@@ -160,6 +172,7 @@ class AddOrEditCarViewModel(private val userRepo: UserRepo, private val carRepo:
             carRepo.updateCar(updatedCar)
             withContext(Dispatchers.Main) {
                 carBeingEditedOrCreated.value = updatedCar
+                carDataState.value = DATA_STATE.SAVED
             }
         }
     }
@@ -205,11 +218,40 @@ class AddOrEditCarViewModel(private val userRepo: UserRepo, private val carRepo:
             carRepo.addCar(car)
             withContext(Dispatchers.Main) {
                 carBeingEditedOrCreated.value = car
+                carDataState.value = DATA_STATE.SAVED
             }
         }
     }
 
+    fun deleteCar() {
+        val car = carBeingEditedOrCreated.value
+        car?.let {
+            carToDelete ->
+            carDataState.value = DATA_STATE.DELETING
+            viewModelScope.launch(Dispatchers.IO) {
+                val hasDeleted = carRepo.deleteCar(car = carToDelete)
+                withContext(Dispatchers.Main){
+                    if (hasDeleted) {
+                        carDataState.value = DATA_STATE.DELETED
+                    }else{
+                        carDataState.value = DATA_STATE.ERROR
+                    }
+                }
+            }
+        }
+    }
+
+
     companion object {
         private val TAG = AddOrEditCarViewModel::class.java.simpleName
     }
+}
+
+enum class DATA_STATE {
+    SAVING,
+    IDLE,
+    DELETING,
+    DELETED,
+    SAVED,
+    ERROR
 }

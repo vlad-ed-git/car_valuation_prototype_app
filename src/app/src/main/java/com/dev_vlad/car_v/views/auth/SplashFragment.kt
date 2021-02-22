@@ -59,7 +59,10 @@ class SplashFragment : Fragment() {
                     }
 
                     it[0].isDealer -> {
-                        //TODO dealers home
+                       val action = SplashFragmentDirections.actionSplashFragmentToDealersHomeFragment()
+                        findNavController().navigate(
+                                action
+                        )
                     }
 
                     else -> {

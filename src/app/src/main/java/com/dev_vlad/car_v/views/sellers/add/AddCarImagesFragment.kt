@@ -173,12 +173,10 @@ class AddCarImagesFragment : Fragment(), MyCarImagesAdapter.ImageActionsListener
 
 
     private fun saveCarImages() {
-        binding.loadingBar.requestFocus()
         addCarImgsVm.save()
     }
 
     private fun deleteSelectedImages() {
-        binding.loadingBar.requestFocus()
         val imgsSelected = addCarImgsVm.getSelectedImagesNum()
         val title: Int
         val positiveMessage: Int

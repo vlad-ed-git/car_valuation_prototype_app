@@ -62,7 +62,9 @@
             android:layout_height="wrap_content"
             android:enabled="false"
             android:hint="@string/country_code_txt"
-            android:inputType="none" />
+            android:fontFamily="monospace"
+            android:inputType="none"
+            android:letterSpacing=".15"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -80,7 +82,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/phone_number_txt"
-            android:inputType="phone" />
+            android:inputType="phone"
+            android:fontFamily="monospace"
+            android:letterSpacing=".15"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
