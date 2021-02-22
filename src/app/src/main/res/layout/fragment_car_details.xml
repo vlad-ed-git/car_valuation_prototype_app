@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".views.dealers.details.CarDetailsFragment">
+    tools:context=".views.sellers.details.MyCarDetailsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/images_rv"
@@ -121,8 +121,8 @@
                 android:layout_marginTop="@dimen/smd_space"
                 android:text="@string/car_if_accident_hint"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/condition" 
-                 />
+                app:layout_constraintTop_toBottomOf="@id/condition"
+                />
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:enabled="false"

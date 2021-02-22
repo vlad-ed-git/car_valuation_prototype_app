@@ -116,5 +116,18 @@
         android:id="@+id/dealersHomeFragment"
         android:name="com.dev_vlad.car_v.views.dealers.home.DealersHomeFragment"
         android:label="@string/cars_txt"
-        tools:layout="@layout/fragment_dealers_home" />
+        tools:layout="@layout/fragment_dealers_home" >
+        <action
+            android:id="@+id/action_dealersHomeFragment_to_carDetailsFragment"
+            app:destination="@id/carDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/carDetailsFragment"
+        android:name="com.dev_vlad.car_v.views.dealers.details.CarDetailsFragment"
+        android:label="@string/fragment_dealer_car_details_lbl"
+        tools:layout="@layout/fragment_my_car_details" >
+        <argument
+            android:name="CarId"
+            app:argType="string" />
+    </fragment>
 </navigation>

@@ -101,4 +101,6 @@
     <string name="updating_user_status_failed"><![CDATA[Failed to update your status… check your internet & retry]]></string>
     <string name="delete_car_confirm">Are you sure you want to delete this car?</string>
     <string name="car_deleted_redirecting">Delete successfully … redirecting</string>
+    <string name="msg_seller_menu_txt">Message seller</string>
+    <string name="fragment_dealer_car_details_lbl">Car Info</string>
 </resources>

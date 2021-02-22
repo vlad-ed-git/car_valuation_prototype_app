@@ -91,6 +91,12 @@ class MainActivity : AppCompatActivity() {
                     binding.bottomNav.isVisible = false
                 }
 
+                R.id.carDetailsFragment -> {
+                    binding.toolbar.title = getString(R.string.fragment_dealer_car_details_lbl)
+                    binding.toolbar.isVisible = true
+                    binding.bottomNav.isVisible = false
+                }
+
                 R.id.addCarImagesFragment -> {
                     binding.toolbar.title = getString(R.string.my_car_photos_txt)
                     binding.toolbar.isVisible = true

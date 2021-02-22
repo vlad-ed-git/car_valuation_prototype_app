@@ -104,7 +104,8 @@ class DealersHomeFragment: Fragment(), MyCarsAdapter.MyCarsActionsListener {
     }
 
     override fun onCarClicked(clickedCar: CarEntity) {
-        MyLogger.logThis(TAG, "onCarClicked()", "car ${clickedCar.carId}")
+        val action = DealersHomeFragmentDirections.actionDealersHomeFragmentToCarDetailsFragment(clickedCar.carId)
+        findNavController().navigate(action)
     }
 
 
