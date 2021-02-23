@@ -110,16 +110,17 @@ class ReceivedOffersFragment : Fragment(), ReceivedOffersAdapter.ReceivedOffersA
 
     override fun onReceivedOffersClicked(item: CarNReceivedOfferWrapper) {
         val data = ChatInitiateData(
-                carId = item.car.carId,
-                carTitle = item.car.make + " " + item.car.model,
-                ownerId = item.car.ownerId,
-                dealerId = item.offer.dealerId,
-                initialOffer = item.offer.offerPrice,
-                initialOfferMsg = item.offer.offerMessage,
-                 offerId = item.offer.offerId,
-                featuredImgUrl = item.car.imageUrls[0]
+            carId = item.car.carId,
+            carTitle = item.car.make + " " + item.car.model,
+            ownerId = item.car.ownerId,
+            dealerId = item.offer.dealerId,
+            initialOffer = item.offer.offerPrice,
+            initialOfferMsg = item.offer.offerMessage,
+            offerId = item.offer.offerId,
+            featuredImgUrl = item.car.imageUrls[0]
         )
-        val action = ReceivedOffersFragmentDirections.actionReceivedOffersFragmentToChatFragment(data)
+        val action =
+            ReceivedOffersFragmentDirections.actionReceivedOffersFragmentToChatFragment(data)
         findNavController().navigate(action)
     }
 

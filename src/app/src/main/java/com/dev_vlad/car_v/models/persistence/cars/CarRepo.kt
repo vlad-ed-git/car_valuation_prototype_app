@@ -1,12 +1,7 @@
 package com.dev_vlad.car_v.models.persistence.cars
 
-import android.nfc.tech.MifareUltralight.PAGE_SIZE
 import androidx.core.net.toUri
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.dev_vlad.car_v.util.*
-import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -24,7 +19,6 @@ class CarRepo(
         private val TAG = CarRepo::class.java.simpleName
     }
 
-    private val registeredListeners = ArrayList<ListenerRegistration>()
 
     /************** LOCAL DB ***********/
     private var loadAllCarsExhausted = false
@@ -34,12 +28,12 @@ class CarRepo(
         val offset = if (page == 1) {
             0
         } else {
-            PAGE_SIZE * (page - 1)
+            RECYCLER_PAGE_SIZE * (page - 1)
         }
         return if (query.isNullOrBlank()) {
             MyLogger.logThis(TAG, "getAllCars()", "page : $pageNo")
-            carEntityDao.getAllCars(PAGE_SIZE, offset).map {
-                if (it.isEmpty() || it.size < PAGE_SIZE && !loadAllCarsExhausted) {
+            carEntityDao.getAllCars(RECYCLER_PAGE_SIZE, offset).map {
+                if (it.isEmpty() || it.size < RECYCLER_PAGE_SIZE && !loadAllCarsExhausted) {
                     //fetch more on time
                     loadMoreCarsFromServer(pageNo = pageNo)
                     loadAllCarsExhausted = true
@@ -49,7 +43,7 @@ class CarRepo(
         } else {
             MyLogger.logThis(TAG, "getAllCars()", "page : $pageNo query $query")
             carEntityDao.searchAllCarsByQuery(
-                limit = PAGE_SIZE,
+                limit = RECYCLER_PAGE_SIZE,
                 offset = offset,
                 queryParam = "%${query.replace(' ', '%')}%"
             )
@@ -63,7 +57,7 @@ class CarRepo(
         val offset = if (page == 1) {
             0
         } else {
-            PAGE_SIZE * (page - 1)
+            RECYCLER_PAGE_SIZE * (page - 1)
         }
         return if (query.isNullOrBlank()) {
             MyLogger.logThis(
@@ -71,7 +65,7 @@ class CarRepo(
                 "getAllCarsByUser()",
                 "page : $pageNo userId $userId offset $offset"
             )
-            carEntityDao.getAllCarsOfUser(userId, limit = PAGE_SIZE, offset = offset)
+            carEntityDao.getAllCarsOfUser(userId, limit = RECYCLER_PAGE_SIZE, offset = offset)
                 .map {
                     if (it.isEmpty() && !loadAllCarsExhausted) {
                         loadAllCarsByUserExhausted = true
@@ -87,7 +81,7 @@ class CarRepo(
             )
             carEntityDao.searchAllCarsOfUserByQuery(
                 userId,
-                limit = PAGE_SIZE,
+                limit = RECYCLER_PAGE_SIZE,
                 offset = offset,
                 queryParam = "%${query.replace(' ', '%')}%"
             )
@@ -208,7 +202,7 @@ class CarRepo(
             MyLogger.logThis(TAG, "loadMoreCarsFromServer($pageNo)", "called--")
             val carsCollection = Firebase.firestore.collection(CARS_COLLECTION_NAME)
             //first as in prev data depends on page
-            val limit = if (pageNo <= 1) PAGE_SIZE else ((pageNo - 1) * PAGE_SIZE)
+            val limit = if (pageNo <= 1) RECYCLER_PAGE_SIZE else ((pageNo - 1) * RECYCLER_PAGE_SIZE)
             val prevData = carsCollection
                 .orderBy(DEFAULT_SORT_FIELD, Query.Direction.DESCENDING)
                 .limit(limit.toLong())
@@ -222,7 +216,7 @@ class CarRepo(
                 val nextData = carsCollection
                     .orderBy(DEFAULT_SORT_FIELD, Query.Direction.DESCENDING)
                     .startAfter(lastVisible)
-                    .limit(PAGE_SIZE.toLong())
+                    .limit(RECYCLER_PAGE_SIZE.toLong())
                     .get()
                     .await()
                 carSnapshots = nextData.documents
@@ -249,7 +243,7 @@ class CarRepo(
             MyLogger.logThis(TAG, "loadUserCarsFromServer($userId)", "called--")
             val carsCollection = Firebase.firestore.collection(CARS_COLLECTION_NAME)
             val prevData = carsCollection
-                .whereEqualTo(CAR_OWNER_FIELD, userId)
+                .whereEqualTo(OWNER_ID_FIELD, userId)
                 .orderBy(DEFAULT_SORT_FIELD, Query.Direction.DESCENDING)
                 .get()
                 .await()
@@ -267,77 +261,4 @@ class CarRepo(
     }
 
 
-    /*
-    * TODO real time code listen to Cars on real time as they are posted by sellers
-     */
-    private val carsUpdates = MutableLiveData<CarDataStateWrapper>()
-    fun getCarUpdates(): LiveData<CarDataStateWrapper> = carsUpdates
-    fun listenForCarUpdates() {
-        val carCollection = Firebase.firestore.collection(CARS_COLLECTION_NAME)
-        val carUpdatesListener = carCollection.addSnapshotListener { snapshots, e ->
-            if (e != null) {
-                MyLogger.logThis(TAG, "listenForCarUpdates()", "exc ${e.message}", e)
-                return@addSnapshotListener
-            }
-
-            for (dc in snapshots!!.documentChanges) {
-                when (dc.type) {
-                    DocumentChange.Type.ADDED -> {
-                        MyLogger.logThis(
-                            TAG,
-                            "DocumentChange.Type.ADDED ",
-                            "New car: ${dc.document.data}"
-                        )
-                        val newCar = dc.document.toObject<CarEntity>()
-                        carsUpdates.value = CarDataStateWrapper(
-                            car = newCar,
-                            state = DataState.ADD
-                        )
-                    }
-                    DocumentChange.Type.MODIFIED -> {
-                        MyLogger.logThis(
-                            TAG,
-                            "DocumentChange.Type.MODIFIED",
-                            "Modified city: ${dc.document.data}"
-                        )
-                        val modifiedCar = dc.document.toObject<CarEntity>()
-                        carsUpdates.value = CarDataStateWrapper(
-                            car = modifiedCar,
-                            state = DataState.UPDATE
-                        )
-                    }
-                    DocumentChange.Type.REMOVED -> {
-                        MyLogger.logThis(
-                            TAG,
-                            "DocumentChange.Type.REMOVED",
-                            "Removed city: ${dc.document.data}"
-                        )
-                        val deletedCar = dc.document.toObject<CarEntity>()
-                        carsUpdates.value = CarDataStateWrapper(
-                            car = deletedCar,
-                            state = DataState.UPDATE
-                        )
-                    }
-                    else -> {
-                    }
-                }
-            }
-        }
-        registeredListeners.add(carUpdatesListener)
-    }
-
-    fun removeListeners() {
-        for (listener in registeredListeners) {
-            listener.remove()
-        }
-    }
-
 }
-
-enum class DataState {
-    DELETE,
-    UPDATE,
-    ADD
-}
-
-data class CarDataStateWrapper(val car: CarEntity, val state: DataState)

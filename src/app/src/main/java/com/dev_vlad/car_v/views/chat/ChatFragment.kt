@@ -4,11 +4,13 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.onNavDestinationSelected
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -17,11 +19,15 @@ import com.bumptech.glide.request.target.Target
 import com.dev_vlad.car_v.CarVApp
 import com.dev_vlad.car_v.R
 import com.dev_vlad.car_v.databinding.FragmentChatBinding
+import com.dev_vlad.car_v.models.persistence.chat.ChatEntity
+import com.dev_vlad.car_v.util.MyLogger
+import com.dev_vlad.car_v.util.hideKeyBoard
 import com.dev_vlad.car_v.view_models.chat.ChatViewModel
 import com.dev_vlad.car_v.view_models.chat.ChatViewModelFactory
+import com.dev_vlad.car_v.views.adapters.chat.ChatAdapter
 import java.util.*
 
-class ChatFragment : Fragment() {
+class ChatFragment : Fragment(), ChatAdapter.ChatActionsListener {
 
     companion object {
         private val TAG = ChatFragment::class.java.simpleName
@@ -33,11 +39,11 @@ class ChatFragment : Fragment() {
         val carVApp = (activity?.application as CarVApp)
         ChatViewModelFactory(
             userRepo = carVApp.userRepo,
-            carRepo = carVApp.carRepo,
-            offersRepo = carVApp.offerRepo
+            chatRepo = carVApp.chatRepo
         )
     }
-    private val args : ChatFragmentArgs by navArgs()
+    private val args: ChatFragmentArgs by navArgs()
+    private lateinit var chatAdapter: ChatAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -51,7 +57,20 @@ class ChatFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         chatViewModel.initializedData(args.ChatInitializationData)
+        observeCurrentUser()
         displayInitialData()
+        observeMessages()
+    }
+
+    private fun observeCurrentUser() {
+        chatViewModel.observeCurrentUser().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            if (it != null) {
+                val userType = if (it.isDealer) ChatAdapter.UserType.DEALER
+                else ChatAdapter.UserType.SELLER
+                chatAdapter = ChatAdapter(this@ChatFragment, userType)
+                initRv()
+            }
+        })
     }
 
     private fun displayInitialData() {
@@ -61,7 +80,9 @@ class ChatFragment : Fragment() {
             carTitle.text = titleTxt
 
             val formattedPrice =
-               getString(R.string.starting_offer_prefix) +  chatViewModel.chatInitiateData.initialOffer.toString() + " " + getString(R.string.currency_suffix)
+                getString(R.string.starting_offer_prefix) + " " + chatViewModel.chatInitiateData.initialOffer.toString() + " " + getString(
+                    R.string.currency_suffix
+                )
             initialPrice.text = formattedPrice
             Glide.with(requireContext())
                 .load(chatViewModel.chatInitiateData.featuredImgUrl)
@@ -91,9 +112,38 @@ class ChatFragment : Fragment() {
                     }
                 )
                 .into(carImg)
+            loadingBar.isVisible = false
         }
     }
 
+    private fun initRv() {
+        binding.apply {
+            messagesRv.layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
+            messagesRv.adapter = chatAdapter
+            send.setOnClickListener {
+                val newMsg = newMessage.text.toString()
+                if (newMsg.isNotBlank()) {
+                    chatViewModel.sendNewMessage(newMsg)
+                    newMessage.setText("")
+                    hideKeyBoard(requireContext(), messageContainer)
+                }
+            }
+        }
+    }
+
+    private fun observeMessages() {
+        chatViewModel.observeMessages().observe(
+            viewLifecycleOwner, androidx.lifecycle.Observer {
+                if (it != null) {
+                    chatAdapter.submitList(it)
+                    MyLogger.logThis(
+                        TAG, "observeMessages()", "messages ${it.size} received"
+                    )
+                }
+            }
+        )
+    }
 
     /******************** MENU ****************/
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -106,6 +156,10 @@ class ChatFragment : Fragment() {
         return item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(
             item
         )
+    }
+
+    override fun onMessageClicked(clickedMessage: ChatEntity) {
+        //TODO
     }
 
 }

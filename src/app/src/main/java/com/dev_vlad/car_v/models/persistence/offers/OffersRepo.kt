@@ -1,6 +1,5 @@
 package com.dev_vlad.car_v.models.persistence.offers
 
-import android.nfc.tech.MifareUltralight
 import com.dev_vlad.car_v.util.*
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
@@ -75,7 +74,7 @@ class OffersRepo(
             )
 
             val offersCollection = Firebase.firestore.collection(OFFERS_COLLECTION_NAME)
-                .whereEqualTo(OFFERS_DEALER_FIELD, dealerId)
+                .whereEqualTo(DEALER_ID_FIELD, dealerId)
                 .get()
                 .await()
             val offers = offersCollection.documents
@@ -146,7 +145,7 @@ class OffersRepo(
                     .whereEqualTo(OWNER_ID_FIELD, userId)
                     .orderBy(DEFAULT_SORT_OFFERS_FIELD, Query.Direction.DESCENDING)
                     .startAfter(lastVisible)
-                    .limit(MifareUltralight.PAGE_SIZE.toLong())
+                    .limit(PAGE_SIZE.toLong())
                     .get()
                     .await()
                 offersSnapshots = nextData.documents

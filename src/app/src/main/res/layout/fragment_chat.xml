@@ -36,9 +36,11 @@
         android:layout_margin="@dimen/std_space"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="start|center_vertical"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:fontFamily="sans-serif"
         app:drawableStartCompat="@drawable/ic_offer"
+        android:drawablePadding="@dimen/std_space"
         app:drawableTint="@color/secondary_txt_on_white"/>
 
 
@@ -97,6 +99,7 @@
             android:contentDescription="@string/add_a_picture_desc"/>
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/new_message"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/add_pic"
             android:layout_marginEnd="@dimen/std_space"

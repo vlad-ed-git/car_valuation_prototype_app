@@ -99,3 +99,10 @@
 -keep class com.bumptech.glide.load.data.ParcelFileDescriptorRewinder$InternalRewinder {
   *** rewind();
 }
+
+
+##################### my classes empty constructors
+-keep class com.dev_vlad.car_v.models.persistence.cars.CarEntity
+-keep class com.dev_vlad.car_v.models.persistence.auth.UserEntity
+-keep class com.dev_vlad.car_v.models.persistence.chat.ChatEntity
+-keep class com.dev_vlad.car_v.models.persistence.offers.CarOfferEntity

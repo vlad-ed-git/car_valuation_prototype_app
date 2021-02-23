@@ -12,7 +12,11 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.dev_vlad.car_v.databinding.ActivityMainBinding
+import com.dev_vlad.car_v.models.persistence.chat.ChatRepo
+import com.dev_vlad.car_v.models.persistence.chat.DataState
+import com.dev_vlad.car_v.util.DEALER_ID_FIELD
 import com.dev_vlad.car_v.util.MyLogger
+import com.dev_vlad.car_v.util.OWNER_ID_FIELD
 import com.dev_vlad.car_v.view_models.activity_vm.MainActViewModel
 import com.dev_vlad.car_v.view_models.activity_vm.MainActViewModelFactory
 
@@ -25,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     private val mainActViewModel: MainActViewModel by viewModels {
         val carVApp = (application as CarVApp)
-        MainActViewModelFactory(carVApp.userRepo, carVApp.carRepo)
+        MainActViewModelFactory(carVApp.userRepo, carVApp.carRepo, carVApp.chatRepo)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -128,36 +132,40 @@ class MainActivity : AppCompatActivity() {
                 if (it[0].isSeller) {
                     binding.bottomNav.menu.clear() //clear old inflated items.
                     binding.bottomNav.inflateMenu(R.menu.sellers_bottom_nav)
+                    listenToChatUpdates(field = OWNER_ID_FIELD, userId = it[0].userId)
                 } else if (it[0].isDealer) {
                     binding.bottomNav.menu.clear() //clear old inflated items.
                     binding.bottomNav.inflateMenu(R.menu.dealers_bottom_nav)
+                    listenToChatUpdates(field = DEALER_ID_FIELD, userId = it[0].userId)
 
                 }
             }
         })
     }
 
-
-    /**TODO real time listeners? private fun observeDealersData(){
-    mainActViewModel.listenToCarUpdates()
-    mainActViewModel.getCarUpdates().observe(this, Observer {
-    updates ->
-    if (updates != null) {
-    when (updates.state) {
-    DataState.DELETE -> {
-    mainActViewModel.deleteCar(updates.car)
+    private fun listenToChatUpdates(field: String, userId: String) {
+        mainActViewModel.listenForMyChatUpdates(field, userId)
+        mainActViewModel.getChatUpdates().observe(this, Observer {
+            it?.let { chatUpdates ->
+                //we have chat updates
+                when (chatUpdates.state) {
+                    DataState.DELETE -> {
+                        MyLogger.logThis(TAG, "calling delete()", chatUpdates.chat.message)
+                        mainActViewModel.deleteChat(chatUpdates.chat)
+                    }
+                    DataState.UPDATE -> {
+                        MyLogger.logThis(TAG, "calling update()", chatUpdates.chat.message)
+                        mainActViewModel.updateChat(chatUpdates.chat)
+                    }
+                    DataState.ADD -> {
+                        //todo send notification?
+                        MyLogger.logThis(TAG, "calling add()", chatUpdates.chat.message)
+                        mainActViewModel.addChat(chatUpdates.chat)
+                    }
+                }
+            }
+        })
     }
-    DataState.UPDATE -> {
-    mainActViewModel.updateCar(updates.car)
-    }
-    DataState.ADD -> {
-    mainActViewModel.addCar(updates.car)
-    }
-    }
-    }
-    })
-
-    }*************/
 
 
     //toolbar handle back navigation

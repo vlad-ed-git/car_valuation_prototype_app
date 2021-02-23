@@ -13,9 +13,9 @@ data class ChatInitiateData(
     val initialOffer: Int,
     val initialOfferMsg: String,
     val offerId: String
-): Parcelable {
+) : Parcelable {
 
     override fun toString(): String {
-        return "initiating chat data carId $carId title $carTitle ownerId $ownerId dealerId $dealerId initalOffer ${initialOffer.toString()}"
+        return "initiating chat data carId $carId title $carTitle ownerId $ownerId dealerId $dealerId initalOffer $initialOffer"
     }
 }

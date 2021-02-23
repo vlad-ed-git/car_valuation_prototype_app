@@ -130,4 +130,6 @@
     <string name="send_message_desc">send message</string>
     <string name="fragment_chat_lbl">Chat</string>
     <string name="starting_offer_prefix">Dealer\'s initial offer</string>
+    <string name="sent_image_desc">Sent Image</string>
+    <string name="received_image_desc">Received Image</string>
 </resources>

@@ -9,7 +9,7 @@ import com.dev_vlad.car_v.util.UNSAVED_CAR_ID
 @Entity(tableName = "cars")
 data class CarEntity(
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = "carId")
+    @ColumnInfo(name = "carId") //matches constant CAR_ID_FIELD
     var carId: String = "${UNSAVED_CAR_ID}_${System.currentTimeMillis()}",
 
     var bodyStyle: String,
