@@ -28,8 +28,7 @@ class UserRepo
     }
 
     suspend fun updateUser(user: UserEntity) =
-        userEntityDao.updateUser(user)
-
+            userEntityDao.updateUser(user)
 
 
     /********* SERVER *******************/
@@ -47,7 +46,8 @@ class UserRepo
 
 
     }
-    suspend fun updateUserInServer(user: UserEntity) : Boolean{
+
+    suspend fun updateUserInServer(user: UserEntity): Boolean {
         return try {
             //re - write
             Firebase.firestore.collection(USERS_COLLECTION_NAME).document(user.userPhone).set(user)
@@ -60,6 +60,7 @@ class UserRepo
             false
         }
     }
+
     suspend fun getUserFromServerIfExists(userPhone: String): UserEntity? {
         try {
             val usersCollection = Firebase.firestore.collection(USERS_COLLECTION_NAME)
@@ -70,7 +71,7 @@ class UserRepo
             val users = usersCollection.documents
             return if (users.isEmpty()) null
             else {
-                val user =  users[0].toObject<UserEntity>()
+                val user = users[0].toObject<UserEntity>()
                 user
             }
         } catch (e: Exception) {
@@ -78,7 +79,6 @@ class UserRepo
             return null
         }
     }
-
 
 
 }

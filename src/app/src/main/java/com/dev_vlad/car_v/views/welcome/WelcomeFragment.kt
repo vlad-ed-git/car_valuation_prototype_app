@@ -44,9 +44,8 @@ class WelcomeFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        welcomeViewModel.errorOccurred.observe(viewLifecycleOwner, Observer {
-            errorOccurred ->
-            if (errorOccurred){
+        welcomeViewModel.errorOccurred.observe(viewLifecycleOwner, Observer { errorOccurred ->
+            if (errorOccurred) {
                 binding.apply {
                     doneBtn.isEnabled = true
                     loadingBar.isVisible = false

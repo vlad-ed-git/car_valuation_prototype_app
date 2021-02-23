@@ -62,9 +62,9 @@ class AddOrEditCarFragment : Fragment() {
                                 loadingBar.isVisible = true
                                 subtitle.text = getString(R.string.car_deleted_redirecting)
                             }
-                           val action = AddOrEditCarFragmentDirections.actionAddOrEditCarFragmentToSellersHomeFragment()
-                           findNavController().navigate(action)
-                            
+                            val action = AddOrEditCarFragmentDirections.actionAddOrEditCarFragmentToSellersHomeFragment()
+                            findNavController().navigate(action)
+
                         }
                         DATA_STATE.SAVED -> {
                             addCarVm.getCarId()?.let { carId ->
@@ -97,7 +97,8 @@ class AddOrEditCarFragment : Fragment() {
                     car?.let {
                         //car data has been saved
                         displayRestoredData(it)
-                    } }
+                    }
+                }
         )
     }
 
@@ -194,7 +195,7 @@ class AddOrEditCarFragment : Fragment() {
 
 
     private var alertDialog: AlertDialog? = null
-    private fun deleteCar(){
+    private fun deleteCar() {
         if (addCarVm.isOperationOnGoing())
             return
 
@@ -254,7 +255,6 @@ class AddOrEditCarFragment : Fragment() {
         alertDialog = null
         _binding = null
     }
-
 
 
 }

@@ -115,5 +115,14 @@
     <string name="optional_txt">*optional</string>
     <string name="initial_offer_message_hint">Message</string>
     <string name="initial_offer_zero_err">Initial offer cannot be zero</string>
-    <string name="default_inital_offer_message">Hello there. I am interested in buying your car</string>
+    <string name="default_initial_offer_msg">Hello there. I am interested in buying your car</string>
+    <string name="failed_to_init_car_details">Failed to fetch car details</string>
+    <string name="you_have_made_offer">You have sent an offer to the seller!</string>
+    <string name="update_offer_prompt_txt">Update your original offer?</string>
+    <string name="update_offer_btn_txt">Update Offer</string>
+    <string name="initial_offer_sent_success_short">Your offer was sent</string>
+    <string name="has_made_offer_desc">has made offer for this car</string>
+    <string name="received_offers_txt">Offers</string>
+    <string name="fragment_received_offers_lbl">Received Offers</string>
+    <string name="currency_suffix">USD</string>
 </resources>

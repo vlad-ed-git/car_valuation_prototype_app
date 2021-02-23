@@ -38,8 +38,8 @@ class CarDetailsFragment : Fragment(), MakeInitialOffer.MakeInitialOfferListener
     }
     private val carImagesAdapter = MyCarImagesAdapter()
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentCarDetailsBinding.inflate(inflater, container, false)
@@ -53,74 +53,83 @@ class CarDetailsFragment : Fragment(), MakeInitialOffer.MakeInitialOfferListener
     private val args: CarDetailsFragmentArgs by navArgs()
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        carDetailsVM.fetchCarDetails(args.CarId)
-        observeCarData()
+        carDetailsVM.fetchCarAndOfferDetails(args.CarId)
         observeInitialOfferState()
     }
 
-    private fun observeCarData() {
-        carDetailsVM.observeCar().observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                displayDetails(it)
+
+    private fun observeInitialOfferState() {
+        carDetailsVM.observeOfferState().observe(
+                viewLifecycleOwner, Observer {
+            when (it) {
+
+                CarDetailsViewModel.STATE.INITIALIZED -> {
+                    val car = carDetailsVM.getCarData()
+                    val initialOffer = carDetailsVM.getInitialOfferIfExist()
+                    displayDetails(car = car, hasMadeOffer = (initialOffer != null))
+                }
+
+                CarDetailsViewModel.STATE.SENT -> {
+                    binding.apply {
+                        title.setText(R.string.initial_offer_sent_success)
+                        loadingBar.isVisible = false
+                        container.showSnackBarToUser(
+                                msgResId = R.string.initial_offer_sent_success_short,
+                                isErrorMsg = false,
+                                actionMessage = R.string.ok_txt
+                        )
+                    }
+                }
+                CarDetailsViewModel.STATE.ERROR -> {
+                    val errRes = carDetailsVM.errMsg ?: R.string.unknown_err_occurred
+                    binding.apply {
+                        container.showSnackBarToUser(
+                                msgResId = errRes,
+                                isErrorMsg = true
+                        )
+                        title.setText(errRes)
+                        loadingBar.isVisible = false
+                    }
+                }
+                else -> {
+                }
             }
-        })
+        }
+        )
     }
 
-    private fun observeInitialOfferState(){
-       carDetailsVM.observeInitialOfferState().observe(
-           viewLifecycleOwner, Observer {
-               when (it) {
-                   CarDetailsViewModel.SENDING_OFFER_STATE.SENDING -> TODO()
-                   CarDetailsViewModel.SENDING_OFFER_STATE.SENT -> {
-                       binding.apply {
-                           title.setText(R.string.initial_offer_sent_success)
-                           loadingBar.isVisible = false
-                           container.showSnackBarToUser(
-                               msgResId = R.string.initial_offer_sent_success,
-                               isErrorMsg = false,
-                               actionMessage = R.string.ok_txt
-                           )
-                       }
-                   }
-                   CarDetailsViewModel.SENDING_OFFER_STATE.ERROR -> {
-                       val errRes = carDetailsVM.errMsg?:R.string.unknown_err_occurred
-                       binding.container.showSnackBarToUser(
-                           msgResId = errRes,
-                           isErrorMsg = true
-                       )
-                   }
-                   else -> {
-                   }
-               }
-           }
-       )
-    }
-
-    private fun displayDetails(car: CarEntity) {
+    private fun displayDetails(car: CarEntity, hasMadeOffer: Boolean) {
         binding.apply {
+
+            if (hasMadeOffer) {
+                title.setText(R.string.you_have_made_offer)
+            }
+
+
+            //images
             carImagesAdapter.setNewImages(car.imageUrls)
             swipeIndicator.isVisible = car.imageUrls.size > 1
             /* the details */
             val bodyStyleTxt =
-                getString(R.string.car_body_style_hint) + "\n" + car.bodyStyle.capitalize(Locale.getDefault())
+                    getString(R.string.car_body_style_hint) + "\n" + car.bodyStyle.capitalize(Locale.getDefault())
             val makeTxt =
-                getString(R.string.car_make_hint) + "\n" + car.make.capitalize(Locale.getDefault())
+                    getString(R.string.car_make_hint) + "\n" + car.make.capitalize(Locale.getDefault())
             val modelTxt =
-                getString(R.string.car_model_hint) + "\n" + car.model.capitalize(Locale.getDefault())
+                    getString(R.string.car_model_hint) + "\n" + car.model.capitalize(Locale.getDefault())
             val yearTxt =
-                getString(R.string.car_year_hint) + "\n" + car.year.capitalize(Locale.getDefault())
+                    getString(R.string.car_year_hint) + "\n" + car.year.capitalize(Locale.getDefault())
             val colorTxt =
-                getString(R.string.car_color_hint) + "\n" + car.color.capitalize(Locale.getDefault())
+                    getString(R.string.car_color_hint) + "\n" + car.color.capitalize(Locale.getDefault())
             val conditionTxt =
-                getString(R.string.add_car_condition_hint) + "\n" + car.condition.capitalize(Locale.getDefault())
+                    getString(R.string.add_car_condition_hint) + "\n" + car.condition.capitalize(Locale.getDefault())
             val mileageTxt =
-                getString(R.string.car_mileage_hint) + "\n" + car.mileage.capitalize(Locale.getDefault())
+                    getString(R.string.car_mileage_hint) + "\n" + car.mileage.capitalize(Locale.getDefault())
             val extraDetailsTxt =
-                getString(R.string.add_car_extra_details) + "\n" + car.extraDetails.capitalize(
-                    Locale.getDefault()
-                )
+                    getString(R.string.add_car_extra_details) + "\n" + car.extraDetails.capitalize(
+                            Locale.getDefault()
+                    )
             val replaceTiresTxt =
-                getString(R.string.car_tyres_to_replace_num_hint) + " " + car.noOfTiresToReplace.toString()
+                    getString(R.string.car_tyres_to_replace_num_hint) + " " + car.noOfTiresToReplace.toString()
             bodyStyle.text = bodyStyleTxt
             make.text = makeTxt
             model.text = modelTxt
@@ -150,26 +159,26 @@ class CarDetailsFragment : Fragment(), MakeInitialOffer.MakeInitialOfferListener
     }
 
 
-    private var makeInitialOfferDialog :  MakeInitialOffer? = null
-    private fun makeInitialOffer(){
-        if (makeInitialOfferDialog != null){
+    private var makeInitialOfferDialog: MakeInitialOffer? = null
+    private fun makeInitialOffer() {
+        if (makeInitialOfferDialog != null) {
             if (makeInitialOfferDialog?.isVisible == true)
                 makeInitialOfferDialog?.dismiss()
             makeInitialOfferDialog = null
         }
-        makeInitialOfferDialog = MakeInitialOffer(this)
+        makeInitialOfferDialog = MakeInitialOffer(this, carDetailsVM.getInitialOfferIfExist() ?: 0)
         makeInitialOfferDialog?.show(parentFragmentManager, "com.dev_vlad.car_v.make_offer_dialog")
     }
 
     override fun onSendOfferClicked(initialOfferPrice: String?, message: String?) {
-        if(carDetailsVM.isSendingOffer())
+        if (carDetailsVM.isSendingOffer())
             return
 
-        if (initialOfferPrice == null || initialOfferPrice.toInt() == 0){
+        if (initialOfferPrice == null || initialOfferPrice.toInt() == 0) {
             Toast.makeText(
-                requireContext(),
-                R.string.initial_offer_zero_err,
-                Toast.LENGTH_LONG
+                    requireContext(),
+                    R.string.initial_offer_zero_err,
+                    Toast.LENGTH_LONG
             ).show()
             return
         }
@@ -179,7 +188,9 @@ class CarDetailsFragment : Fragment(), MakeInitialOffer.MakeInitialOfferListener
             loadingBar.isVisible = true
         }
 
-        val initialMsg = message?:getString(R.string.default_inital_offer_message)
+
+        val initialMsg = if (message.isNullOrBlank()) getString(R.string.default_initial_offer_msg)
+        else message
         carDetailsVM.saveOffer(initialOfferPrice.toInt(), initialMsg)
     }
 
@@ -196,23 +207,21 @@ class CarDetailsFragment : Fragment(), MakeInitialOffer.MakeInitialOfferListener
                 true
             }
             else -> item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(
-                item
+                    item
             )
         }
     }
 
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        if (makeInitialOfferDialog != null){
+        if (makeInitialOfferDialog != null) {
             if (makeInitialOfferDialog?.isVisible == true)
                 makeInitialOfferDialog?.dismiss()
             makeInitialOfferDialog = null
         }
     }
-
 
 
 }

@@ -5,13 +5,13 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
 class VerticalSpacingItemDecorator(private val verticalSpaceHeight: Int) :
-    RecyclerView.ItemDecoration() {
+        RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(
-        outRect: Rect,
-        view: View,
-        parent: RecyclerView,
-        state: RecyclerView.State
+            outRect: Rect,
+            view: View,
+            parent: RecyclerView,
+            state: RecyclerView.State
     ) {
         outRect.top = verticalSpaceHeight
     }

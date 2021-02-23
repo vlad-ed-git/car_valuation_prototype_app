@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -13,12 +12,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.dev_vlad.car_v.databinding.ActivityMainBinding
-import com.dev_vlad.car_v.models.persistence.cars.DataState
 import com.dev_vlad.car_v.util.MyLogger
 import com.dev_vlad.car_v.view_models.activity_vm.MainActViewModel
 import com.dev_vlad.car_v.view_models.activity_vm.MainActViewModelFactory
-import com.dev_vlad.car_v.view_models.auth.AuthViewModel
-import com.dev_vlad.car_v.view_models.auth.AuthViewModelFactory
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -39,17 +35,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
 
         val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
         //specify home fragments
         appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.sellersHomeFragment,
-                    R.id.dealersHomeFragment,
-                R.id.splashFragment,
-                R.id.loginFragment,
-                R.id.welcomeFragment
-            )
+                setOf(
+                        R.id.sellersHomeFragment,
+                        R.id.dealersHomeFragment,
+                        R.id.splashFragment,
+                        R.id.loginFragment,
+                        R.id.welcomeFragment
+                )
         )
         setSupportActionBar(binding.toolbar)
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -69,6 +65,12 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.sellersHomeFragment -> {
                     binding.toolbar.title = getString(R.string.my_cars_txt)
+                    binding.toolbar.isVisible = true
+                    binding.bottomNav.isVisible = true
+                }
+
+                R.id.receivedOffersFragment -> {
+                    binding.toolbar.title = getString(R.string.fragment_received_offers_lbl)
                     binding.toolbar.isVisible = true
                     binding.bottomNav.isVisible = true
                 }
@@ -113,16 +115,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun observeAuthState(){
+    private fun observeAuthState() {
         mainActViewModel.userState.observe(this, Observer {
             //set bottom menu
-            if (!it.isNullOrEmpty()){
-                if (it[0].isSeller){
-                    binding.bottomNav.menu.clear(); //clear old inflated items.
+            if (!it.isNullOrEmpty()) {
+                if (it[0].isSeller) {
+                    binding.bottomNav.menu.clear() //clear old inflated items.
                     binding.bottomNav.inflateMenu(R.menu.sellers_bottom_nav)
-                }
-                else if (it[0].isDealer){
-                    binding.bottomNav.menu.clear(); //clear old inflated items.
+                } else if (it[0].isDealer) {
+                    binding.bottomNav.menu.clear() //clear old inflated items.
                     binding.bottomNav.inflateMenu(R.menu.dealers_bottom_nav)
 
                 }
@@ -132,23 +133,23 @@ class MainActivity : AppCompatActivity() {
 
 
     /**TODO real time listeners? private fun observeDealersData(){
-        mainActViewModel.listenToCarUpdates()
-        mainActViewModel.getCarUpdates().observe(this, Observer {
-            updates ->
-          if (updates != null) {
-              when (updates.state) {
-                  DataState.DELETE -> {
-                      mainActViewModel.deleteCar(updates.car)
-                  }
-                  DataState.UPDATE -> {
-                      mainActViewModel.updateCar(updates.car)
-                  }
-                  DataState.ADD -> {
-                      mainActViewModel.addCar(updates.car)
-                  }
-              }
-          }
-        })
+    mainActViewModel.listenToCarUpdates()
+    mainActViewModel.getCarUpdates().observe(this, Observer {
+    updates ->
+    if (updates != null) {
+    when (updates.state) {
+    DataState.DELETE -> {
+    mainActViewModel.deleteCar(updates.car)
+    }
+    DataState.UPDATE -> {
+    mainActViewModel.updateCar(updates.car)
+    }
+    DataState.ADD -> {
+    mainActViewModel.addCar(updates.car)
+    }
+    }
+    }
+    })
 
     }*************/
 

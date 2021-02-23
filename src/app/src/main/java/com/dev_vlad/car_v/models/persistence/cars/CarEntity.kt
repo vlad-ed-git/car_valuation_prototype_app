@@ -53,29 +53,29 @@ data class CarEntity(
         var imageUrls: List<String>
 
 ) {
-        //empty constructor for fire store
-        constructor() : this(
-                carId = "",
-                bodyStyle = "",
-                extraDetails = "",
-                year = "",
-                make = "",
-                model = "",
-                color = "",
-                condition = "",
-                mileage = "",
-                hasBeenInAccident = false,
-                hasFloodDamage = false,
-                hasFlameDamage = false,
-                hasIssuesOnDashboard = false,
-                hasBrokenOrReplacedOdometer = false,
-                noOfTiresToReplace = 0,
-                hasCustomizations = false,
-                updatedAt = System.currentTimeMillis(),
-                createdAt = System.currentTimeMillis(),
-                ownerId = "",
-                imageUrls = arrayListOf<String>()
-        )
+    //empty constructor for fire store
+    constructor() : this(
+            carId = "",
+            bodyStyle = "",
+            extraDetails = "",
+            year = "",
+            make = "",
+            model = "",
+            color = "",
+            condition = "",
+            mileage = "",
+            hasBeenInAccident = false,
+            hasFloodDamage = false,
+            hasFlameDamage = false,
+            hasIssuesOnDashboard = false,
+            hasBrokenOrReplacedOdometer = false,
+            noOfTiresToReplace = 0,
+            hasCustomizations = false,
+            updatedAt = System.currentTimeMillis(),
+            createdAt = System.currentTimeMillis(),
+            ownerId = "",
+            imageUrls = arrayListOf<String>()
+    )
 }
 
 

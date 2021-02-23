@@ -5,15 +5,19 @@ import com.dev_vlad.car_v.models.persistence.auth.UserEntity
 import com.dev_vlad.car_v.models.persistence.auth.UserRepo
 import com.dev_vlad.car_v.models.persistence.cars.CarEntity
 import com.dev_vlad.car_v.models.persistence.cars.CarRepo
+import com.dev_vlad.car_v.models.persistence.offers.CarOfferEntity
+import com.dev_vlad.car_v.models.persistence.offers.OffersRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class DealersHomeViewModel (
+class DealersHomeViewModel(
         private val userRepo: UserRepo,
-        private val carRepo: CarRepo
+        private val carRepo: CarRepo,
+        private val offersRepo: OffersRepo
 ) : ViewModel() {
     init {
         setCurrentUser()
@@ -34,16 +38,32 @@ class DealersHomeViewModel (
     /*************** POSTS AND QUERIES ***************/
     private val postsState = MutableLiveData<PostsStateModifiers>(PostsStateModifiers())
 
-    fun observeCarsState() : LiveData<List<CarEntity>> = postsState.switchMap {
+    fun observeCarsState(): LiveData<List<CarsWrapperForDealers>> = postsState.switchMap {
         refreshPosts(query = it.query, page = it.page).asLiveData()
     }
 
-    private fun refreshPosts(query: String?, page: Int = 1): Flow<List<CarEntity>> =
+    private fun refreshPosts(query: String?, page: Int = 1): Flow<List<CarsWrapperForDealers>> =
             if (currentUser.value == null) emptyFlow()
             else carRepo.getAllCars(
                     pageNo = page,
                     query = query
-            )
+            ).map {
+                //check if dealer has sent offer for this
+                val mappedCarsWrapper = ArrayList<CarsWrapperForDealers>()
+                for (car in it) {
+                    val offer = offersRepo.getMyNonObservableOfferIfExist(
+                            carId = car.carId,
+                            ownerId = car.ownerId,
+                            dealersId = currentUser.value!!.userId
+                    )
+                    val carsWrapper = CarsWrapperForDealers(
+                            offerSent = offer,
+                            car = car
+                    )
+                    mappedCarsWrapper.add(carsWrapper)
+                }
+                mappedCarsWrapper
+            }
 
 
     //TODO
@@ -70,4 +90,9 @@ class DealersHomeViewModel (
 data class PostsStateModifiers(
         var query: String? = null,
         var page: Int = 1
+)
+
+data class CarsWrapperForDealers(
+        val offerSent: CarOfferEntity?,
+        val car: CarEntity
 )

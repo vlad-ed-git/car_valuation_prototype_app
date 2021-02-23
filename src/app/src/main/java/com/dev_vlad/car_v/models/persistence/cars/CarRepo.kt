@@ -1,5 +1,6 @@
 package com.dev_vlad.car_v.models.persistence.cars
 
+import android.nfc.tech.MifareUltralight.PAGE_SIZE
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,7 +22,6 @@ class CarRepo(
 
     companion object {
         private val TAG = CarRepo::class.java.simpleName
-        private const val PAGE_SIZE = 30
     }
 
     private val registeredListeners = ArrayList<ListenerRegistration>()
@@ -39,9 +39,9 @@ class CarRepo(
         return if (query.isNullOrBlank()) {
             MyLogger.logThis(TAG, "getAllCars()", "page : $pageNo")
             carEntityDao.getAllCars(PAGE_SIZE, offset).map {
-                if (it.isEmpty() || it.size < PAGE_SIZE && !loadAllCarsExhausted){
+                if (it.isEmpty() || it.size < PAGE_SIZE && !loadAllCarsExhausted) {
                     //fetch more on time
-                    loadMoreCarsFromServer(pageNo=pageNo)
+                    loadMoreCarsFromServer(pageNo = pageNo)
                     loadAllCarsExhausted = true
                 }
                 it
@@ -65,7 +65,7 @@ class CarRepo(
             MyLogger.logThis(TAG, "getAllCarsByUser()", "page : $pageNo userId $userId offset $offset")
             carEntityDao.getAllCarsOfUser(userId, limit = PAGE_SIZE, offset = offset)
                     .map {
-                        if(it.isEmpty() && !loadAllCarsExhausted){
+                        if (it.isEmpty() && !loadAllCarsExhausted) {
                             loadAllCarsByUserExhausted = true
                             loadUserCarsFromServer(userId = userId)
                         }
@@ -108,43 +108,44 @@ class CarRepo(
         carEntityDao.updateCar(updatedCar)
     }
 
-    suspend fun deleteCar(car: CarEntity) : Boolean {
+    suspend fun deleteCar(car: CarEntity): Boolean {
         MyLogger.logThis(TAG, "deleteCar()", "car : ${car.carId}")
         val deleted = deleteCarsOnFireStore(car)
         if (deleted)
-        carEntityDao.deleteCar(car)
+            carEntityDao.deleteCar(car)
         return deleted
     }
 
 
     /******************************* FIRE STORE *************************************/
-    private suspend fun deleteCarsOnFireStore(car: CarEntity) : Boolean{
-       return try {
+    private suspend fun deleteCarsOnFireStore(car: CarEntity): Boolean {
+        return try {
             Firebase.firestore.collection(CARS_COLLECTION_NAME).document(car.carId)
-                .delete()
-                .await()
-                true
-        }catch (e : Exception){
+                    .delete()
+                    .await()
+            true
+        } catch (e: Exception) {
             MyLogger.logThis(TAG, "deleteCarsOnFireStore()", "deleting failed ${e.message}", e)
             false
         }
 
 
     }
+
     suspend fun addMyCarToFireStore(car: CarEntity): String? {
         return try {
             val carDoc =
-            if (car.carId.substring(0, UNSAVED_CAR_ID.length) == UNSAVED_CAR_ID) {
-                MyLogger.logThis(
-                        TAG, "addMyCarToFireStore()", "saving an unsaved new car"
-                )
-                Firebase.firestore.collection(CARS_COLLECTION_NAME).document()
-                        .also {
-                            car.carId = it.id
-                        }
-            }else {
-                Firebase.firestore.collection(CARS_COLLECTION_NAME).document(car.carId)
-            }
+                    if (car.carId.substring(0, UNSAVED_CAR_ID.length) == UNSAVED_CAR_ID) {
+                        MyLogger.logThis(
+                                TAG, "addMyCarToFireStore()", "saving an unsaved new car"
+                        )
+                        Firebase.firestore.collection(CARS_COLLECTION_NAME).document()
+                                .also {
+                                    car.carId = it.id
+                                }
+                    } else {
+                        Firebase.firestore.collection(CARS_COLLECTION_NAME).document(car.carId)
+                    }
             carDoc.set(car)
                     .await()
             car.carId
@@ -196,12 +197,12 @@ class CarRepo(
     private suspend fun loadMoreCarsFromServer(pageNo: Int = 1) {
         try {
 
-            MyLogger.logThis(TAG,"loadMoreCarsFromServer($pageNo)", "called--")
+            MyLogger.logThis(TAG, "loadMoreCarsFromServer($pageNo)", "called--")
             val carsCollection = Firebase.firestore.collection(CARS_COLLECTION_NAME)
             //first as in prev data depends on page
             val limit = if (pageNo <= 1) PAGE_SIZE else ((pageNo - 1) * PAGE_SIZE)
             val prevData = carsCollection
-                    .orderBy(DEFAULT_SORT_FIELD)
+                    .orderBy(DEFAULT_SORT_FIELD, Query.Direction.DESCENDING)
                     .limit(limit.toLong())
                     .get()
                     .await()
@@ -211,7 +212,7 @@ class CarRepo(
             if (pageNo > 1) {
                 val lastVisible = carSnapshots[carSnapshots.size - 1]
                 val nextData = carsCollection
-                        .orderBy(DEFAULT_SORT_FIELD)
+                        .orderBy(DEFAULT_SORT_FIELD, Query.Direction.DESCENDING)
                         .startAfter(lastVisible)
                         .limit(PAGE_SIZE.toLong())
                         .get()
@@ -219,7 +220,7 @@ class CarRepo(
                 carSnapshots = nextData.documents
             }
 
-            var i = 0; //TODO remove ...for debug only
+            var i = 0 //TODO remove ...for debug only
             for ((index, car) in carSnapshots.withIndex()) {
                 val aCar = car.toObject<CarEntity>()
                 if (aCar != null) {
@@ -228,16 +229,16 @@ class CarRepo(
                 }
             }
 
-            MyLogger.logThis(TAG,"loadMoreCarsFromServer($pageNo)", "found $i cars")
-        }catch (e : Exception){
-            MyLogger.logThis(TAG,"loadMoreCarsFromServer($pageNo)", "exc ${e.message}", e )
+            MyLogger.logThis(TAG, "loadMoreCarsFromServer($pageNo)", "found $i cars")
+        } catch (e: Exception) {
+            MyLogger.logThis(TAG, "loadMoreCarsFromServer($pageNo)", "exc ${e.message}", e)
         }
     }
 
 
     private suspend fun loadUserCarsFromServer(userId: String) {
         try {
-            MyLogger.logThis(TAG,"loadUserCarsFromServer($userId)", "called--")
+            MyLogger.logThis(TAG, "loadUserCarsFromServer($userId)", "called--")
             val carsCollection = Firebase.firestore.collection(CARS_COLLECTION_NAME)
             val prevData = carsCollection
                     .whereEqualTo(CAR_OWNER_FIELD, userId)
@@ -246,14 +247,14 @@ class CarRepo(
                     .await()
 
             val carSnapshots = prevData.documents
-            for ( car in carSnapshots ) {
+            for (car in carSnapshots) {
                 val aCar = car.toObject<CarEntity>()
                 if (aCar != null) {
                     carEntityDao.insert(aCar)
                 }
             }
-        }catch (e : Exception){
-            MyLogger.logThis(TAG,"loadMoreCarsFromServer()", "exc ${e.message}", e )
+        } catch (e: Exception) {
+            MyLogger.logThis(TAG, "loadMoreCarsFromServer()", "exc ${e.message}", e)
         }
     }
 
@@ -304,6 +305,7 @@ class CarRepo(
         }
         registeredListeners.add(carUpdatesListener)
     }
+
     fun removeListeners() {
         for (listener in registeredListeners) {
             listener.remove()

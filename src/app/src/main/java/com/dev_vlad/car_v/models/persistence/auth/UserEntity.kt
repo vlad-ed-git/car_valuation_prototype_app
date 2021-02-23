@@ -50,6 +50,7 @@ data class UserEntity(
             isDealer = false,
             isSeller = false
     )
+
     override fun toString(): String {
         return "id $userId , phoneNumber $userCode - $userPhone , userName $userName , country $userLocationCountry, isDealer $isDealer, isSeller $isSeller"
     }

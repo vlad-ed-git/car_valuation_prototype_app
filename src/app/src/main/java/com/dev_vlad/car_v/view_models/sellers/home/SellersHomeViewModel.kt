@@ -12,8 +12,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SellersHomeViewModel(
-    private val userRepo: UserRepo,
-    private val carRepo: CarRepo
+        private val userRepo: UserRepo,
+        private val carRepo: CarRepo
 ) : ViewModel() {
     init {
         setCurrentUser()
@@ -34,17 +34,17 @@ class SellersHomeViewModel(
     /*************** POSTS AND QUERIES ***************/
     private val postsState = MutableLiveData<PostsStateModifiers>(PostsStateModifiers())
 
-    fun observeMyCarsState() : LiveData<List<CarEntity>> = postsState.switchMap {
+    fun observeMyCarsState(): LiveData<List<CarEntity>> = postsState.switchMap {
         refreshPosts(query = it.query, page = it.page).asLiveData()
     }
 
     private fun refreshPosts(query: String?, page: Int = 1): Flow<List<CarEntity>> =
-        if (currentUser.value == null) emptyFlow()
-        else carRepo.getAllCarsByUser(
-            pageNo = page,
-            userId = currentUser.value!!.userId,
-            query = query
-        )
+            if (currentUser.value == null) emptyFlow()
+            else carRepo.getAllCarsByUser(
+                    pageNo = page,
+                    userId = currentUser.value!!.userId,
+                    query = query
+            )
 
 
     //TODO
@@ -52,8 +52,8 @@ class SellersHomeViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             //modify query and page
             val newState = PostsStateModifiers(
-                query = query,
-                page = 1
+                    query = query,
+                    page = 1
             )
             postsState.postValue(newState)
         }
@@ -69,6 +69,6 @@ class SellersHomeViewModel(
 }
 
 data class PostsStateModifiers(
-    var query: String? = null,
-    var page: Int = 1
+        var query: String? = null,
+        var page: Int = 1
 )

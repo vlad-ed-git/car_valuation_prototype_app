@@ -13,31 +13,34 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.dev_vlad.car_v.R
-import com.dev_vlad.car_v.databinding.MyCarsItemBinding
-import com.dev_vlad.car_v.models.persistence.cars.CarEntity
+import com.dev_vlad.car_v.databinding.ReceivedOfferItemBinding
+import com.dev_vlad.car_v.view_models.sellers.offers.CarNReceivedOfferWrapper
 import java.util.*
 
-class MyCarsAdapter(private val actionListener: MyCarsActionsListener) :
-        ListAdapter<CarEntity, MyCarsAdapter.MyCarsAdapterVH>(MyCarsAdapterDifUtil()) {
+class ReceivedOffersAdapter(private val actionListener: ReceivedOffersActionsListener) :
+        ListAdapter<CarNReceivedOfferWrapper, ReceivedOffersAdapter.ReceivedOffersAdapterVH>(ReceivedOffersAdapterDifUtil()) {
 
     companion object {
-        private val TAG = MyCarsAdapter::class.java.simpleName
+        private val TAG = ReceivedOffersAdapter::class.java.simpleName
     }
 
-    interface MyCarsActionsListener {
-        fun onCarClicked(clickedCar: CarEntity)
+    interface ReceivedOffersActionsListener {
+        fun onReceivedOffersClicked(item: CarNReceivedOfferWrapper)
     }
 
-    class MyCarsAdapterVH(private val binding: MyCarsItemBinding) :
+    class ReceivedOffersAdapterVH(private val binding: ReceivedOfferItemBinding) :
             RecyclerView.ViewHolder(binding.root) {
-        fun bind(car: CarEntity, actionListener: MyCarsActionsListener) {
+        fun bind(item: CarNReceivedOfferWrapper, actionListener: ReceivedOffersActionsListener) {
             binding.apply {
+                val car = item.car
                 val titleTxt =
                         car.make.capitalize(Locale.getDefault()) + " " + car.model.capitalize(Locale.getDefault())
-                title.text = titleTxt
-                carCard.setOnClickListener {
-                    actionListener.onCarClicked(car)
+                carTitle.text = titleTxt
+                itemView.setOnClickListener {
+                    actionListener.onReceivedOffersClicked(item)
                 }
+                val formattedPrice = item.offer.offerPrice.toString() + " " + itemView.context.getString(R.string.currency_suffix)
+                initialPrice.text = formattedPrice
                 val imgUrl = if (car.imageUrls.isNotEmpty() && car.imageUrls[0].length > 4) car.imageUrls[0]
                 else ""
                 Glide.with(itemView.context)
@@ -61,38 +64,38 @@ class MyCarsAdapter(private val actionListener: MyCarsActionsListener) :
                                             dataSource: DataSource?,
                                             isFirstResource: Boolean
                                     ): Boolean {
-                                        featuredImage.scaleType = ImageView.ScaleType.CENTER_CROP
+                                        carImg.scaleType = ImageView.ScaleType.CENTER_CROP
                                         return false
                                     }
 
                                 }
                         )
-                        .into(featuredImage)
+                        .into(carImg)
 
             }
         }
 
     }
 
-    class MyCarsAdapterDifUtil : DiffUtil.ItemCallback<CarEntity>() {
-        override fun areItemsTheSame(oldItem: CarEntity, newItem: CarEntity): Boolean {
-            return oldItem.carId == newItem.carId
+    class ReceivedOffersAdapterDifUtil : DiffUtil.ItemCallback<CarNReceivedOfferWrapper>() {
+        override fun areItemsTheSame(oldItem: CarNReceivedOfferWrapper, newItem: CarNReceivedOfferWrapper): Boolean {
+            return (oldItem.car.carId == newItem.car.carId) && (oldItem.offer.offerId == newItem.offer.offerId)
         }
 
-        override fun areContentsTheSame(oldItem: CarEntity, newItem: CarEntity): Boolean {
-            return (oldItem.carId == newItem.carId) &&
-                    (oldItem.updatedAt == newItem.updatedAt)
+        override fun areContentsTheSame(oldItem: CarNReceivedOfferWrapper, newItem: CarNReceivedOfferWrapper): Boolean {
+            return (oldItem.car == newItem.car) &&
+                    (oldItem.offer == newItem.offer)
         }
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyCarsAdapterVH {
-        val myCarsItemBinding =
-                MyCarsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return MyCarsAdapterVH(myCarsItemBinding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReceivedOffersAdapterVH {
+        val binding =
+                ReceivedOfferItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ReceivedOffersAdapterVH(binding)
     }
 
-    override fun onBindViewHolder(holder: MyCarsAdapterVH, position: Int) {
+    override fun onBindViewHolder(holder: ReceivedOffersAdapterVH, position: Int) {
         val car = getItem(position)
         if (car != null)
             holder.bind(car, actionListener)

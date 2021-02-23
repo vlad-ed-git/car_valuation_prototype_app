@@ -1,9 +1,10 @@
-package com.dev_vlad.car_v.views.adapters.sellers
+package com.dev_vlad.car_v.views.adapters.dealers
 
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,30 +14,35 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.dev_vlad.car_v.R
-import com.dev_vlad.car_v.databinding.MyCarsItemBinding
-import com.dev_vlad.car_v.models.persistence.cars.CarEntity
+import com.dev_vlad.car_v.databinding.CarsItemBinding
+import com.dev_vlad.car_v.view_models.dealers.home.CarsWrapperForDealers
 import java.util.*
 
-class MyCarsAdapter(private val actionListener: MyCarsActionsListener) :
-        ListAdapter<CarEntity, MyCarsAdapter.MyCarsAdapterVH>(MyCarsAdapterDifUtil()) {
+class CarsAdapter(private val actionListener: CarsActionsListener) :
+        ListAdapter<CarsWrapperForDealers, CarsAdapter.CarsAdapterVH>(CarsAdapterDifUtil()) {
 
     companion object {
-        private val TAG = MyCarsAdapter::class.java.simpleName
+        private val TAG = CarsAdapter::class.java.simpleName
     }
 
-    interface MyCarsActionsListener {
-        fun onCarClicked(clickedCar: CarEntity)
+    interface CarsActionsListener {
+        fun onCarClicked(clickedCar: CarsWrapperForDealers)
     }
 
-    class MyCarsAdapterVH(private val binding: MyCarsItemBinding) :
+    class CarsAdapterVH(private val binding: CarsItemBinding) :
             RecyclerView.ViewHolder(binding.root) {
-        fun bind(car: CarEntity, actionListener: MyCarsActionsListener) {
+        fun bind(carWrapperForDealer: CarsWrapperForDealers, actionListener: CarsActionsListener) {
             binding.apply {
+                val car = carWrapperForDealer.car
                 val titleTxt =
                         car.make.capitalize(Locale.getDefault()) + " " + car.model.capitalize(Locale.getDefault())
                 title.text = titleTxt
+
+                //offer sent or not
+                hasMadeOffer.isVisible = (carWrapperForDealer.offerSent != null)
+
                 carCard.setOnClickListener {
-                    actionListener.onCarClicked(car)
+                    actionListener.onCarClicked(carWrapperForDealer)
                 }
                 val imgUrl = if (car.imageUrls.isNotEmpty() && car.imageUrls[0].length > 4) car.imageUrls[0]
                 else ""
@@ -74,25 +80,26 @@ class MyCarsAdapter(private val actionListener: MyCarsActionsListener) :
 
     }
 
-    class MyCarsAdapterDifUtil : DiffUtil.ItemCallback<CarEntity>() {
-        override fun areItemsTheSame(oldItem: CarEntity, newItem: CarEntity): Boolean {
-            return oldItem.carId == newItem.carId
+    class CarsAdapterDifUtil : DiffUtil.ItemCallback<CarsWrapperForDealers>() {
+        override fun areItemsTheSame(oldItem: CarsWrapperForDealers, newItem: CarsWrapperForDealers): Boolean {
+            return oldItem.car.carId == newItem.car.carId
         }
 
-        override fun areContentsTheSame(oldItem: CarEntity, newItem: CarEntity): Boolean {
-            return (oldItem.carId == newItem.carId) &&
-                    (oldItem.updatedAt == newItem.updatedAt)
+        override fun areContentsTheSame(oldItem: CarsWrapperForDealers, newItem: CarsWrapperForDealers): Boolean {
+            return (oldItem.car.carId == newItem.car.carId) &&
+                    (oldItem.car.updatedAt == newItem.car.updatedAt) &&
+                    (oldItem.offerSent?.offerPrice == newItem.offerSent?.offerPrice)
         }
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyCarsAdapterVH {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarsAdapterVH {
         val myCarsItemBinding =
-                MyCarsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return MyCarsAdapterVH(myCarsItemBinding)
+                CarsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return CarsAdapterVH(myCarsItemBinding)
     }
 
-    override fun onBindViewHolder(holder: MyCarsAdapterVH, position: Int) {
+    override fun onBindViewHolder(holder: CarsAdapterVH, position: Int) {
         val car = getItem(position)
         if (car != null)
             holder.bind(car, actionListener)

@@ -7,6 +7,18 @@
     android:id="@+id/container"
     tools:context=".views.sellers.home.SellersHomeFragment">
 
+    <ProgressBar
+        android:id="@+id/loading_bar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/accent"
+        android:visibility="visible"
+        android:layout_gravity="center_horizontal"
+        />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/my_cars"
         android:layout_width="match_parent"

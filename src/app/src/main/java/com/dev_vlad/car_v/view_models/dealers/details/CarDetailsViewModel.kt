@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dev_vlad.car_v.R
 import com.dev_vlad.car_v.models.persistence.auth.UserEntity
 import com.dev_vlad.car_v.models.persistence.auth.UserRepo
 import com.dev_vlad.car_v.models.persistence.cars.CarEntity
@@ -18,79 +19,99 @@ import kotlinx.coroutines.withContext
 class CarDetailsViewModel(private val userRepo: UserRepo, private val carRepo: CarRepo, private val offersRepo: OffersRepo) : ViewModel() {
 
 
-    /** ////////////////// AUTHENTICATION ///////////////////////// */
-    init {
-        setCurrentUser()
-    }
-    private var currentUser : UserEntity? = null
-
-    private fun setCurrentUser() {
-        if (currentUser != null)
-            return
-        viewModelScope.launch(Dispatchers.IO) {
-            val userData = userRepo.getNonObservableUser()[0]
-            withContext(Dispatchers.Main) {
-                currentUser = userData
-            }
-        }
-    }
-    /** ////////////////// AUTH END ///////////////////////// */
-
-    private val carData = MutableLiveData<CarEntity?>()
-    fun observeCar(): LiveData<CarEntity?> = carData
-    fun fetchCarDetails(carId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val car = carRepo.getNonObservableCarDetailsById(carId)
-            withContext(Dispatchers.Main) {
-                carData.value = car
-            }
-        }
-    }
-
-
-
-    enum class SENDING_OFFER_STATE{
+    //STATE
+    enum class STATE {
         IDLE,
+        INITIALIZING,
+        INITIALIZED,
         SENDING,
         SENT,
         ERROR
     }
-    val errMsg : Int? = null
-    private val sendingOfferState = MutableLiveData<SENDING_OFFER_STATE>(SENDING_OFFER_STATE.IDLE)
-    fun observeInitialOfferState() : LiveData<SENDING_OFFER_STATE> = sendingOfferState
-    fun isSendingOffer(): Boolean {
-        return sendingOfferState.value == SENDING_OFFER_STATE.SENDING
-    }
 
-    fun saveOffer(initialOfferPrice: Int, message: String) {
-        sendingOfferState.value = SENDING_OFFER_STATE.SENDING
-        val car =  carData.value
-        val userId = currentUser?.userId
-        if (car != null && userId != null) {
-            val newOffer = CarOfferEntity(
-                offerId  = "offer_todo",
-                dealerId = userId,
-                ownerId = car.ownerId,
-                carId = car.carId,
-                updatedAt = System.currentTimeMillis(),
-                offerPrice = initialOfferPrice,
-                offerMessage = message
-            )
-            viewModelScope.launch(Dispatchers.IO) {
-               val isSent =  offersRepo.addOffer(newOffer)
-                if (isSent){
-                    sendingOfferState.value = SENDING_OFFER_STATE.SENT
-                }else{
-                    sendingOfferState.value = SENDING_OFFER_STATE.ERROR
+    var errMsg: Int? = null
+    private val sendingOfferState = MutableLiveData<STATE>(STATE.IDLE)
+
+
+    //OFFER DATA
+    private var offerWrapper: OfferWrapper? = null
+    fun getInitialOfferIfExist() = offerWrapper?.offer?.offerPrice
+    fun getCarData() = offerWrapper!!.car
+    fun fetchCarAndOfferDetails(carId: String) {
+        sendingOfferState.value = STATE.INITIALIZING
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val dealer = userRepo.getNonObservableUser()[0]
+                val car = carRepo.getNonObservableCarDetailsById(carId)
+                val myOffer = offersRepo.getMyNonObservableOfferIfExist(carId = car!!.carId, ownerId = car.ownerId, dealersId = dealer.userId)
+                withContext(Dispatchers.Main) {
+                    offerWrapper = OfferWrapper(
+                            car = car, dealer = dealer, offer = myOffer
+                    )
+                    sendingOfferState.value = STATE.INITIALIZED
+                }
+            } catch (exception: Exception) {
+                withContext(Dispatchers.Main) {
+                    MyLogger.logThis(
+                            TAG, "fetchCarDetails()", "EXC RAISED ${exception.message}", exception)
+                    errMsg = R.string.failed_to_init_car_details
+                    offerWrapper = null
+                    sendingOfferState.value = STATE.ERROR
                 }
             }
-        }else{
-            MyLogger.logThis(TAG, "saveOffer", "car is null!")
-            sendingOfferState.value = SENDING_OFFER_STATE.ERROR
+
         }
     }
 
-    companion object{
+    fun observeOfferState(): LiveData<STATE> = sendingOfferState
+    fun isSendingOffer(): Boolean {
+        return sendingOfferState.value == STATE.SENDING
+    }
+
+    fun saveOffer(initialOfferPrice: Int, message: String) {
+        sendingOfferState.value = STATE.SENDING
+        val car = offerWrapper?.car
+        val userId = offerWrapper?.dealer?.userId
+        val offerId = offerWrapper?.offer?.offerId ?: "" //TO BE SET DURING SAVE BY FIREBASE
+        val prevPrice = offerWrapper?.offer?.offerPrice
+        if (initialOfferPrice == prevPrice) {
+            sendingOfferState.value = STATE.SENT
+            return
+        }
+        if (car != null && userId != null) {
+            val newOffer = CarOfferEntity(
+                    offerId = offerId,
+                    dealerId = userId,
+                    ownerId = car.ownerId,
+                    carId = car.carId,
+                    updatedAt = System.currentTimeMillis(),
+                    offerPrice = initialOfferPrice,
+                    offerMessage = message
+            )
+            viewModelScope.launch(Dispatchers.IO) {
+                val isSent = offersRepo.addOffer(newOffer)
+                withContext(Dispatchers.Main) {
+                    if (isSent) {
+                        sendingOfferState.value = STATE.SENT
+                    } else {
+                        sendingOfferState.value = STATE.ERROR
+                    }
+                }
+            }
+        } else {
+            MyLogger.logThis(TAG, "saveOffer", "car is null!")
+            sendingOfferState.value = STATE.ERROR
+        }
+    }
+
+
+    companion object {
         private val TAG = CarDetailsViewModel::class.java.simpleName
     }
 }
+
+data class OfferWrapper(
+        val car: CarEntity,
+        val offer: CarOfferEntity?,
+        val dealer: UserEntity
+)

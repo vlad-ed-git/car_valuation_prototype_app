@@ -4,6 +4,8 @@ import androidx.lifecycle.*
 import com.dev_vlad.car_v.R
 import com.dev_vlad.car_v.models.persistence.auth.UserEntity
 import com.dev_vlad.car_v.models.persistence.auth.UserRepo
+import com.dev_vlad.car_v.models.persistence.cars.CarRepo
+import com.dev_vlad.car_v.models.persistence.offers.OffersRepo
 import com.dev_vlad.car_v.util.MyLogger
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
@@ -14,7 +16,7 @@ import com.google.firebase.auth.PhoneAuthProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class AuthViewModel(private val repository: UserRepo) : ViewModel() {
+class AuthViewModel(private val userRepo: UserRepo, private val carRepo: CarRepo, private val offersRepo: OffersRepo) : ViewModel() {
 
     companion object {
         private val TAG = AuthViewModel::class.java.simpleName
@@ -42,7 +44,7 @@ class AuthViewModel(private val repository: UserRepo) : ViewModel() {
     fun getCountries() = countries
     fun setCountryAndGetCode(country: String?): String {
         MyLogger.logThis(
-            TAG, "getCountryCode()", "country $country"
+                TAG, "getCountryCode()", "country $country"
         )
         if (country.isNullOrBlank()) return ""
         userCountry = country //set country
@@ -63,7 +65,7 @@ class AuthViewModel(private val repository: UserRepo) : ViewModel() {
     var storedVerificationId: String? = null
     var resendToken: PhoneAuthProvider.ForceResendingToken? = null
     val onVerificationStateChangedCallbacks = object :
-        PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         override fun onVerificationCompleted(credential: PhoneAuthCredential) {
             // This callback will be invoked in two situations:
             // 1 - Instant verification. In some cases the phone number can be instantly
@@ -95,8 +97,8 @@ class AuthViewModel(private val repository: UserRepo) : ViewModel() {
         }
 
         override fun onCodeSent(
-            verificationId: String,
-            token: PhoneAuthProvider.ForceResendingToken
+                verificationId: String,
+                token: PhoneAuthProvider.ForceResendingToken
         ) {
             // The SMS verification code has been sent to the provided phone number, we
             // now need to ask the user to enter the code and then construct a credential
@@ -118,46 +120,52 @@ class AuthViewModel(private val repository: UserRepo) : ViewModel() {
     fun storeUserInFireStoreIfNotExist(user: FirebaseUser) {
         setSignInState(SIGNINSTATE.SAVING_USER_IN_SERVER)
         MyLogger.logThis(
-            TAG, "storeUserInFireStore()", "user id $user.uid"
+                TAG, "storeUserInFireStore()", "user id $user.uid"
         )
 
 
         val userEntity = UserEntity(
-            userId = user.uid,
-            userPhone = userPhone,
-            userCode = userCode,
-            userLocationCountry = userCountry,
-            isDealer = false,
-            isSeller = false
+                userId = user.uid,
+                userPhone = userPhone,
+                userCode = userCode,
+                userLocationCountry = userCountry,
+                isDealer = false,
+                isSeller = false
         )
         userData.value = userEntity
-        viewModelScope.launch {
-            var existingUser = repository.getUserFromServerIfExists(userPhone)
-            if (existingUser == null){
+        viewModelScope.launch(Dispatchers.IO) {
+            var existingUser = userRepo.getUserFromServerIfExists(userPhone)
+            if (existingUser == null) {
                 //save first
-                val isSaved = repository.saveUserInFireStore(userEntity)
-                if(!isSaved) {
+                val isSaved = userRepo.saveUserInFireStore(userEntity)
+                if (!isSaved) {
                     //still not saved
                     setSignInState(SIGNINSTATE.STATE_SIGN_IN_FAILED)
                 }
                 existingUser = userEntity
                 saveUserLocally(existingUser)
-            }else{
+            } else {
+                //TODO sync other user data
+                if (existingUser.isDealer) {
+                    //fetch offers
+                    val isDone = offersRepo.loadOffersIMade(dealerId = existingUser.userId)
+                }
                 saveUserLocally(existingUser)
-            }
 
+
+            }
 
         }
 
     }
 
-    val userState: LiveData<List<UserEntity>> = repository.user.asLiveData()
+    val userState: LiveData<List<UserEntity>> = userRepo.user.asLiveData()
     private fun saveUserLocally(user: UserEntity) = viewModelScope.launch(Dispatchers.IO) {
-        repository.insertUser(user)
+        userRepo.insertUser(user)
         MyLogger.logThis(
-            TAG,
-            "saveUser()",
-            "savingUser locally -- $user"
+                TAG,
+                "saveUser()",
+                "savingUser locally -- $user"
         )
     }
 

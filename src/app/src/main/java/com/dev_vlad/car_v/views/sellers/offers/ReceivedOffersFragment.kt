@@ -1,4 +1,4 @@
-package com.dev_vlad.car_v.views.dealers.home
+package com.dev_vlad.car_v.views.sellers.offers
 
 import android.os.Bundle
 import android.view.*
@@ -8,36 +8,37 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dev_vlad.car_v.CarVApp
 import com.dev_vlad.car_v.R
-import com.dev_vlad.car_v.databinding.FragmentDealersHomeBinding
+import com.dev_vlad.car_v.databinding.FragmentReceivedOffersBinding
 import com.dev_vlad.car_v.util.MyLogger
 import com.dev_vlad.car_v.util.VerticalSpacingItemDecorator
-import com.dev_vlad.car_v.view_models.dealers.home.CarsWrapperForDealers
-import com.dev_vlad.car_v.view_models.dealers.home.DealersHomeViewModel
-import com.dev_vlad.car_v.view_models.dealers.home.DealersHomeViewModelFactory
-import com.dev_vlad.car_v.views.adapters.dealers.CarsAdapter
+import com.dev_vlad.car_v.view_models.sellers.offers.CarNReceivedOfferWrapper
+import com.dev_vlad.car_v.view_models.sellers.offers.ReceivedOffersViewModel
+import com.dev_vlad.car_v.view_models.sellers.offers.ReceivedOffersViewModelFactory
+import com.dev_vlad.car_v.views.adapters.sellers.ReceivedOffersAdapter
 
-class DealersHomeFragment : Fragment(), CarsAdapter.CarsActionsListener {
+class ReceivedOffersFragment : Fragment(), ReceivedOffersAdapter.ReceivedOffersActionsListener {
 
     companion object {
-        private val TAG = DealersHomeFragment::class.java.simpleName
+        private val TAG = ReceivedOffersFragment::class.java.simpleName
     }
 
-    private var _binding: FragmentDealersHomeBinding? = null
+    private var _binding: FragmentReceivedOffersBinding? = null
     private val binding get() = _binding!!
-    private val dealersHomeViewModel: DealersHomeViewModel by viewModels {
+    private val receivedOffersViewModel: ReceivedOffersViewModel by viewModels {
         val carVApp = (activity?.application as CarVApp)
-        DealersHomeViewModelFactory(carVApp.userRepo, carVApp.carRepo, carVApp.offerRepo)
+        ReceivedOffersViewModelFactory(carVApp.userRepo, carVApp.carRepo, carVApp.offerRepo)
     }
-    private val carsAdapter = CarsAdapter(this)
+    private val receivedOffersAdapter = ReceivedOffersAdapter(this)
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        _binding = FragmentDealersHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentReceivedOffersBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
         initViews()
 
@@ -46,33 +47,33 @@ class DealersHomeFragment : Fragment(), CarsAdapter.CarsActionsListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        dealersHomeViewModel.getCurrentUser().observe(
+        receivedOffersViewModel.getCurrentUser().observe(
                 viewLifecycleOwner, Observer {
             if (it != null) {
-                observeCars()
+                observeReceivedOffers()
             }
 
         }
         )
     }
 
-    private fun observeCars() {
-        dealersHomeViewModel.observeCarsState().observe(
+    private fun observeReceivedOffers() {
+        receivedOffersViewModel.observeReceivedOffers().observe(
                 viewLifecycleOwner, Observer {
             binding.loadingBar.isVisible = false
             if (it == null) {
                 MyLogger.logThis(
                         TAG,
-                        "observeCars()",
-                        "Cars List Is Null"
+                        "observeReceivedOffers()",
+                        "offers list is null"
                 )
             } else {
                 MyLogger.logThis(
                         TAG,
-                        "observeCars()",
-                        "Found ${it.size} cars"
+                        "observeReceivedOffers()",
+                        "Found ${it.size} offers"
                 )
-                carsAdapter.submitList(it)
+                receivedOffersAdapter.submitList(it)
             }
         }
         )
@@ -80,9 +81,11 @@ class DealersHomeFragment : Fragment(), CarsAdapter.CarsActionsListener {
 
     private fun initViews() {
         binding.apply {
-            carsRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            carsRv.adapter = carsAdapter
-            carsRv.addItemDecoration(VerticalSpacingItemDecorator(30))
+            receivedOffersRv.apply {
+                layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                adapter = receivedOffersAdapter
+                addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+            }
         }
     }
 
@@ -94,7 +97,7 @@ class DealersHomeFragment : Fragment(), CarsAdapter.CarsActionsListener {
 
     /******************** MENU ****************/
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.dealers_home_menu, menu)
+        inflater.inflate(R.menu.sellers_home_menu, menu)
 
     }
 
@@ -105,10 +108,8 @@ class DealersHomeFragment : Fragment(), CarsAdapter.CarsActionsListener {
         )
     }
 
-    override fun onCarClicked(clickedCar: CarsWrapperForDealers) {
-        val action = DealersHomeFragmentDirections.actionDealersHomeFragmentToCarDetailsFragment(clickedCar.car.carId)
-        findNavController().navigate(action)
+    override fun onReceivedOffersClicked(item: CarNReceivedOfferWrapper) {
+        //TODO
     }
-
 
 }

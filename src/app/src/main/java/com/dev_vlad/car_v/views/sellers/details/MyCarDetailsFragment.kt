@@ -35,8 +35,8 @@ class MyCarDetailsFragment : Fragment() {
     }
     private val carImagesAdapter = MyCarImagesAdapter()
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentMyCarDetailsBinding.inflate(inflater, container, false)
@@ -68,25 +68,25 @@ class MyCarDetailsFragment : Fragment() {
             swipeIndicator.isVisible = car.imageUrls.size > 1
             /* the details */
             val bodyStyleTxt =
-                getString(R.string.car_body_style_hint) + "\n" + car.bodyStyle.capitalize(Locale.getDefault())
+                    getString(R.string.car_body_style_hint) + "\n" + car.bodyStyle.capitalize(Locale.getDefault())
             val makeTxt =
-                getString(R.string.car_make_hint) + "\n" + car.make.capitalize(Locale.getDefault())
+                    getString(R.string.car_make_hint) + "\n" + car.make.capitalize(Locale.getDefault())
             val modelTxt =
-                getString(R.string.car_model_hint) + "\n" + car.model.capitalize(Locale.getDefault())
+                    getString(R.string.car_model_hint) + "\n" + car.model.capitalize(Locale.getDefault())
             val yearTxt =
-                getString(R.string.car_year_hint) + "\n" + car.year.capitalize(Locale.getDefault())
+                    getString(R.string.car_year_hint) + "\n" + car.year.capitalize(Locale.getDefault())
             val colorTxt =
-                getString(R.string.car_color_hint) + "\n" + car.color.capitalize(Locale.getDefault())
+                    getString(R.string.car_color_hint) + "\n" + car.color.capitalize(Locale.getDefault())
             val conditionTxt =
-                getString(R.string.add_car_condition_hint) + "\n" + car.condition.capitalize(Locale.getDefault())
+                    getString(R.string.add_car_condition_hint) + "\n" + car.condition.capitalize(Locale.getDefault())
             val mileageTxt =
-                getString(R.string.car_mileage_hint) + "\n" + car.mileage.capitalize(Locale.getDefault())
+                    getString(R.string.car_mileage_hint) + "\n" + car.mileage.capitalize(Locale.getDefault())
             val extraDetailsTxt =
-                getString(R.string.add_car_extra_details) + "\n" + car.extraDetails.capitalize(
-                    Locale.getDefault()
-                )
+                    getString(R.string.add_car_extra_details) + "\n" + car.extraDetails.capitalize(
+                            Locale.getDefault()
+                    )
             val replaceTiresTxt =
-                getString(R.string.car_tyres_to_replace_num_hint) + " " + car.noOfTiresToReplace.toString()
+                    getString(R.string.car_tyres_to_replace_num_hint) + " " + car.noOfTiresToReplace.toString()
             bodyStyle.text = bodyStyleTxt
             make.text = makeTxt
             model.text = modelTxt
@@ -120,9 +120,9 @@ class MyCarDetailsFragment : Fragment() {
         val carId = myCarDetailsVm.getCarId()
         if (carId != null) {
             val action =
-                MyCarDetailsFragmentDirections.actionMyCarDetailsFragmentToAddOrEditCarFragment(
-                    carId
-                )
+                    MyCarDetailsFragmentDirections.actionMyCarDetailsFragmentToAddOrEditCarFragment(
+                            carId
+                    )
             findNavController().navigate(action)
         }
     }
@@ -145,7 +145,7 @@ class MyCarDetailsFragment : Fragment() {
                 true
             }
             else -> item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(
-                item
+                    item
             )
         }
     }

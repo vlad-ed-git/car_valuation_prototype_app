@@ -3,14 +3,10 @@ package com.dev_vlad.car_v.view_models.activity_vm
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
 import com.dev_vlad.car_v.models.persistence.auth.UserEntity
 import com.dev_vlad.car_v.models.persistence.auth.UserRepo
-import com.dev_vlad.car_v.models.persistence.cars.CarEntity
 import com.dev_vlad.car_v.models.persistence.cars.CarRepo
 import com.dev_vlad.car_v.view_models.auth.AuthViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class MainActViewModel(private val userRepo: UserRepo, private val carRepo: CarRepo) : ViewModel() {
 
@@ -24,29 +20,29 @@ class MainActViewModel(private val userRepo: UserRepo, private val carRepo: CarR
     /********* DEALERS TODO OFFERS / CHATS
     /* sync */
     fun listenToCarUpdates(){
-        carRepo.listenForCarUpdates()
+    carRepo.listenForCarUpdates()
     }
 
     fun getCarUpdates() = carRepo.getCarUpdates()
 
 
     fun addCar(car: CarEntity) {
-        viewModelScope.launch(Dispatchers.IO) {
-            carRepo.addCar(car)
-        }
+    viewModelScope.launch(Dispatchers.IO) {
+    carRepo.addCar(car)
+    }
     }
 
     fun updateCar(car: CarEntity) {
-        viewModelScope.launch(Dispatchers.IO) {
-            carRepo.updateCar(car)
-        }
+    viewModelScope.launch(Dispatchers.IO) {
+    carRepo.updateCar(car)
+    }
 
     }
 
     fun deleteCar(car: CarEntity) {
-        viewModelScope.launch(Dispatchers.IO) {
-            carRepo.deleteCar(car)
-        }
+    viewModelScope.launch(Dispatchers.IO) {
+    carRepo.deleteCar(car)
+    }
     }
 
      *************/
