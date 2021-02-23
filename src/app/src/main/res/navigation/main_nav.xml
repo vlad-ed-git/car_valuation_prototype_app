@@ -137,5 +137,18 @@
         android:id="@+id/receivedOffersFragment"
         android:name="com.dev_vlad.car_v.views.sellers.offers.ReceivedOffersFragment"
         android:label="@string/fragment_received_offers_lbl"
-        tools:layout="@layout/fragment_received_offers" />
+        tools:layout="@layout/fragment_received_offers" >
+        <action
+            android:id="@+id/action_receivedOffersFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.dev_vlad.car_v.views.chat.ChatFragment"
+        android:label="@string/fragment_chat_lbl"
+        tools:layout="@layout/fragment_chat" >
+        <argument
+            android:name="ChatInitializationData"
+            app:argType="com.dev_vlad.car_v.models.persistence.chat.ChatInitiateData" />
+    </fragment>
 </navigation>

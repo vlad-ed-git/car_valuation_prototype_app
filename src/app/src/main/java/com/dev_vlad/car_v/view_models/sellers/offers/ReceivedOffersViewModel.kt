@@ -15,10 +15,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ReceivedOffersViewModel(
-        private val userRepo: UserRepo,
-        private val carRepo: CarRepo,
-        private val offersRepo: OffersRepo)
-    : ViewModel() {
+    private val userRepo: UserRepo,
+    private val carRepo: CarRepo,
+    private val offersRepo: OffersRepo
+) : ViewModel() {
 
     init {
         setCurrentUser()
@@ -39,35 +39,36 @@ class ReceivedOffersViewModel(
     /***************** AUTH ************************/
     private var currentPage = 1
 
-    fun observeReceivedOffers(): LiveData<List<CarNReceivedOfferWrapper>> = refreshPosts().asLiveData()
+    fun observeReceivedOffers(): LiveData<List<CarNReceivedOfferWrapper>> =
+        refreshPosts().asLiveData()
 
     private fun refreshPosts(): Flow<List<CarNReceivedOfferWrapper>> =
-            if (currentUser.value == null) emptyFlow()
-            else offersRepo.getReceivedOffers(
-                    userId = currentUser.value!!.userId,
-                    pageNo = currentPage,
-            ).map {
-                //check if dealer has sent offer for this
-                val receivedOffersWrapped = ArrayList<CarNReceivedOfferWrapper>()
-                for (offer in it) {
-                    val car = carRepo.getNonObservableCarDetailsById(
-                            carId = offer.carId
+        if (currentUser.value == null) emptyFlow()
+        else offersRepo.getReceivedOffers(
+            userId = currentUser.value!!.userId,
+            pageNo = currentPage,
+        ).map {
+            //check if dealer has sent offer for this
+            val receivedOffersWrapped = ArrayList<CarNReceivedOfferWrapper>()
+            for (offer in it) {
+                val car = carRepo.getNonObservableCarDetailsById(
+                    carId = offer.carId
+                )
+                if (car != null) {
+                    val item = CarNReceivedOfferWrapper(
+                        offer = offer,
+                        car = car
                     )
-                    if (car != null) {
-                        val item = CarNReceivedOfferWrapper(
-                                offer = offer,
-                                car = car
-                        )
-                        receivedOffersWrapped.add(item)
-                    }
+                    receivedOffersWrapped.add(item)
                 }
-                receivedOffersWrapped
             }
+            receivedOffersWrapped
+        }
 
 
 }
 
 data class CarNReceivedOfferWrapper(
-        val car: CarEntity,
-        val offer: CarOfferEntity
+    val car: CarEntity,
+    val offer: CarOfferEntity
 )

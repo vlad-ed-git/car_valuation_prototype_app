@@ -6,7 +6,7 @@ import com.dev_vlad.car_v.models.persistence.auth.UserRepo
 import com.dev_vlad.car_v.models.persistence.cars.CarRepo
 
 class SellersHomeViewModelFactory(private val repository: UserRepo, private val carRepo: CarRepo) :
-        ViewModelProvider.Factory {
+    ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SellersHomeViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")

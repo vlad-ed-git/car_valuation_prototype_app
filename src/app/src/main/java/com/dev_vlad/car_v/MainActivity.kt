@@ -35,17 +35,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
 
         val navHostFragment =
-                supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
         //specify home fragments
         appBarConfiguration = AppBarConfiguration(
-                setOf(
-                        R.id.sellersHomeFragment,
-                        R.id.dealersHomeFragment,
-                        R.id.splashFragment,
-                        R.id.loginFragment,
-                        R.id.welcomeFragment
-                )
+            setOf(
+                R.id.sellersHomeFragment,
+                R.id.dealersHomeFragment,
+                R.id.splashFragment,
+                R.id.loginFragment,
+                R.id.welcomeFragment
+            )
         )
         setSupportActionBar(binding.toolbar)
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -95,6 +95,12 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.carDetailsFragment -> {
                     binding.toolbar.title = getString(R.string.fragment_dealer_car_details_lbl)
+                    binding.toolbar.isVisible = true
+                    binding.bottomNav.isVisible = false
+                }
+
+                R.id.chatFragment -> {
+                    binding.toolbar.title = getString(R.string.fragment_chat_lbl)
                     binding.toolbar.isVisible = true
                     binding.bottomNav.isVisible = false
                 }

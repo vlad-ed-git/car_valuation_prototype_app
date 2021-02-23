@@ -16,7 +16,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CarDetailsViewModel(private val userRepo: UserRepo, private val carRepo: CarRepo, private val offersRepo: OffersRepo) : ViewModel() {
+class CarDetailsViewModel(
+    private val userRepo: UserRepo,
+    private val carRepo: CarRepo,
+    private val offersRepo: OffersRepo
+) : ViewModel() {
 
 
     //STATE
@@ -43,17 +47,22 @@ class CarDetailsViewModel(private val userRepo: UserRepo, private val carRepo: C
             try {
                 val dealer = userRepo.getNonObservableUser()[0]
                 val car = carRepo.getNonObservableCarDetailsById(carId)
-                val myOffer = offersRepo.getMyNonObservableOfferIfExist(carId = car!!.carId, ownerId = car.ownerId, dealersId = dealer.userId)
+                val myOffer = offersRepo.getMyNonObservableOfferIfExist(
+                    carId = car!!.carId,
+                    ownerId = car.ownerId,
+                    dealersId = dealer.userId
+                )
                 withContext(Dispatchers.Main) {
                     offerWrapper = OfferWrapper(
-                            car = car, dealer = dealer, offer = myOffer
+                        car = car, dealer = dealer, offer = myOffer
                     )
                     sendingOfferState.value = STATE.INITIALIZED
                 }
             } catch (exception: Exception) {
                 withContext(Dispatchers.Main) {
                     MyLogger.logThis(
-                            TAG, "fetchCarDetails()", "EXC RAISED ${exception.message}", exception)
+                        TAG, "fetchCarDetails()", "EXC RAISED ${exception.message}", exception
+                    )
                     errMsg = R.string.failed_to_init_car_details
                     offerWrapper = null
                     sendingOfferState.value = STATE.ERROR
@@ -80,13 +89,13 @@ class CarDetailsViewModel(private val userRepo: UserRepo, private val carRepo: C
         }
         if (car != null && userId != null) {
             val newOffer = CarOfferEntity(
-                    offerId = offerId,
-                    dealerId = userId,
-                    ownerId = car.ownerId,
-                    carId = car.carId,
-                    updatedAt = System.currentTimeMillis(),
-                    offerPrice = initialOfferPrice,
-                    offerMessage = message
+                offerId = offerId,
+                dealerId = userId,
+                ownerId = car.ownerId,
+                carId = car.carId,
+                updatedAt = System.currentTimeMillis(),
+                offerPrice = initialOfferPrice,
+                offerMessage = message
             )
             viewModelScope.launch(Dispatchers.IO) {
                 val isSent = offersRepo.addOffer(newOffer)
@@ -111,7 +120,7 @@ class CarDetailsViewModel(private val userRepo: UserRepo, private val carRepo: C
 }
 
 data class OfferWrapper(
-        val car: CarEntity,
-        val offer: CarOfferEntity?,
-        val dealer: UserEntity
+    val car: CarEntity,
+    val offer: CarOfferEntity?,
+    val dealer: UserEntity
 )

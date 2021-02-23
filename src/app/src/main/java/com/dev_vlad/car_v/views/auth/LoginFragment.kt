@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -42,12 +41,16 @@ class LoginFragment : Fragment() {
     private val binding get() = _binding!!
     private val authViewModel: AuthViewModel by viewModels {
         val carVApp = (activity?.application as CarVApp)
-        AuthViewModelFactory(userRepo = carVApp.userRepo, carRepo = carVApp.carRepo, offersRepo = carVApp.offerRepo)
+        AuthViewModelFactory(
+            userRepo = carVApp.userRepo,
+            carRepo = carVApp.carRepo,
+            offersRepo = carVApp.offerRepo
+        )
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
@@ -64,19 +67,19 @@ class LoginFragment : Fragment() {
     private fun initViews() {
         binding.apply {
             val adapter =
-                    ArrayAdapter(requireContext(), R.layout.country_item, authViewModel.getCountries())
+                ArrayAdapter(requireContext(), R.layout.country_item, authViewModel.getCountries())
             val countryInput = (countryPicker.editText as? AutoCompleteTextView)
             countryInput?.setAdapter(adapter)
             countryInput?.onItemClickListener =
-                    OnItemClickListener { _, _, position, _ ->
-                        val selectedCountry: String? = adapter.getItem(position)
-                        val countryCode = authViewModel.setCountryAndGetCode(selectedCountry)
-                        MyLogger.logThis(
-                                TAG, "initViews()", "country $selectedCountry code $countryCode"
-                        )
-                        phoneCode.editText?.setText(countryCode)
+                OnItemClickListener { _, _, position, _ ->
+                    val selectedCountry: String? = adapter.getItem(position)
+                    val countryCode = authViewModel.setCountryAndGetCode(selectedCountry)
+                    MyLogger.logThis(
+                        TAG, "initViews()", "country $selectedCountry code $countryCode"
+                    )
+                    phoneCode.editText?.setText(countryCode)
 
-                    }
+                }
         }
     }
 
@@ -119,71 +122,71 @@ class LoginFragment : Fragment() {
 
     private fun observeAuthState() {
         authViewModel.userState.observe(
-                viewLifecycleOwner,
-                Observer {
-                    if (it.isNullOrEmpty() || it.size != 1) {
-                        authViewModel.setSignInState(SIGNINSTATE.IDLE)
-                    } else {
-                        authViewModel.setSignInState(SIGNINSTATE.STATE_SIGN_IN_SUCCESS)
-                    }
+            viewLifecycleOwner,
+            Observer {
+                if (it.isNullOrEmpty() || it.size != 1) {
+                    authViewModel.setSignInState(SIGNINSTATE.IDLE)
+                } else {
+                    authViewModel.setSignInState(SIGNINSTATE.STATE_SIGN_IN_SUCCESS)
                 }
+            }
         )
     }
 
     private fun observeSignInProcess() {
         authViewModel.getLoginState().observe(
-                viewLifecycleOwner, Observer {
-            when (it) {
-                SIGNINSTATE.VERIFICATION_IN_PROGRESS -> {
-                    binding.loadingBar.isVisible = true
-                }
-                SIGNINSTATE.STATE_VERIFY_SUCCESS -> {
-                    //auto verified
-                    binding.getVerificationCode.setText(R.string.verified_txt)
-                    binding.verificationCode.isEnabled = true
-                    disableActions()
-                    signInWithCredentials()
-                }
-                SIGNINSTATE.STATE_VERIFY_FAILED -> {
-                    binding.getVerificationCode.setText(R.string.resend_code_txt)
-                    binding.getVerificationCode.isEnabled = true
-                    binding.loadingBar.isVisible = false
-                    val errRes = authViewModel.signInErrRes ?: R.string.verification_err_unknown
-                    authViewModel.signInErrRes = null //clear after user
-                    showSnackBar(errRes, true)
-                }
-                SIGNINSTATE.STATE_CODE_SENT -> {
-                    binding.getVerificationCode.setText(R.string.resend_code_txt)
-                    binding.getVerificationCode.isEnabled = true
-                    binding.loadingBar.isVisible = false
-                    showSnackBar(
+            viewLifecycleOwner, Observer {
+                when (it) {
+                    SIGNINSTATE.VERIFICATION_IN_PROGRESS -> {
+                        binding.loadingBar.isVisible = true
+                    }
+                    SIGNINSTATE.STATE_VERIFY_SUCCESS -> {
+                        //auto verified
+                        binding.getVerificationCode.setText(R.string.verified_txt)
+                        binding.verificationCode.isEnabled = true
+                        disableActions()
+                        signInWithCredentials()
+                    }
+                    SIGNINSTATE.STATE_VERIFY_FAILED -> {
+                        binding.getVerificationCode.setText(R.string.resend_code_txt)
+                        binding.getVerificationCode.isEnabled = true
+                        binding.loadingBar.isVisible = false
+                        val errRes = authViewModel.signInErrRes ?: R.string.verification_err_unknown
+                        authViewModel.signInErrRes = null //clear after user
+                        showSnackBar(errRes, true)
+                    }
+                    SIGNINSTATE.STATE_CODE_SENT -> {
+                        binding.getVerificationCode.setText(R.string.resend_code_txt)
+                        binding.getVerificationCode.isEnabled = true
+                        binding.loadingBar.isVisible = false
+                        showSnackBar(
                             errorRes = R.string.verification_code_was_sent_txt,
                             isError = false
-                    )
-                    binding.signIn.isEnabled = true
-                }
-                SIGNINSTATE.STATE_SIGN_IN_FAILED -> {
-                    //reset everything
-                    resetViewsState()
-                    val errorRes = authViewModel.signInErrRes ?: R.string.failed_to_sign_in_err
-                    authViewModel.signInErrRes = null //clear
-                    showSnackBar(errorRes, isError = true)
-                }
+                        )
+                        binding.signIn.isEnabled = true
+                    }
+                    SIGNINSTATE.STATE_SIGN_IN_FAILED -> {
+                        //reset everything
+                        resetViewsState()
+                        val errorRes = authViewModel.signInErrRes ?: R.string.failed_to_sign_in_err
+                        authViewModel.signInErrRes = null //clear
+                        showSnackBar(errorRes, isError = true)
+                    }
 
-                SIGNINSTATE.STATE_SIGN_IN_SUCCESS -> {
-                    resetViewsState()
-                    val action = LoginFragmentDirections.actionLoginFragmentToWelcomeFragment()
-                    findNavController().navigate(action)
-                }
+                    SIGNINSTATE.STATE_SIGN_IN_SUCCESS -> {
+                        resetViewsState()
+                        val action = LoginFragmentDirections.actionLoginFragmentToWelcomeFragment()
+                        findNavController().navigate(action)
+                    }
 
-                SIGNINSTATE.IDLE -> {
-                    resetViewsState()
-                }
+                    SIGNINSTATE.IDLE -> {
+                        resetViewsState()
+                    }
 
-                else -> {
+                    else -> {
+                    }
                 }
             }
-        }
         )
 
     }
@@ -228,10 +231,10 @@ class LoginFragment : Fragment() {
 
         val phoneNumber = code + phone
         val optionsBuilder = PhoneAuthOptions.newBuilder(auth)
-                .setPhoneNumber(phoneNumber)       // Phone number to verify
-                .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
-                .setActivity(requireActivity())                 // Activity (for callback binding)
-                .setCallbacks(authViewModel.onVerificationStateChangedCallbacks)
+            .setPhoneNumber(phoneNumber)       // Phone number to verify
+            .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+            .setActivity(requireActivity())                 // Activity (for callback binding)
+            .setCallbacks(authViewModel.onVerificationStateChangedCallbacks)
         authViewModel.resendToken?.let {
             // callback's ForceResendingToken
             optionsBuilder.setForceResendingToken(it)
@@ -256,38 +259,38 @@ class LoginFragment : Fragment() {
             return
         }
         auth.signInWithCredential(credentials)
-                .addOnCompleteListener(requireActivity()) { task ->
-                    if (task.isSuccessful && (task.result?.user) != null) {
+            .addOnCompleteListener(requireActivity()) { task ->
+                if (task.isSuccessful && (task.result?.user) != null) {
 
-                        MyLogger.logThis(TAG, "signInWithCredentials()", "Success")
+                    MyLogger.logThis(TAG, "signInWithCredentials()", "Success")
 
-                        authViewModel.storeUserInFireStoreIfNotExist(task.result?.user!!)
-                    } else {
-                        // Sign in failed, display a message and update the UI
-                        MyLogger.logThis(
-                                TAG,
-                                "signInWithCredentials()",
-                                "failed ${task.exception?.message}",
-                                task.exception
-                        )
-                        if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                            // The verification code entered was invalid
-                            authViewModel.signInErrRes = R.string.invalid_verification_code_err
-                        }
-                        authViewModel.setSignInState(SIGNINSTATE.STATE_SIGN_IN_FAILED)
+                    authViewModel.storeUserInFireStoreIfNotExist(task.result?.user!!)
+                } else {
+                    // Sign in failed, display a message and update the UI
+                    MyLogger.logThis(
+                        TAG,
+                        "signInWithCredentials()",
+                        "failed ${task.exception?.message}",
+                        task.exception
+                    )
+                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
+                        // The verification code entered was invalid
+                        authViewModel.signInErrRes = R.string.invalid_verification_code_err
                     }
+                    authViewModel.setSignInState(SIGNINSTATE.STATE_SIGN_IN_FAILED)
                 }
+            }
     }
 
     private fun signInWithCode() {
         disableActions()
         val code = binding.verificationCode.editText?.text
         if (authViewModel.storedVerificationId != null
-                && !code.isNullOrBlank()
+            && !code.isNullOrBlank()
         ) {
             authViewModel.phoneAuthCredential = PhoneAuthProvider.getCredential(
-                    authViewModel.storedVerificationId!!,
-                    code.toString()
+                authViewModel.storedVerificationId!!,
+                code.toString()
             )
             signInWithCredentials()
         }
@@ -295,9 +298,9 @@ class LoginFragment : Fragment() {
 
     private fun showSnackBar(errorRes: Int, isError: Boolean) {
         binding.container.showSnackBarToUser(
-                msgResId = errorRes,
-                isErrorMsg = isError,
-                actionMessage = if (isError) R.string.dismiss else null
+            msgResId = errorRes,
+            isErrorMsg = isError,
+            actionMessage = if (isError) R.string.dismiss else null
         )
     }
 

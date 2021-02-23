@@ -39,8 +39,8 @@ class AddOrEditCarFragment : Fragment() {
 
     private val args: AddOrEditCarFragmentArgs by navArgs()
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentAddCarBinding.inflate(inflater, container, false)
@@ -55,50 +55,51 @@ class AddOrEditCarFragment : Fragment() {
             addCarVm.initCarForEditing(args.CarId!!)
         }
         addCarVm.getCarDataState().observe(viewLifecycleOwner,
-                Observer {
-                    when (it) {
-                        DATA_STATE.DELETED -> {
+            Observer {
+                when (it) {
+                    DATA_STATE.DELETED -> {
+                        binding.apply {
+                            loadingBar.isVisible = true
+                            subtitle.text = getString(R.string.car_deleted_redirecting)
+                        }
+                        val action =
+                            AddOrEditCarFragmentDirections.actionAddOrEditCarFragmentToSellersHomeFragment()
+                        findNavController().navigate(action)
+
+                    }
+                    DATA_STATE.SAVED -> {
+                        addCarVm.getCarId()?.let { carId ->
                             binding.apply {
                                 loadingBar.isVisible = true
-                                subtitle.text = getString(R.string.car_deleted_redirecting)
+                                subtitle.text = getString(R.string.car_saved_redirecting)
                             }
-                            val action = AddOrEditCarFragmentDirections.actionAddOrEditCarFragmentToSellersHomeFragment()
+                            val action =
+                                AddOrEditCarFragmentDirections.actionAddOrEditCarFragmentToAddCarImagesFragment(
+                                    carId
+                                )
                             findNavController().navigate(action)
-
-                        }
-                        DATA_STATE.SAVED -> {
-                            addCarVm.getCarId()?.let { carId ->
-                                binding.apply {
-                                    loadingBar.isVisible = true
-                                    subtitle.text = getString(R.string.car_saved_redirecting)
-                                }
-                                val action =
-                                        AddOrEditCarFragmentDirections.actionAddOrEditCarFragmentToAddCarImagesFragment(
-                                                carId
-                                        )
-                                findNavController().navigate(action)
-                            }
-                        }
-                        DATA_STATE.ERROR -> {
-                            binding.apply {
-                                loadingBar.isVisible = false
-                                subtitle.text = getString(R.string.saving_unknown_err)
-                            }
-                        }
-
-                        else -> {
                         }
                     }
+                    DATA_STATE.ERROR -> {
+                        binding.apply {
+                            loadingBar.isVisible = false
+                            subtitle.text = getString(R.string.saving_unknown_err)
+                        }
+                    }
+
+                    else -> {
+                    }
                 }
+            }
         )
         addCarVm.observeCarData().observe(
-                viewLifecycleOwner,
-                Observer { car ->
-                    car?.let {
-                        //car data has been saved
-                        displayRestoredData(it)
-                    }
+            viewLifecycleOwner,
+            Observer { car ->
+                car?.let {
+                    //car data has been saved
+                    displayRestoredData(it)
                 }
+            }
         )
     }
 
@@ -119,20 +120,20 @@ class AddOrEditCarFragment : Fragment() {
             val mileage = mileage.myTxt(mileage)
 
             if (bodyStyle.isNullOrBlank()
-                    || make.isNullOrBlank()
-                    || model.isNullOrBlank()
-                    || year.isNullOrBlank()
-                    || color.isNullOrBlank()
-                    || condition.isNullOrBlank()
-                    || mileage.isNullOrBlank()
+                || make.isNullOrBlank()
+                || model.isNullOrBlank()
+                || year.isNullOrBlank()
+                || color.isNullOrBlank()
+                || condition.isNullOrBlank()
+                || mileage.isNullOrBlank()
             ) {
 
                 loadingBar.isVisible = false
                 subtitle.text = getString(R.string.add_car_subtitle)
                 container.showSnackBarToUser(
-                        msgResId = R.string.missing_required_car_info,
-                        isErrorMsg = true,
-                        actionMessage = R.string.got_it_txt
+                    msgResId = R.string.missing_required_car_info,
+                    isErrorMsg = true,
+                    actionMessage = R.string.got_it_txt
                 )
                 return
             }
@@ -147,21 +148,21 @@ class AddOrEditCarFragment : Fragment() {
             val hasCustomizationsTxt = hasCustomizations.isChecked
 
             addCarVm.saveCarInfo(
-                    bodyStyle,
-                    make,
-                    model,
-                    year,
-                    color,
-                    condition,
-                    mileage,
-                    extraDetailsTxt,
-                    hasBeenInAccidentTxt,
-                    hasFloodDamageTxt,
-                    hasFlameDamageTxt,
-                    hasIssuesOnDashboardTxt,
-                    hasBrokenOrReplacedOdometerTxt,
-                    noOfTiresToReplaceTxt,
-                    hasCustomizationsTxt,
+                bodyStyle,
+                make,
+                model,
+                year,
+                color,
+                condition,
+                mileage,
+                extraDetailsTxt,
+                hasBeenInAccidentTxt,
+                hasFloodDamageTxt,
+                hasFlameDamageTxt,
+                hasIssuesOnDashboardTxt,
+                hasBrokenOrReplacedOdometerTxt,
+                noOfTiresToReplaceTxt,
+                hasCustomizationsTxt,
             )
 
         }
@@ -185,8 +186,8 @@ class AddOrEditCarFragment : Fragment() {
             hasIssuesOnDashboard.isChecked = savedCar.hasIssuesOnDashboard
             hasBrokenOrReplacedOdometer.isChecked = savedCar.hasBrokenOrReplacedOdometer
             noOfTiresToReplace.setTxt(
-                    noOfTiresToReplace,
-                    savedCar.noOfTiresToReplace.toString()
+                noOfTiresToReplace,
+                savedCar.noOfTiresToReplace.toString()
             )
             hasCustomizations.isChecked = savedCar.hasCustomizations
 
@@ -211,14 +212,14 @@ class AddOrEditCarFragment : Fragment() {
             builder.apply {
                 setTitle(R.string.delete_car_confirm)
                 setPositiveButton(R.string.yes_txt,
-                        DialogInterface.OnClickListener { dialog, _ ->
-                            dialog.dismiss()
-                            addCarVm.deleteCar()
-                        })
+                    DialogInterface.OnClickListener { dialog, _ ->
+                        dialog.dismiss()
+                        addCarVm.deleteCar()
+                    })
                 setNegativeButton(R.string.cancel_action_txt,
-                        DialogInterface.OnClickListener { dialog, _ ->
-                            dialog.dismiss()
-                        })
+                    DialogInterface.OnClickListener { dialog, _ ->
+                        dialog.dismiss()
+                    })
             }
             builder.create()
         }
@@ -242,7 +243,7 @@ class AddOrEditCarFragment : Fragment() {
                 true
             }
             else -> item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(
-                    item
+                item
             )
         }
     }

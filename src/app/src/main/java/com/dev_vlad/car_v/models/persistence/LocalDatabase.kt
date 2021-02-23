@@ -13,7 +13,11 @@ import com.dev_vlad.car_v.models.persistence.offers.CarOfferEntity
 import com.dev_vlad.car_v.models.persistence.offers.CarOfferEntityDao
 import com.dev_vlad.car_v.util.DATABASE_NAME
 
-@Database(entities = [UserEntity::class, CarEntity::class, CarOfferEntity::class], version = 1, exportSchema = false)
+@Database(
+    entities = [UserEntity::class, CarEntity::class, CarOfferEntity::class],
+    version = 1,
+    exportSchema = false
+)
 @TypeConverters(Converters::class)
 abstract class LocalDatabase : RoomDatabase() {
 
@@ -32,9 +36,9 @@ abstract class LocalDatabase : RoomDatabase() {
             // if it is, then create the database
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        LocalDatabase::class.java,
-                        DATABASE_NAME
+                    context.applicationContext,
+                    LocalDatabase::class.java,
+                    DATABASE_NAME
                 ).build()
                 INSTANCE = instance
                 // return instance

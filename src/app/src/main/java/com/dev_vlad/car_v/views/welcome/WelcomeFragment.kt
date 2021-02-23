@@ -31,8 +31,8 @@ class WelcomeFragment : Fragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentWelcomeBinding.inflate(inflater, container, false)
@@ -50,8 +50,8 @@ class WelcomeFragment : Fragment() {
                     doneBtn.isEnabled = true
                     loadingBar.isVisible = false
                     container.showSnackBarToUser(
-                            msgResId = R.string.updating_user_status_failed,
-                            isErrorMsg = true
+                        msgResId = R.string.updating_user_status_failed,
+                        isErrorMsg = true
                     )
                 }
             }
@@ -69,10 +69,11 @@ class WelcomeFragment : Fragment() {
 
                     if (userEntity.isSeller) {
                         val action =
-                                WelcomeFragmentDirections.actionWelcomeFragmentToSellersHomeFragment()
+                            WelcomeFragmentDirections.actionWelcomeFragmentToSellersHomeFragment()
                         findNavController().navigate(action)
                     } else if (userEntity.isDealer) {
-                        val action = WelcomeFragmentDirections.actionWelcomeFragmentToDealersHomeFragment()
+                        val action =
+                            WelcomeFragmentDirections.actionWelcomeFragmentToDealersHomeFragment()
                         findNavController().navigate(action)
                     }
                 }
@@ -105,31 +106,31 @@ class WelcomeFragment : Fragment() {
             doneBtn.setOnClickListener {
                 hideKeyBoard(requireContext(), binding.container)
                 MyLogger.logThis(
-                        TAG,
-                        "setOnClickListener()",
-                        "params isBuyer ${buyerCard.isChecked} isSeller ${sellerCard.isChecked}"
+                    TAG,
+                    "setOnClickListener()",
+                    "params isBuyer ${buyerCard.isChecked} isSeller ${sellerCard.isChecked}"
                 )
                 if (buyerCard.isChecked || sellerCard.isChecked) {
                     val userName = userName.editText?.text?.toString()
                     if (buyerCard.isChecked) {
                         welcomeViewModel.updateUser(
-                                setAsBuyer = true,
-                                setAsSeller = false,
-                                userGivenName = userName
+                            setAsBuyer = true,
+                            setAsSeller = false,
+                            userGivenName = userName
                         )
                     } else {
                         welcomeViewModel.updateUser(
-                                setAsBuyer = false,
-                                setAsSeller = true,
-                                userGivenName = userName
+                            setAsBuyer = false,
+                            setAsSeller = true,
+                            userGivenName = userName
                         )
                     }
                     binding.doneBtn.isEnabled = false
                     binding.loadingBar.isVisible = true
                 } else {
                     showSnackBar(
-                            errorRes = R.string.select_dealer_or_seller_err,
-                            isError = false
+                        errorRes = R.string.select_dealer_or_seller_err,
+                        isError = false
                     )
                 }
             }
@@ -154,9 +155,9 @@ class WelcomeFragment : Fragment() {
 
     private fun showSnackBar(errorRes: Int, isError: Boolean, actionMsgRes: Int? = null) {
         binding.container.showSnackBarToUser(
-                msgResId = errorRes,
-                isErrorMsg = isError,
-                actionMessage = actionMsgRes
+            msgResId = errorRes,
+            isErrorMsg = isError,
+            actionMessage = actionMsgRes
         )
     }
 

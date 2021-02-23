@@ -41,8 +41,8 @@ class AddCarImagesFragment : Fragment(), MyCarImagesAdapter.ImageActionsListener
 
     private val photosAdapter = MyCarImagesAdapter(this)
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentAddCarImagesBinding.inflate(inflater, container, false)
@@ -58,9 +58,9 @@ class AddCarImagesFragment : Fragment(), MyCarImagesAdapter.ImageActionsListener
 
         addCarImgsVm.observeCarImages().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             MyLogger.logThis(
-                    TAG,
-                    ".getCarImages().observe()",
-                    "has ${it?.size} images"
+                TAG,
+                ".getCarImages().observe()",
+                "has ${it?.size} images"
             )
             if (it != null)
                 photosAdapter.setNewImages(it)
@@ -79,9 +79,9 @@ class AddCarImagesFragment : Fragment(), MyCarImagesAdapter.ImageActionsListener
                 AddCarImagesViewModel.SavingState.ERROR -> {
                     binding.apply {
                         container.showSnackBarToUser(
-                                msgResId = addCarImgsVm.errMsgRes ?: R.string.saving_unknown_err,
-                                isErrorMsg = true,
-                                actionMessage = R.string.ok_txt
+                            msgResId = addCarImgsVm.errMsgRes ?: R.string.saving_unknown_err,
+                            isErrorMsg = true,
+                            actionMessage = R.string.ok_txt
                         )
                         subtitle.setText(R.string.please_add_photos)
                         loadingBar.isVisible = false
@@ -97,7 +97,7 @@ class AddCarImagesFragment : Fragment(), MyCarImagesAdapter.ImageActionsListener
     private fun initViews() {
         binding.apply {
             photosRv.layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             photosRv.adapter = photosAdapter
             photosRv.addItemDecoration(VerticalSpacingItemDecorator(30))
             laterBtn.setOnClickListener {
@@ -118,16 +118,16 @@ class AddCarImagesFragment : Fragment(), MyCarImagesAdapter.ImageActionsListener
         val intent = Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT)
         val selectPictTitle = getString(R.string.select_photo_in_gallery_title)
         startActivityForResult(
-                Intent.createChooser(intent, selectPictTitle),
-                REQUEST_IMAGE_IN_GALLERY
+            Intent.createChooser(intent, selectPictTitle),
+            REQUEST_IMAGE_IN_GALLERY
         )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_IN_GALLERY && resultCode == RESULT_OK) {
             MyLogger.logThis(
-                    TAG,
-                    " addPhotoFromGallery() -> onActivityResult()", "returned data ${data?.data}"
+                TAG,
+                " addPhotoFromGallery() -> onActivityResult()", "returned data ${data?.data}"
             )
             data?.data?.let { imgUri ->
                 addCarImgsVm.addImage(imgUri.toString())
@@ -151,14 +151,14 @@ class AddCarImagesFragment : Fragment(), MyCarImagesAdapter.ImageActionsListener
             builder.apply {
                 setTitle(R.string.add_photos_later_confirm_title)
                 setPositiveButton(R.string.ok_txt,
-                        DialogInterface.OnClickListener { dialog, _ ->
-                            dialog.dismiss()
-                            goToSellersHome()
-                        })
+                    DialogInterface.OnClickListener { dialog, _ ->
+                        dialog.dismiss()
+                        goToSellersHome()
+                    })
                 setNegativeButton(R.string.cancel_adding_photos_later,
-                        DialogInterface.OnClickListener { dialog, _ ->
-                            dialog.dismiss()
-                        })
+                    DialogInterface.OnClickListener { dialog, _ ->
+                        dialog.dismiss()
+                    })
             }
             builder.create()
         }
@@ -167,7 +167,7 @@ class AddCarImagesFragment : Fragment(), MyCarImagesAdapter.ImageActionsListener
 
     private fun goToSellersHome() {
         val action =
-                AddCarImagesFragmentDirections.actionAddCarImagesFragmentToSellersHomeFragment()
+            AddCarImagesFragmentDirections.actionAddCarImagesFragmentToSellersHomeFragment()
         findNavController().navigate(action)
     }
 
@@ -200,14 +200,14 @@ class AddCarImagesFragment : Fragment(), MyCarImagesAdapter.ImageActionsListener
             builder.apply {
                 setTitle(title)
                 setPositiveButton(positiveMessage,
-                        DialogInterface.OnClickListener { dialog, _ ->
-                            dialog.dismiss()
-                            addCarImgsVm.deleteSelectedImages()
-                        })
+                    DialogInterface.OnClickListener { dialog, _ ->
+                        dialog.dismiss()
+                        addCarImgsVm.deleteSelectedImages()
+                    })
                 setNegativeButton(R.string.cancel_action_txt,
-                        DialogInterface.OnClickListener { dialog, _ ->
-                            dialog.dismiss()
-                        })
+                    DialogInterface.OnClickListener { dialog, _ ->
+                        dialog.dismiss()
+                    })
             }
             builder.create()
         }
@@ -240,7 +240,7 @@ class AddCarImagesFragment : Fragment(), MyCarImagesAdapter.ImageActionsListener
                 true
             }
             else -> item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(
-                    item
+                item
             )
         }
     }

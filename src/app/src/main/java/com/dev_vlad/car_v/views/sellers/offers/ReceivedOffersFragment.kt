@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dev_vlad.car_v.CarVApp
 import com.dev_vlad.car_v.R
 import com.dev_vlad.car_v.databinding.FragmentReceivedOffersBinding
+import com.dev_vlad.car_v.models.persistence.chat.ChatInitiateData
 import com.dev_vlad.car_v.util.MyLogger
-import com.dev_vlad.car_v.util.VerticalSpacingItemDecorator
 import com.dev_vlad.car_v.view_models.sellers.offers.CarNReceivedOfferWrapper
 import com.dev_vlad.car_v.view_models.sellers.offers.ReceivedOffersViewModel
 import com.dev_vlad.car_v.view_models.sellers.offers.ReceivedOffersViewModelFactory
@@ -34,8 +34,8 @@ class ReceivedOffersFragment : Fragment(), ReceivedOffersAdapter.ReceivedOffersA
     }
     private val receivedOffersAdapter = ReceivedOffersAdapter(this)
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentReceivedOffersBinding.inflate(inflater, container, false)
@@ -48,34 +48,34 @@ class ReceivedOffersFragment : Fragment(), ReceivedOffersAdapter.ReceivedOffersA
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         receivedOffersViewModel.getCurrentUser().observe(
-                viewLifecycleOwner, Observer {
-            if (it != null) {
-                observeReceivedOffers()
-            }
+            viewLifecycleOwner, Observer {
+                if (it != null) {
+                    observeReceivedOffers()
+                }
 
-        }
+            }
         )
     }
 
     private fun observeReceivedOffers() {
         receivedOffersViewModel.observeReceivedOffers().observe(
-                viewLifecycleOwner, Observer {
-            binding.loadingBar.isVisible = false
-            if (it == null) {
-                MyLogger.logThis(
+            viewLifecycleOwner, Observer {
+                binding.loadingBar.isVisible = false
+                if (it == null) {
+                    MyLogger.logThis(
                         TAG,
                         "observeReceivedOffers()",
                         "offers list is null"
-                )
-            } else {
-                MyLogger.logThis(
+                    )
+                } else {
+                    MyLogger.logThis(
                         TAG,
                         "observeReceivedOffers()",
                         "Found ${it.size} offers"
-                )
-                receivedOffersAdapter.submitList(it)
+                    )
+                    receivedOffersAdapter.submitList(it)
+                }
             }
-        }
         )
     }
 
@@ -104,12 +104,23 @@ class ReceivedOffersFragment : Fragment(), ReceivedOffersAdapter.ReceivedOffersA
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         //todo menu? -- about, profile, etc
         return item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(
-                item
+            item
         )
     }
 
     override fun onReceivedOffersClicked(item: CarNReceivedOfferWrapper) {
-        //TODO
+        val data = ChatInitiateData(
+                carId = item.car.carId,
+                carTitle = item.car.make + " " + item.car.model,
+                ownerId = item.car.ownerId,
+                dealerId = item.offer.dealerId,
+                initialOffer = item.offer.offerPrice,
+                initialOfferMsg = item.offer.offerMessage,
+                 offerId = item.offer.offerId,
+                featuredImgUrl = item.car.imageUrls[0]
+        )
+        val action = ReceivedOffersFragmentDirections.actionReceivedOffersFragmentToChatFragment(data)
+        findNavController().navigate(action)
     }
 
 }

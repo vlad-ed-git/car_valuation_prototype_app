@@ -16,7 +16,11 @@ import com.google.firebase.auth.PhoneAuthProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class AuthViewModel(private val userRepo: UserRepo, private val carRepo: CarRepo, private val offersRepo: OffersRepo) : ViewModel() {
+class AuthViewModel(
+    private val userRepo: UserRepo,
+    private val carRepo: CarRepo,
+    private val offersRepo: OffersRepo
+) : ViewModel() {
 
     companion object {
         private val TAG = AuthViewModel::class.java.simpleName
@@ -44,7 +48,7 @@ class AuthViewModel(private val userRepo: UserRepo, private val carRepo: CarRepo
     fun getCountries() = countries
     fun setCountryAndGetCode(country: String?): String {
         MyLogger.logThis(
-                TAG, "getCountryCode()", "country $country"
+            TAG, "getCountryCode()", "country $country"
         )
         if (country.isNullOrBlank()) return ""
         userCountry = country //set country
@@ -65,7 +69,7 @@ class AuthViewModel(private val userRepo: UserRepo, private val carRepo: CarRepo
     var storedVerificationId: String? = null
     var resendToken: PhoneAuthProvider.ForceResendingToken? = null
     val onVerificationStateChangedCallbacks = object :
-            PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+        PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         override fun onVerificationCompleted(credential: PhoneAuthCredential) {
             // This callback will be invoked in two situations:
             // 1 - Instant verification. In some cases the phone number can be instantly
@@ -97,8 +101,8 @@ class AuthViewModel(private val userRepo: UserRepo, private val carRepo: CarRepo
         }
 
         override fun onCodeSent(
-                verificationId: String,
-                token: PhoneAuthProvider.ForceResendingToken
+            verificationId: String,
+            token: PhoneAuthProvider.ForceResendingToken
         ) {
             // The SMS verification code has been sent to the provided phone number, we
             // now need to ask the user to enter the code and then construct a credential
@@ -120,17 +124,17 @@ class AuthViewModel(private val userRepo: UserRepo, private val carRepo: CarRepo
     fun storeUserInFireStoreIfNotExist(user: FirebaseUser) {
         setSignInState(SIGNINSTATE.SAVING_USER_IN_SERVER)
         MyLogger.logThis(
-                TAG, "storeUserInFireStore()", "user id $user.uid"
+            TAG, "storeUserInFireStore()", "user id $user.uid"
         )
 
 
         val userEntity = UserEntity(
-                userId = user.uid,
-                userPhone = userPhone,
-                userCode = userCode,
-                userLocationCountry = userCountry,
-                isDealer = false,
-                isSeller = false
+            userId = user.uid,
+            userPhone = userPhone,
+            userCode = userCode,
+            userLocationCountry = userCountry,
+            isDealer = false,
+            isSeller = false
         )
         userData.value = userEntity
         viewModelScope.launch(Dispatchers.IO) {
@@ -163,9 +167,9 @@ class AuthViewModel(private val userRepo: UserRepo, private val carRepo: CarRepo
     private fun saveUserLocally(user: UserEntity) = viewModelScope.launch(Dispatchers.IO) {
         userRepo.insertUser(user)
         MyLogger.logThis(
-                TAG,
-                "saveUser()",
-                "savingUser locally -- $user"
+            TAG,
+            "saveUser()",
+            "savingUser locally -- $user"
         )
     }
 

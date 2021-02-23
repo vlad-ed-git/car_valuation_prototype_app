@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".views.chat.ChatFragment">
+
+    <ImageView
+        android:id="@+id/car_img"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/car_image_desc"
+        android:layout_margin="@dimen/std_space"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/car_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/car_img"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/std_space"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:maxLines="1"
+        android:id="@+id/initial_price"
+        app:layout_constraintTop_toBottomOf="@id/car_title"
+        app:layout_constraintStart_toEndOf="@id/car_img"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/std_space"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:fontFamily="sans-serif"
+        app:drawableStartCompat="@drawable/ic_offer"
+        app:drawableTint="@color/secondary_txt_on_white"/>
+
+
+    <ProgressBar
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/car_img"
+        android:id="@+id/loading_bar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/accent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/messages_rv"
+        app:layout_constraintTop_toBottomOf="@id/loading_bar"
+        app:layout_constraintEnd_toStartOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/message_container"
+        android:layout_margin="@dimen/smd_space" />
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/message_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/whitish"
+        android:padding="@dimen/std_space">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/send"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_twotone_send_24"
+            app:tint="@color/white"
+            android:contentDescription="@string/send_message_desc"
+            app:fabSize="mini" />
+
+        <ImageView
+            android:id="@+id/add_pic"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/send"
+            android:layout_width="@dimen/std_clickable"
+            android:layout_height="@dimen/std_clickable"
+            android:src="@drawable/ic_add_pic"
+            app:tint="@color/primary"
+            android:scaleType="center"
+            android:contentDescription="@string/add_a_picture_desc"/>
+
+        <com.google.android.material.textfield.TextInputEditText
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/add_pic"
+            android:layout_marginEnd="@dimen/std_space"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/message_hint_txt"
+            android:padding="@dimen/std_space"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

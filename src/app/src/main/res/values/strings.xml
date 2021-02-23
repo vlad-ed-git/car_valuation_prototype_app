@@ -125,4 +125,9 @@
     <string name="received_offers_txt">Offers</string>
     <string name="fragment_received_offers_lbl">Received Offers</string>
     <string name="currency_suffix">USD</string>
+    <string name="message_hint_txt">Type a message</string>
+    <string name="add_a_picture_desc">add a picture</string>
+    <string name="send_message_desc">send message</string>
+    <string name="fragment_chat_lbl">Chat</string>
+    <string name="starting_offer_prefix">Dealer\'s initial offer</string>
 </resources>

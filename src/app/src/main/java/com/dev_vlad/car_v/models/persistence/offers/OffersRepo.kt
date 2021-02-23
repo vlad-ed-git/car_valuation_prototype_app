@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
 class OffersRepo(
-        private val carOfferEntityDao: CarOfferEntityDao
+    private val carOfferEntityDao: CarOfferEntityDao
 ) {
     companion object {
         private val TAG = OffersRepo::class.java.simpleName
@@ -29,7 +29,11 @@ class OffersRepo(
         return true
     }
 
-    suspend fun getMyNonObservableOfferIfExist(carId: String, ownerId: String, dealersId: String): CarOfferEntity? {
+    suspend fun getMyNonObservableOfferIfExist(
+        carId: String,
+        ownerId: String,
+        dealersId: String
+    ): CarOfferEntity? {
         val offerEntity = carOfferEntityDao.getOfferIfWasMade(carId, ownerId, dealersId)
         return if (offerEntity.isEmpty()) null
         else offerEntity[0] //should be only 1 anyways
@@ -38,23 +42,24 @@ class OffersRepo(
     private suspend fun addOfferToFireStore(offerEntity: CarOfferEntity): String? {
         return try {
             MyLogger.logThis(
-                    TAG, "addOfferToFireStore()", "saving a new offer $offerEntity"
+                TAG, "addOfferToFireStore()", "saving a new offer $offerEntity"
             )
             val offerDoc =
-                    if (offerEntity.offerId.isEmpty()) {
-                        Firebase.firestore.collection(OFFERS_COLLECTION_NAME).document()
-                                .also {
-                                    offerEntity.offerId = it.id
-                                }
-                    } else {
-                        Firebase.firestore.collection(OFFERS_COLLECTION_NAME).document(offerEntity.offerId)
-                    }
+                if (offerEntity.offerId.isEmpty()) {
+                    Firebase.firestore.collection(OFFERS_COLLECTION_NAME).document()
+                        .also {
+                            offerEntity.offerId = it.id
+                        }
+                } else {
+                    Firebase.firestore.collection(OFFERS_COLLECTION_NAME)
+                        .document(offerEntity.offerId)
+                }
             offerDoc.set(offerEntity)
-                    .await()
+                .await()
             offerEntity.offerId
         } catch (e: Exception) {
             MyLogger.logThis(
-                    TAG, "addOfferToFireStore() offer $offerEntity", "${e.message} --exc", e
+                TAG, "addOfferToFireStore() offer $offerEntity", "${e.message} --exc", e
             )
             null
         }
@@ -66,22 +71,22 @@ class OffersRepo(
     suspend fun loadOffersIMade(dealerId: String): Boolean {
         return try {
             MyLogger.logThis(
-                    TAG, "loadOffersIMade()", "loading offers by $dealerId"
+                TAG, "loadOffersIMade()", "loading offers by $dealerId"
             )
 
             val offersCollection = Firebase.firestore.collection(OFFERS_COLLECTION_NAME)
-                    .whereEqualTo(OFFERS_DEALER_FIELD, dealerId)
-                    .get()
-                    .await()
+                .whereEqualTo(OFFERS_DEALER_FIELD, dealerId)
+                .get()
+                .await()
             val offers = offersCollection.documents
             MyLogger.logThis(
-                    TAG, "loadOffersIMade()", "found offers - ${offers.size}"
+                TAG, "loadOffersIMade()", "found offers - ${offers.size}"
             )
             for (offer in offers) {
                 val offerEntity = offer.toObject<CarOfferEntity>()
                 offerEntity?.let {
                     MyLogger.logThis(
-                            TAG, "loadOffersIMade()", "saving loading offers - $offerEntity"
+                        TAG, "loadOffersIMade()", "saving loading offers - $offerEntity"
                     )
                     carOfferEntityDao.insert(it)
                 }
@@ -89,7 +94,7 @@ class OffersRepo(
             true
         } catch (e: Exception) {
             MyLogger.logThis(
-                    TAG, "loadOffersIMade() dealer = $dealerId", "${e.message} --exc", e
+                TAG, "loadOffersIMade() dealer = $dealerId", "${e.message} --exc", e
             )
             true //we are done -- not interested in failure or not
 
@@ -109,13 +114,13 @@ class OffersRepo(
 
         MyLogger.logThis(TAG, "getReceivedOffers()", "page : $pageNo userId $userId offset $offset")
         return carOfferEntityDao.getReceivedOffers(userId, limit = PAGE_SIZE, offset = offset)
-                .map {
-                    if (it.isEmpty() && !loadReceivedOffersExhausted) {
-                        loadReceivedOffersExhausted = true
-                        loadReceivedOffersFromServer(userId = userId, pageNo = page)
-                    }
-                    it
+            .map {
+                if (it.isEmpty() && !loadReceivedOffersExhausted) {
+                    loadReceivedOffersExhausted = true
+                    loadReceivedOffersFromServer(userId = userId, pageNo = page)
                 }
+                it
+            }
 
     }
 
@@ -127,23 +132,23 @@ class OffersRepo(
             //first as in prev data depends on page
             val limit = if (pageNo <= 1) PAGE_SIZE else ((pageNo - 1) * PAGE_SIZE)
             val prevData = offersCollection
-                    .whereEqualTo(OWNER_ID_FIELD, userId)
-                    .orderBy(DEFAULT_SORT_OFFERS_FIELD, Query.Direction.DESCENDING)
-                    .limit(limit.toLong())
-                    .get()
-                    .await()
+                .whereEqualTo(OWNER_ID_FIELD, userId)
+                .orderBy(DEFAULT_SORT_OFFERS_FIELD, Query.Direction.DESCENDING)
+                .limit(limit.toLong())
+                .get()
+                .await()
 
             // Get the last visible document
             var offersSnapshots = prevData.documents
             if (pageNo > 1) {
                 val lastVisible = offersSnapshots[offersSnapshots.size - 1]
                 val nextData = offersCollection
-                        .whereEqualTo(OWNER_ID_FIELD, userId)
-                        .orderBy(DEFAULT_SORT_OFFERS_FIELD, Query.Direction.DESCENDING)
-                        .startAfter(lastVisible)
-                        .limit(MifareUltralight.PAGE_SIZE.toLong())
-                        .get()
-                        .await()
+                    .whereEqualTo(OWNER_ID_FIELD, userId)
+                    .orderBy(DEFAULT_SORT_OFFERS_FIELD, Query.Direction.DESCENDING)
+                    .startAfter(lastVisible)
+                    .limit(MifareUltralight.PAGE_SIZE.toLong())
+                    .get()
+                    .await()
                 offersSnapshots = nextData.documents
             }
 

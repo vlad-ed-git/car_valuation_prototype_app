@@ -15,7 +15,7 @@ import com.dev_vlad.car_v.databinding.MyCarImageItemBinding
 
 
 class MyCarImagesAdapter(private val actionsListener: MyCarImagesAdapter.ImageActionsListeners? = null) :
-        RecyclerView.Adapter<MyCarImagesAdapter.MyCarImagesViewHolder>() {
+    RecyclerView.Adapter<MyCarImagesAdapter.MyCarImagesViewHolder>() {
 
     private val images = ArrayList<String>()
 
@@ -25,37 +25,37 @@ class MyCarImagesAdapter(private val actionsListener: MyCarImagesAdapter.ImageAc
     }
 
     class MyCarImagesViewHolder(private val binding: MyCarImageItemBinding) :
-            RecyclerView.ViewHolder(binding.root) {
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(imgUrl: String, actionsListener: ImageActionsListeners?) {
             binding.apply {
                 Glide.with(itemView.context)
-                        .load(imgUrl)
-                        .placeholder(R.drawable.logo_grey)
-                        .listener(
-                                object : RequestListener<Drawable> {
-                                    override fun onLoadFailed(
-                                            e: GlideException?,
-                                            model: Any?,
-                                            target: Target<Drawable>?,
-                                            isFirstResource: Boolean
-                                    ): Boolean {
-                                        return false
-                                    }
+                    .load(imgUrl)
+                    .placeholder(R.drawable.logo_grey)
+                    .listener(
+                        object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                return false
+                            }
 
-                                    override fun onResourceReady(
-                                            resource: Drawable?,
-                                            model: Any?,
-                                            target: Target<Drawable>?,
-                                            dataSource: DataSource?,
-                                            isFirstResource: Boolean
-                                    ): Boolean {
-                                        img.scaleType = ImageView.ScaleType.CENTER_CROP
-                                        return false
-                                    }
+                            override fun onResourceReady(
+                                resource: Drawable?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                dataSource: DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                img.scaleType = ImageView.ScaleType.CENTER_CROP
+                                return false
+                            }
 
-                                }
-                        )
-                        .into(img)
+                        }
+                    )
+                    .into(img)
 
                 //if listening for actions
                 actionsListener?.let { listener ->
@@ -73,11 +73,11 @@ class MyCarImagesAdapter(private val actionsListener: MyCarImagesAdapter.ImageAc
     }
 
     override fun onCreateViewHolder(
-            parent: ViewGroup,
-            viewType: Int
+        parent: ViewGroup,
+        viewType: Int
     ): MyCarImagesAdapter.MyCarImagesViewHolder {
         val binding =
-                MyCarImageItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            MyCarImageItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MyCarImagesViewHolder(binding)
     }
 

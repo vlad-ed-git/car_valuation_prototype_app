@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
 class CarRepo(
-        private val carEntityDao: CarEntityDao
+    private val carEntityDao: CarEntityDao
 ) {
 
     companion object {
@@ -48,7 +48,11 @@ class CarRepo(
             }
         } else {
             MyLogger.logThis(TAG, "getAllCars()", "page : $pageNo query $query")
-            carEntityDao.searchAllCarsByQuery(limit = PAGE_SIZE, offset = offset, queryParam = "%${query.replace(' ', '%')}%")
+            carEntityDao.searchAllCarsByQuery(
+                limit = PAGE_SIZE,
+                offset = offset,
+                queryParam = "%${query.replace(' ', '%')}%"
+            )
         }
     }
 
@@ -62,26 +66,30 @@ class CarRepo(
             PAGE_SIZE * (page - 1)
         }
         return if (query.isNullOrBlank()) {
-            MyLogger.logThis(TAG, "getAllCarsByUser()", "page : $pageNo userId $userId offset $offset")
+            MyLogger.logThis(
+                TAG,
+                "getAllCarsByUser()",
+                "page : $pageNo userId $userId offset $offset"
+            )
             carEntityDao.getAllCarsOfUser(userId, limit = PAGE_SIZE, offset = offset)
-                    .map {
-                        if (it.isEmpty() && !loadAllCarsExhausted) {
-                            loadAllCarsByUserExhausted = true
-                            loadUserCarsFromServer(userId = userId)
-                        }
-                        it
+                .map {
+                    if (it.isEmpty() && !loadAllCarsExhausted) {
+                        loadAllCarsByUserExhausted = true
+                        loadUserCarsFromServer(userId = userId)
                     }
+                    it
+                }
         } else {
             MyLogger.logThis(
-                    TAG,
-                    "getAllCarsByUser()",
-                    "page : $pageNo userId $userId query $query offset $offset"
+                TAG,
+                "getAllCarsByUser()",
+                "page : $pageNo userId $userId query $query offset $offset"
             )
             carEntityDao.searchAllCarsOfUserByQuery(
-                    userId,
-                    limit = PAGE_SIZE,
-                    offset = offset,
-                    queryParam = "%${query.replace(' ', '%')}%"
+                userId,
+                limit = PAGE_SIZE,
+                offset = offset,
+                queryParam = "%${query.replace(' ', '%')}%"
             )
         }
     }
@@ -121,8 +129,8 @@ class CarRepo(
     private suspend fun deleteCarsOnFireStore(car: CarEntity): Boolean {
         return try {
             Firebase.firestore.collection(CARS_COLLECTION_NAME).document(car.carId)
-                    .delete()
-                    .await()
+                .delete()
+                .await()
             true
         } catch (e: Exception) {
             MyLogger.logThis(TAG, "deleteCarsOnFireStore()", "deleting failed ${e.message}", e)
@@ -135,23 +143,23 @@ class CarRepo(
     suspend fun addMyCarToFireStore(car: CarEntity): String? {
         return try {
             val carDoc =
-                    if (car.carId.substring(0, UNSAVED_CAR_ID.length) == UNSAVED_CAR_ID) {
-                        MyLogger.logThis(
-                                TAG, "addMyCarToFireStore()", "saving an unsaved new car"
-                        )
-                        Firebase.firestore.collection(CARS_COLLECTION_NAME).document()
-                                .also {
-                                    car.carId = it.id
-                                }
-                    } else {
-                        Firebase.firestore.collection(CARS_COLLECTION_NAME).document(car.carId)
-                    }
+                if (car.carId.substring(0, UNSAVED_CAR_ID.length) == UNSAVED_CAR_ID) {
+                    MyLogger.logThis(
+                        TAG, "addMyCarToFireStore()", "saving an unsaved new car"
+                    )
+                    Firebase.firestore.collection(CARS_COLLECTION_NAME).document()
+                        .also {
+                            car.carId = it.id
+                        }
+                } else {
+                    Firebase.firestore.collection(CARS_COLLECTION_NAME).document(car.carId)
+                }
             carDoc.set(car)
-                    .await()
+                .await()
             car.carId
         } catch (e: Exception) {
             MyLogger.logThis(
-                    TAG, "addMyCarToFireStore()", "${e.message} --exc", e
+                TAG, "addMyCarToFireStore()", "${e.message} --exc", e
             )
             null
         }
@@ -174,10 +182,10 @@ class CarRepo(
                 val fileRef = folderRef.child("${uri.lastPathSegment}")
                 val uploadTask = fileRef.putFile(uri)
                 val downloadUrl = uploadTask.await()
-                        .storage
-                        .downloadUrl
-                        .await()
-                        .toString()
+                    .storage
+                    .downloadUrl
+                    .await()
+                    .toString()
                 uploadedPhotoUrls.add(downloadUrl)
                 MyLogger.logThis(TAG, "UploadImages()", "image added at ${uri.lastPathSegment}")
 
@@ -202,26 +210,26 @@ class CarRepo(
             //first as in prev data depends on page
             val limit = if (pageNo <= 1) PAGE_SIZE else ((pageNo - 1) * PAGE_SIZE)
             val prevData = carsCollection
-                    .orderBy(DEFAULT_SORT_FIELD, Query.Direction.DESCENDING)
-                    .limit(limit.toLong())
-                    .get()
-                    .await()
+                .orderBy(DEFAULT_SORT_FIELD, Query.Direction.DESCENDING)
+                .limit(limit.toLong())
+                .get()
+                .await()
 
             // Get the last visible document
             var carSnapshots = prevData.documents
             if (pageNo > 1) {
                 val lastVisible = carSnapshots[carSnapshots.size - 1]
                 val nextData = carsCollection
-                        .orderBy(DEFAULT_SORT_FIELD, Query.Direction.DESCENDING)
-                        .startAfter(lastVisible)
-                        .limit(PAGE_SIZE.toLong())
-                        .get()
-                        .await()
+                    .orderBy(DEFAULT_SORT_FIELD, Query.Direction.DESCENDING)
+                    .startAfter(lastVisible)
+                    .limit(PAGE_SIZE.toLong())
+                    .get()
+                    .await()
                 carSnapshots = nextData.documents
             }
 
             var i = 0 //TODO remove ...for debug only
-            for ((index, car) in carSnapshots.withIndex()) {
+            for (car in carSnapshots) {
                 val aCar = car.toObject<CarEntity>()
                 if (aCar != null) {
                     i++
@@ -241,10 +249,10 @@ class CarRepo(
             MyLogger.logThis(TAG, "loadUserCarsFromServer($userId)", "called--")
             val carsCollection = Firebase.firestore.collection(CARS_COLLECTION_NAME)
             val prevData = carsCollection
-                    .whereEqualTo(CAR_OWNER_FIELD, userId)
-                    .orderBy(DEFAULT_SORT_FIELD, Query.Direction.DESCENDING)
-                    .get()
-                    .await()
+                .whereEqualTo(CAR_OWNER_FIELD, userId)
+                .orderBy(DEFAULT_SORT_FIELD, Query.Direction.DESCENDING)
+                .get()
+                .await()
 
             val carSnapshots = prevData.documents
             for (car in carSnapshots) {
@@ -275,27 +283,39 @@ class CarRepo(
             for (dc in snapshots!!.documentChanges) {
                 when (dc.type) {
                     DocumentChange.Type.ADDED -> {
-                        MyLogger.logThis(TAG, "DocumentChange.Type.ADDED ", "New car: ${dc.document.data}")
+                        MyLogger.logThis(
+                            TAG,
+                            "DocumentChange.Type.ADDED ",
+                            "New car: ${dc.document.data}"
+                        )
                         val newCar = dc.document.toObject<CarEntity>()
                         carsUpdates.value = CarDataStateWrapper(
-                                car = newCar,
-                                state = DataState.ADD
+                            car = newCar,
+                            state = DataState.ADD
                         )
                     }
                     DocumentChange.Type.MODIFIED -> {
-                        MyLogger.logThis(TAG, "DocumentChange.Type.MODIFIED", "Modified city: ${dc.document.data}")
+                        MyLogger.logThis(
+                            TAG,
+                            "DocumentChange.Type.MODIFIED",
+                            "Modified city: ${dc.document.data}"
+                        )
                         val modifiedCar = dc.document.toObject<CarEntity>()
                         carsUpdates.value = CarDataStateWrapper(
-                                car = modifiedCar,
-                                state = DataState.UPDATE
+                            car = modifiedCar,
+                            state = DataState.UPDATE
                         )
                     }
                     DocumentChange.Type.REMOVED -> {
-                        MyLogger.logThis(TAG, "DocumentChange.Type.REMOVED", "Removed city: ${dc.document.data}")
+                        MyLogger.logThis(
+                            TAG,
+                            "DocumentChange.Type.REMOVED",
+                            "Removed city: ${dc.document.data}"
+                        )
                         val deletedCar = dc.document.toObject<CarEntity>()
                         carsUpdates.value = CarDataStateWrapper(
-                                car = deletedCar,
-                                state = DataState.UPDATE
+                            car = deletedCar,
+                            state = DataState.UPDATE
                         )
                     }
                     else -> {

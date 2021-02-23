@@ -18,7 +18,9 @@ import com.dev_vlad.car_v.view_models.sellers.offers.CarNReceivedOfferWrapper
 import java.util.*
 
 class ReceivedOffersAdapter(private val actionListener: ReceivedOffersActionsListener) :
-        ListAdapter<CarNReceivedOfferWrapper, ReceivedOffersAdapter.ReceivedOffersAdapterVH>(ReceivedOffersAdapterDifUtil()) {
+    ListAdapter<CarNReceivedOfferWrapper, ReceivedOffersAdapter.ReceivedOffersAdapterVH>(
+        ReceivedOffersAdapterDifUtil()
+    ) {
 
     companion object {
         private val TAG = ReceivedOffersAdapter::class.java.simpleName
@@ -29,48 +31,50 @@ class ReceivedOffersAdapter(private val actionListener: ReceivedOffersActionsLis
     }
 
     class ReceivedOffersAdapterVH(private val binding: ReceivedOfferItemBinding) :
-            RecyclerView.ViewHolder(binding.root) {
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: CarNReceivedOfferWrapper, actionListener: ReceivedOffersActionsListener) {
             binding.apply {
                 val car = item.car
                 val titleTxt =
-                        car.make.capitalize(Locale.getDefault()) + " " + car.model.capitalize(Locale.getDefault())
+                    car.make.capitalize(Locale.getDefault()) + " " + car.model.capitalize(Locale.getDefault())
                 carTitle.text = titleTxt
                 itemView.setOnClickListener {
                     actionListener.onReceivedOffersClicked(item)
                 }
-                val formattedPrice = item.offer.offerPrice.toString() + " " + itemView.context.getString(R.string.currency_suffix)
+                val formattedPrice =
+                    item.offer.offerPrice.toString() + " " + itemView.context.getString(R.string.currency_suffix)
                 initialPrice.text = formattedPrice
-                val imgUrl = if (car.imageUrls.isNotEmpty() && car.imageUrls[0].length > 4) car.imageUrls[0]
-                else ""
+                val imgUrl =
+                    if (car.imageUrls.isNotEmpty() && car.imageUrls[0].length > 4) car.imageUrls[0]
+                    else ""
                 Glide.with(itemView.context)
-                        .load(imgUrl)
-                        .placeholder(R.drawable.logo_grey)
-                        .listener(
-                                object : RequestListener<Drawable> {
-                                    override fun onLoadFailed(
-                                            e: GlideException?,
-                                            model: Any?,
-                                            target: Target<Drawable>?,
-                                            isFirstResource: Boolean
-                                    ): Boolean {
-                                        return false
-                                    }
+                    .load(imgUrl)
+                    .placeholder(R.drawable.logo_grey)
+                    .listener(
+                        object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                return false
+                            }
 
-                                    override fun onResourceReady(
-                                            resource: Drawable?,
-                                            model: Any?,
-                                            target: Target<Drawable>?,
-                                            dataSource: DataSource?,
-                                            isFirstResource: Boolean
-                                    ): Boolean {
-                                        carImg.scaleType = ImageView.ScaleType.CENTER_CROP
-                                        return false
-                                    }
+                            override fun onResourceReady(
+                                resource: Drawable?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                dataSource: DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                carImg.scaleType = ImageView.ScaleType.CENTER_CROP
+                                return false
+                            }
 
-                                }
-                        )
-                        .into(carImg)
+                        }
+                    )
+                    .into(carImg)
 
             }
         }
@@ -78,11 +82,17 @@ class ReceivedOffersAdapter(private val actionListener: ReceivedOffersActionsLis
     }
 
     class ReceivedOffersAdapterDifUtil : DiffUtil.ItemCallback<CarNReceivedOfferWrapper>() {
-        override fun areItemsTheSame(oldItem: CarNReceivedOfferWrapper, newItem: CarNReceivedOfferWrapper): Boolean {
+        override fun areItemsTheSame(
+            oldItem: CarNReceivedOfferWrapper,
+            newItem: CarNReceivedOfferWrapper
+        ): Boolean {
             return (oldItem.car.carId == newItem.car.carId) && (oldItem.offer.offerId == newItem.offer.offerId)
         }
 
-        override fun areContentsTheSame(oldItem: CarNReceivedOfferWrapper, newItem: CarNReceivedOfferWrapper): Boolean {
+        override fun areContentsTheSame(
+            oldItem: CarNReceivedOfferWrapper,
+            newItem: CarNReceivedOfferWrapper
+        ): Boolean {
             return (oldItem.car == newItem.car) &&
                     (oldItem.offer == newItem.offer)
         }
@@ -91,7 +101,7 @@ class ReceivedOffersAdapter(private val actionListener: ReceivedOffersActionsLis
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReceivedOffersAdapterVH {
         val binding =
-                ReceivedOfferItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ReceivedOfferItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ReceivedOffersAdapterVH(binding)
     }
 

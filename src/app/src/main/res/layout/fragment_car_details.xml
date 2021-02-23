@@ -16,7 +16,7 @@
         android:layout_margin="@dimen/std_space"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:textStyle="bold"
-        android:textColor="@color/secondary_accent_txt"
+        android:textColor="@color/secondary_txt_on_white"
         android:fontFamily="monospace"/>
 
     <ProgressBar

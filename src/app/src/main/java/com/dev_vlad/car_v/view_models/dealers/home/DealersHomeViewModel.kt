@@ -15,9 +15,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class DealersHomeViewModel(
-        private val userRepo: UserRepo,
-        private val carRepo: CarRepo,
-        private val offersRepo: OffersRepo
+    private val userRepo: UserRepo,
+    private val carRepo: CarRepo,
+    private val offersRepo: OffersRepo
 ) : ViewModel() {
     init {
         setCurrentUser()
@@ -43,27 +43,27 @@ class DealersHomeViewModel(
     }
 
     private fun refreshPosts(query: String?, page: Int = 1): Flow<List<CarsWrapperForDealers>> =
-            if (currentUser.value == null) emptyFlow()
-            else carRepo.getAllCars(
-                    pageNo = page,
-                    query = query
-            ).map {
-                //check if dealer has sent offer for this
-                val mappedCarsWrapper = ArrayList<CarsWrapperForDealers>()
-                for (car in it) {
-                    val offer = offersRepo.getMyNonObservableOfferIfExist(
-                            carId = car.carId,
-                            ownerId = car.ownerId,
-                            dealersId = currentUser.value!!.userId
-                    )
-                    val carsWrapper = CarsWrapperForDealers(
-                            offerSent = offer,
-                            car = car
-                    )
-                    mappedCarsWrapper.add(carsWrapper)
-                }
-                mappedCarsWrapper
+        if (currentUser.value == null) emptyFlow()
+        else carRepo.getAllCars(
+            pageNo = page,
+            query = query
+        ).map {
+            //check if dealer has sent offer for this
+            val mappedCarsWrapper = ArrayList<CarsWrapperForDealers>()
+            for (car in it) {
+                val offer = offersRepo.getMyNonObservableOfferIfExist(
+                    carId = car.carId,
+                    ownerId = car.ownerId,
+                    dealersId = currentUser.value!!.userId
+                )
+                val carsWrapper = CarsWrapperForDealers(
+                    offerSent = offer,
+                    car = car
+                )
+                mappedCarsWrapper.add(carsWrapper)
             }
+            mappedCarsWrapper
+        }
 
 
     //TODO
@@ -71,8 +71,8 @@ class DealersHomeViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             //modify query and page
             val newState = PostsStateModifiers(
-                    query = query,
-                    page = 1
+                query = query,
+                page = 1
             )
             postsState.postValue(newState)
         }
@@ -88,11 +88,11 @@ class DealersHomeViewModel(
 }
 
 data class PostsStateModifiers(
-        var query: String? = null,
-        var page: Int = 1
+    var query: String? = null,
+    var page: Int = 1
 )
 
 data class CarsWrapperForDealers(
-        val offerSent: CarOfferEntity?,
-        val car: CarEntity
+    val offerSent: CarOfferEntity?,
+    val car: CarEntity
 )

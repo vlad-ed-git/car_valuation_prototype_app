@@ -22,7 +22,7 @@ class AddCarImagesViewModel(private val carRepo: CarRepo) : ViewModel() {
     fun observeCarImages(): LiveData<List<String>> = carImages
     fun loadCarDataById(carId: String) {
         MyLogger.logThis(
-                TAG, "setCar()", "carId $carId"
+            TAG, "setCar()", "carId $carId"
         )
         viewModelScope.launch(Dispatchers.IO) {
             val fetchedCar = carRepo.getNonObservableCarDetailsById(carId)
@@ -39,9 +39,9 @@ class AddCarImagesViewModel(private val carRepo: CarRepo) : ViewModel() {
         //TODO FIX the issue with image_urls array-list never being null
         val properImages = ogCarImages.filter { imgUrl -> imgUrl.length > 4 }
         MyLogger.logThis(
-                TAG,
-                "initCarImages()",
-                "proper images in it -- ${properImages.size}"
+            TAG,
+            "initCarImages()",
+            "proper images in it -- ${properImages.size}"
         )
         carImages.value = properImages
     }
@@ -57,9 +57,9 @@ class AddCarImagesViewModel(private val carRepo: CarRepo) : ViewModel() {
         imgTmp.add(0, newImgUri)
         carImages.value = imgTmp
         MyLogger.logThis(
-                TAG,
-                "addImage()",
-                "added $newImgUri new size == ${imgTmp.size}"
+            TAG,
+            "addImage()",
+            "added $newImgUri new size == ${imgTmp.size}"
         )
     }
 
@@ -80,7 +80,7 @@ class AddCarImagesViewModel(private val carRepo: CarRepo) : ViewModel() {
         else {
             val newImages = ArrayList<String>()
             newImages.addAll(
-                    allImages.filterNot { imgUrl -> selectedImages.contains(imgUrl) }
+                allImages.filterNot { imgUrl -> selectedImages.contains(imgUrl) }
             )
             carImages.value = newImages
         }
@@ -117,9 +117,9 @@ class AddCarImagesViewModel(private val carRepo: CarRepo) : ViewModel() {
                 } else {
                     car.imageUrls = uploadedImages
                     MyLogger.logThis(
-                            TAG,
-                            "aboutToCompress",
-                            "compressed uris ${uploadedImages.size}"
+                        TAG,
+                        "aboutToCompress",
+                        "compressed uris ${uploadedImages.size}"
                     )
 
                     //save on fire-store
@@ -132,8 +132,8 @@ class AddCarImagesViewModel(private val carRepo: CarRepo) : ViewModel() {
                         car.carId = carId
                         //save locally
                         MyLogger.logThis(
-                                TAG, "savingCarLocally() --- ",
-                                "car ${car.imageUrls} old id $oldId"
+                            TAG, "savingCarLocally() --- ",
+                            "car ${car.imageUrls} old id $oldId"
                         )
                         carRepo.deleteTmpCarAndSaveCar(car, oldId = oldId)
                         withContext(Dispatchers.Main) {

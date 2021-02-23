@@ -17,7 +17,11 @@ interface CarOfferEntityDao {
 
 
     @Query("SELECT * FROM buy_offers WHERE dealerId=:dealersId AND carId=:carId AND ownerId =:ownerId")
-    suspend fun getOfferIfWasMade(carId: String, ownerId: String, dealersId: String): List<CarOfferEntity>
+    suspend fun getOfferIfWasMade(
+        carId: String,
+        ownerId: String,
+        dealersId: String
+    ): List<CarOfferEntity>
 
     @Query("SELECT * FROM buy_offers WHERE ownerId =:userId ORDER BY offerPrice DESC LIMIT :limit OFFSET :offset")
     fun getReceivedOffers(userId: String, limit: Int, offset: Int): Flow<List<CarOfferEntity>>
