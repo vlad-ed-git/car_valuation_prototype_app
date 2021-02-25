@@ -1,23 +1,27 @@
 package com.dev_vlad.car_v.models.persistence.chat
 
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.bumptech.glide.RequestManager
+import com.dev_vlad.car_v.models.persistence.cars.CarRepo
 import com.dev_vlad.car_v.util.*
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 
-class ChatRepo(private val chatDao: ChatDao) {
+class ChatRepo(private val chatDao: ChatDao, private val glideRequestMgr : RequestManager) {
 
     companion object {
         private val TAG = ChatRepo::class.java.simpleName
     }
 
-    suspend fun sendMessageToFirestore(chatEntity: ChatEntity): String? {
+    suspend fun sendMessageToFireStore(chatEntity: ChatEntity): String? {
         val chatCollection = Firebase.firestore.collection(CHATS_COLLECTION_NAME)
         val chatDoc = if (chatEntity.chatId == "") {
             val tmpDoc = chatCollection.document()
@@ -35,6 +39,66 @@ class ChatRepo(private val chatDao: ChatDao) {
             null
         }
 
+    }
+
+    suspend fun sendImageMessageToFireStore(chatEntity: ChatEntity, userId: String): String? {
+        val chatCollection = Firebase.firestore.collection(CHATS_COLLECTION_NAME)
+        val chatDoc = if (chatEntity.chatId == "") {
+            val tmpDoc = chatCollection.document()
+            chatEntity.chatId = tmpDoc.id
+            tmpDoc
+        } else {
+            chatCollection.document(chatEntity.chatId)
+        }
+
+        return try {
+            //1.. save in room
+            chatDao.insert(chatEntity) //this is so that the sender can immediately see the image
+            //2..send it to firebase
+            val imgUrl = uploadImage(chatEntity.message, userId)
+            if (imgUrl != null) {
+                chatEntity.message = imgUrl
+                chatDoc.set(chatEntity).await()
+                chatEntity.chatId
+            }else{
+                chatDao.delete(chatEntity) //failed so undo
+                null
+            }
+        } catch (exception: Exception) {
+            MyLogger.logThis(TAG, "", "exception ${exception.message}", exception)
+            null
+        }
+    }
+
+    suspend fun uploadImage(photoUriStr: String, ownerId: String): String? {
+        return try {
+            if (photoUriStr.startsWith("https")) {
+                return photoUriStr
+            }
+
+            val storageRef = Firebase.storage.reference
+            val folderRef = storageRef.child(CHATS_COLLECTION_NAME).child(ownerId)
+            val imageName = System.currentTimeMillis().toString() + "_img"
+            val fileRef = folderRef.child(imageName)
+            val compressedImage = compressImage(glideRequestMgr, photoUriStr)
+            val uploadTask = if (compressedImage == null) {
+                fileRef.putFile(photoUriStr.toUri()) //put uncompressed file
+            }
+            else{
+                fileRef.putBytes(compressedImage)
+            }
+
+            val downloadUrl = uploadTask.await()
+                    .storage
+                    .downloadUrl
+                    .await()
+                    .toString()
+            MyLogger.logThis(TAG, "UploadImage()", "image added at ${photoUriStr.toUri().lastPathSegment}")
+            downloadUrl
+        } catch (exception: java.lang.Exception) {
+            MyLogger.logThis(TAG, "UploadImages()", "exception thrown $exception", exception)
+            null
+        }
     }
 
     private val registeredListeners = ArrayList<ListenerRegistration>()
@@ -173,6 +237,7 @@ class ChatRepo(private val chatDao: ChatDao) {
             offset = offset
         )
     }
+
 
 
 }

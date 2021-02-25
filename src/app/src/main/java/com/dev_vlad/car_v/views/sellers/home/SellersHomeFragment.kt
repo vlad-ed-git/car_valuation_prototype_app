@@ -95,10 +95,6 @@ class SellersHomeFragment : Fragment(), MyCarsAdapter.MyCarsActionsListener {
     }
 
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 
     /******************** MENU ****************/
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -118,6 +114,12 @@ class SellersHomeFragment : Fragment(), MyCarsAdapter.MyCarsActionsListener {
         val action =
             SellersHomeFragmentDirections.actionSellersHomeFragmentToMyCarDetailsFragment(clickedCar.carId)
         findNavController().navigate(action)
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 

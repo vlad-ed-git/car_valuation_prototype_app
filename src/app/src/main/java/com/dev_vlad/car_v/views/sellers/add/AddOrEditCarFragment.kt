@@ -78,6 +78,7 @@ class AddOrEditCarFragment : Fragment() {
                                     carId
                                 )
                             findNavController().navigate(action)
+                            addCarVm.resetCarDataState()
                         }
                     }
                     DATA_STATE.ERROR -> {

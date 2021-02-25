@@ -4,6 +4,7 @@ import android.app.Activity.RESULT_OK
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
@@ -23,7 +24,7 @@ import com.dev_vlad.car_v.util.showSnackBarToUser
 import com.dev_vlad.car_v.view_models.sellers.add.AddCarImagesViewModel
 import com.dev_vlad.car_v.view_models.sellers.add.AddCarImagesViewModelFactory
 import com.dev_vlad.car_v.views.adapters.sellers.MyCarImagesAdapter
-import com.dev_vlad.car_v.util.REQUEST_IMAGE_CAPTURE as REQUEST_IMAGE_IN_GALLERY
+import com.dev_vlad.car_v.util.REQUEST_IMAGE_IN_GALLERY
 
 
 class AddCarImagesFragment : Fragment(), MyCarImagesAdapter.ImageActionsListeners {
@@ -115,12 +116,13 @@ class AddCarImagesFragment : Fragment(), MyCarImagesAdapter.ImageActionsListener
     }
 
     private fun addPhotoFromGallery() {
-        val intent = Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT)
-        val selectPictTitle = getString(R.string.select_photo_in_gallery_title)
-        startActivityForResult(
-            Intent.createChooser(intent, selectPictTitle),
-            REQUEST_IMAGE_IN_GALLERY
-        )
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        val mimeTypes = arrayOf("image/jpeg", "image/png", "image/jpg")
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        startActivityForResult(intent,REQUEST_IMAGE_IN_GALLERY)
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -215,13 +217,6 @@ class AddCarImagesFragment : Fragment(), MyCarImagesAdapter.ImageActionsListener
     }
 
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        if (alertDialog?.isShowing == true)
-            alertDialog?.dismiss()
-        alertDialog = null
-        _binding = null
-    }
 
     /******************** MENU ****************/
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -253,6 +248,15 @@ class AddCarImagesFragment : Fragment(), MyCarImagesAdapter.ImageActionsListener
 
     override fun onUnSelectImage(imgUrl: String) {
         addCarImgsVm.unSelectCarImg(imgUrl)
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (alertDialog?.isShowing == true)
+            alertDialog?.dismiss()
+        alertDialog = null
+        _binding = null
     }
 
 

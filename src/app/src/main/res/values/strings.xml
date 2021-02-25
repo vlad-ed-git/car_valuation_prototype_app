@@ -132,4 +132,6 @@
     <string name="starting_offer_prefix">Dealer\'s initial offer</string>
     <string name="sent_image_desc">Sent Image</string>
     <string name="received_image_desc">Received Image</string>
+    <string name="fragment_sent_offers_lbl">My offers</string>
+    <string name="full_image_desc">full image</string>
 </resources>

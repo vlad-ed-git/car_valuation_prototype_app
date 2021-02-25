@@ -17,11 +17,10 @@ const val CARS_COLLECTION_NAME = "cars"
 const val USERS_COLLECTION_NAME = "users"
 const val OFFERS_COLLECTION_NAME = "offers"
 const val UNSAVED_CAR_ID = "TMP_CAR"
-const val DEFAULT_SORT_OFFERS_FIELD = "offerPrice"
 const val OWNER_ID_FIELD = "ownerId"
 const val PHONE_NUMBER_FIELD = "userPhone"
 const val CAR_ID_FIELD = "carId"
 const val DEALER_ID_FIELD = "dealerId"
 
 //IMAGES STUFF
-const val REQUEST_IMAGE_CAPTURE = 11
+const val REQUEST_IMAGE_IN_GALLERY = 11

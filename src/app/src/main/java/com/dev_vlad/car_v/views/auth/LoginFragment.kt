@@ -159,11 +159,11 @@ class LoginFragment : Fragment() {
                         binding.getVerificationCode.setText(R.string.resend_code_txt)
                         binding.getVerificationCode.isEnabled = true
                         binding.loadingBar.isVisible = false
+                        binding.signIn.isEnabled = true
                         showSnackBar(
                             errorRes = R.string.verification_code_was_sent_txt,
                             isError = false
                         )
-                        binding.signIn.isEnabled = true
                     }
                     SIGNINSTATE.STATE_SIGN_IN_FAILED -> {
                         //reset everything
@@ -195,7 +195,7 @@ class LoginFragment : Fragment() {
     private fun resetViewsState() {
         binding.getVerificationCode.setText(R.string.get_code_txt)
         binding.getVerificationCode.isEnabled = true
-        binding.signIn.isEnabled = false
+        binding.signIn.isEnabled = true
         binding.loadingBar.isVisible = false
         binding.verificationCode.editText?.setText("")
 

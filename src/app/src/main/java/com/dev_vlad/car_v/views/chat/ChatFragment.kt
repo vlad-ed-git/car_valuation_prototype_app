@@ -1,7 +1,10 @@
 package com.dev_vlad.car_v.views.chat
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.*
 import android.widget.ImageView
 import androidx.core.view.isVisible
@@ -21,10 +24,14 @@ import com.dev_vlad.car_v.R
 import com.dev_vlad.car_v.databinding.FragmentChatBinding
 import com.dev_vlad.car_v.models.persistence.chat.ChatEntity
 import com.dev_vlad.car_v.util.MyLogger
+import com.dev_vlad.car_v.util.REQUEST_IMAGE_IN_GALLERY
 import com.dev_vlad.car_v.util.hideKeyBoard
 import com.dev_vlad.car_v.view_models.chat.ChatViewModel
 import com.dev_vlad.car_v.view_models.chat.ChatViewModelFactory
 import com.dev_vlad.car_v.views.adapters.chat.ChatAdapter
+import com.dev_vlad.car_v.views.dialogs.DialogFullImage
+import com.dev_vlad.car_v.views.dialogs.MakeInitialOffer
+import com.dev_vlad.car_v.views.sellers.add.AddCarImagesFragment
 import java.util.*
 
 class ChatFragment : Fragment(), ChatAdapter.ChatActionsListener {
@@ -129,8 +136,36 @@ class ChatFragment : Fragment(), ChatAdapter.ChatActionsListener {
                     hideKeyBoard(requireContext(), messageContainer)
                 }
             }
+
+           addPic.setOnClickListener{
+               addPhotoFromGallery()
+           }
         }
     }
+
+    private fun addPhotoFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        val mimeTypes = arrayOf("image/jpeg", "image/png", "image/jpg")
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        startActivityForResult(intent, REQUEST_IMAGE_IN_GALLERY)
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_IMAGE_IN_GALLERY && resultCode == Activity.RESULT_OK) {
+            MyLogger.logThis(
+                    TAG,
+                    " addPhotoFromGallery() -> onActivityResult()", "returned data ${data?.data}"
+            )
+            data?.data?.let { imgUri ->
+                chatViewModel.sendImageMessage(imgUri.toString())
+            }
+        }
+
+    }
+
 
     private fun observeMessages() {
         chatViewModel.observeMessages().observe(
@@ -158,8 +193,27 @@ class ChatFragment : Fragment(), ChatAdapter.ChatActionsListener {
         )
     }
 
+    private var dialogShowFullImage : DialogFullImage? = null
     override fun onMessageClicked(clickedMessage: ChatEntity) {
-        //TODO
+        if (clickedMessage.messageIsImage){
+            if (dialogShowFullImage != null) {
+                if (dialogShowFullImage?.isVisible == true)
+                    dialogShowFullImage?.dismiss()
+                dialogShowFullImage = null
+            }
+            dialogShowFullImage = DialogFullImage(clickedMessage.message)
+            dialogShowFullImage?.show(parentFragmentManager, "com.dev_vlad.car_v.zoom_img_dialog")
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        if (dialogShowFullImage != null) {
+            if (dialogShowFullImage?.isVisible == true)
+                dialogShowFullImage?.dismiss()
+            dialogShowFullImage = null
+        }
     }
 
 }

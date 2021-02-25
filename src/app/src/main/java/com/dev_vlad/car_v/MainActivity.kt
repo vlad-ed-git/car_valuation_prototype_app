@@ -79,6 +79,12 @@ class MainActivity : AppCompatActivity() {
                     binding.bottomNav.isVisible = true
                 }
 
+                R.id.sentOffersFragment -> {
+                    binding.toolbar.title = getString(R.string.fragment_sent_offers_lbl)
+                    binding.toolbar.isVisible = true
+                    binding.bottomNav.isVisible = true
+                }
+
                 R.id.dealersHomeFragment -> {
                     binding.toolbar.title = getString(R.string.cars_txt)
                     binding.toolbar.isVisible = true

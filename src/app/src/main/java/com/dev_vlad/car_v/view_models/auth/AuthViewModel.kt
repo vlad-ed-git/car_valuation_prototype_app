@@ -152,7 +152,10 @@ class AuthViewModel(
                 //TODO sync other user data
                 if (existingUser.isDealer) {
                     //fetch offers
-                    val isDone = offersRepo.loadOffersIMade(dealerId = existingUser.userId)
+                    val isDone = offersRepo.loadOffersIMade(dealerId = existingUser.userId, pageNo = 1  )
+                }
+                else{
+                   val isDone =  offersRepo.loadReceivedOffersFromServer(sellerId = existingUser.userId, pageNo = 1)
                 }
                 saveUserLocally(existingUser)
 

@@ -27,7 +27,6 @@ class ChatAdapter(private val actionListener: ChatActionsListener, private val u
 
     companion object {
         private val TAG = ChatAdapter::class.java.simpleName
-        private const val IMG_URL_PREFIX = "http"
     }
 
     interface ChatActionsListener {
@@ -72,7 +71,7 @@ class ChatAdapter(private val actionListener: ChatActionsListener, private val u
             binding.apply {
                 receiverMessage.isVisible = false
                 receiverMessageIv.isVisible = false
-                if (msg.message.startsWith(IMG_URL_PREFIX)) {
+                if (msg.messageIsImage) {
                     senderMessage.isVisible = false
                     senderMessageIv.isVisible = true
                     showImageMessage(msg.message, senderMessageIv)
@@ -88,7 +87,7 @@ class ChatAdapter(private val actionListener: ChatActionsListener, private val u
             binding.apply {
                 senderMessage.isVisible = false
                 senderMessageIv.isVisible = false
-                if (msg.message.startsWith(IMG_URL_PREFIX)) {
+                if (msg.messageIsImage) {
                     receiverMessage.isVisible = false
                     receiverMessageIv.isVisible = true
                     showImageMessage(msg.message, receiverMessageIv)
@@ -134,6 +133,11 @@ class ChatAdapter(private val actionListener: ChatActionsListener, private val u
                         }
 
                     }
+                }
+
+                //on click
+                itemView.setOnClickListener {
+                    actionListener.onMessageClicked(msg)
                 }
 
             }

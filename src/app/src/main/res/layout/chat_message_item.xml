@@ -33,10 +33,11 @@
 
     <ImageView
         android:visibility="gone"
+        android:src="@drawable/logo_grey"
         android:id="@+id/sender_message_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxHeight="@dimen/featured_image_height"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent=".5"
+        android:layout_height="@dimen/featured_image_height"
         android:gravity="start|center_vertical"
         android:padding="@dimen/std_space"
         android:scaleType="fitCenter"
@@ -47,9 +48,9 @@
     <ImageView
         android:visibility="gone"
         android:id="@+id/receiver_message_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxHeight="@dimen/featured_image_height"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent=".5"
+        android:layout_height="@dimen/featured_image_height"
         android:gravity="start|center_vertical"
         android:padding="@dimen/std_space"
         android:background="@color/whitish"

@@ -13,7 +13,8 @@ data class ChatEntity(
     var message: String,
     var sentByOwner: Boolean,
     var sentByDealer: Boolean,
-    var sentOn: Long
+    var sentOn: Long,
+    var messageIsImage: Boolean
 ) {
 
     constructor() : this(
@@ -24,7 +25,8 @@ data class ChatEntity(
         message = "",
         sentByOwner = false,
         sentByDealer = false,
-        sentOn = 1L
+        sentOn = 1L,
+            messageIsImage = false
     )
 }
 

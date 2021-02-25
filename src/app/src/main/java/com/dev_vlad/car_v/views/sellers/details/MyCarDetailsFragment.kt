@@ -128,10 +128,6 @@ class MyCarDetailsFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 
     /******************** MENU ****************/
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -150,5 +146,11 @@ class MyCarDetailsFragment : Fragment() {
             )
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 
 }

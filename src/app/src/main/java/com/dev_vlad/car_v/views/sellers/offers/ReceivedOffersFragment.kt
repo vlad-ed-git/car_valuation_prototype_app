@@ -90,11 +90,6 @@ class ReceivedOffersFragment : Fragment(), ReceivedOffersAdapter.ReceivedOffersA
     }
 
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     /******************** MENU ****************/
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.sellers_home_menu, menu)
@@ -122,6 +117,13 @@ class ReceivedOffersFragment : Fragment(), ReceivedOffersAdapter.ReceivedOffersA
         val action =
             ReceivedOffersFragmentDirections.actionReceivedOffersFragmentToChatFragment(data)
         findNavController().navigate(action)
+    }
+
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

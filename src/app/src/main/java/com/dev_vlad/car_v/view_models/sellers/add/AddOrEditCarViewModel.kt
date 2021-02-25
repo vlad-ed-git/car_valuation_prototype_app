@@ -55,6 +55,12 @@ class AddOrEditCarViewModel(private val userRepo: UserRepo, private val carRepo:
 
 
     private var carDataState = MutableLiveData<DATA_STATE>(DATA_STATE.IDLE)
+    fun resetCarDataState() {
+            //when we navigate forward,
+        // user will find the idle state
+        // else back button wont result in a loop
+            carDataState.value = DATA_STATE.IDLE
+    }
     fun getCarDataState(): LiveData<DATA_STATE> = carDataState
     fun isOperationOnGoing(): Boolean {
         return carDataState.value == DATA_STATE.SAVING || carDataState.value == DATA_STATE.DELETING
@@ -241,6 +247,7 @@ class AddOrEditCarViewModel(private val userRepo: UserRepo, private val carRepo:
             }
         }
     }
+
 
 
     companion object {

@@ -1,6 +1,7 @@
 package com.dev_vlad.car_v.models.persistence.cars
 
 import androidx.core.net.toUri
+import com.bumptech.glide.RequestManager
 import com.dev_vlad.car_v.util.*
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -12,7 +13,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
 class CarRepo(
-    private val carEntityDao: CarEntityDao
+    private val carEntityDao: CarEntityDao,
+    private val glideRequestMgr: RequestManager
 ) {
 
     companion object {
@@ -167,21 +169,28 @@ class CarRepo(
             val storageRef = Firebase.storage.reference
             val folderRef = storageRef.child(CARS_COLLECTION_NAME).child(ownerId)
             val uploadedPhotoUrls = ArrayList<String>()
-            for (photos in photosToUpload) {
-                if (photos.startsWith("https")) {
-                    uploadedPhotoUrls.add(photos)
+            for (photo in photosToUpload) {
+                if (photo.startsWith("https")) {
+                    uploadedPhotoUrls.add(photo)
                     continue
                 }
-                val uri = photos.toUri()
-                val fileRef = folderRef.child("${uri.lastPathSegment}")
-                val uploadTask = fileRef.putFile(uri)
+                val imageName = System.currentTimeMillis().toString() + "_img"
+                val fileRef = folderRef.child(imageName)
+                val compressedImage = compressImage(glideRequestMgr, photo)
+                val uploadTask = if (compressedImage == null) {
+                    fileRef.putFile(photo.toUri())
+                }
+                else{
+                    fileRef.putBytes(compressedImage)
+                }
+
                 val downloadUrl = uploadTask.await()
-                    .storage
-                    .downloadUrl
-                    .await()
-                    .toString()
+                        .storage
+                        .downloadUrl
+                        .await()
+                        .toString()
                 uploadedPhotoUrls.add(downloadUrl)
-                MyLogger.logThis(TAG, "UploadImages()", "image added at ${uri.lastPathSegment}")
+                MyLogger.logThis(TAG, "UploadImages()", "image added at ${photo.toUri().lastPathSegment}")
 
             }
             return uploadedPhotoUrls
@@ -191,10 +200,6 @@ class CarRepo(
         }
     }
 
-    //fetch cars for dealers
-    private fun searchCarsInServer(pageNo: Int = 1, query: String?) {
-
-    }
 
     private suspend fun loadMoreCarsFromServer(pageNo: Int = 1) {
         try {

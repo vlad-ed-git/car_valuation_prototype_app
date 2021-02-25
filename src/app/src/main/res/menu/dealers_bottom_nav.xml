@@ -3,4 +3,8 @@
     <item android:id="@+id/dealersHomeFragment"
         android:icon="@drawable/ic_car"
         android:title="@string/cars_txt"/>
+
+    <item android:id="@+id/sentOffersFragment"
+        android:icon="@drawable/ic_offer"
+        android:title="@string/received_offers_txt"/>
 </menu>

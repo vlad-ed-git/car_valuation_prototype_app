@@ -137,7 +137,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/md_space"
-        android:enabled="false"
         android:text="@string/sign_in_btn_txt"
         android:textColor="@color/accent"
         app:layout_constraintTop_toBottomOf="@id/verification_code_hint" />

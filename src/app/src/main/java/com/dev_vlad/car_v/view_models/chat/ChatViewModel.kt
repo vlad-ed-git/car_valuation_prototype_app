@@ -53,11 +53,30 @@ class ChatViewModel(private val chatRepo: ChatRepo, private val userRepo: UserRe
             message = newMsg,
             sentByOwner = currentUser.value?.isSeller ?: false,
             sentByDealer = currentUser.value?.isDealer ?: false,
-            sentOn = System.currentTimeMillis()
+            sentOn = System.currentTimeMillis(),
+            messageIsImage = false
         )
         viewModelScope.launch(Dispatchers.IO) {
-            val serverChatId = chatRepo.sendMessageToFirestore(chatEntity)
+            val serverChatId = chatRepo.sendMessageToFireStore(chatEntity)
              //serverChatId will be null if something went wrong
+        }
+    }
+
+    fun sendImageMessage(uriStr: String) {
+        val chatEntity = ChatEntity(
+                chatId = "",
+                ownerId = chatInitiateData.ownerId,
+                dealerId = chatInitiateData.dealerId,
+                carId = chatInitiateData.carId,
+                message = uriStr,
+                sentByOwner = currentUser.value?.isSeller ?: false,
+                sentByDealer = currentUser.value?.isDealer ?: false,
+                sentOn = System.currentTimeMillis(),
+                messageIsImage = true
+        )
+        viewModelScope.launch(Dispatchers.IO) {
+            val serverChatId = chatRepo.sendImageMessageToFireStore(chatEntity, currentUser.value!!.userId)
+            //serverChatId will be null if something went wrong
         }
     }
 
