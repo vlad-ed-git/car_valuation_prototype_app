@@ -7,6 +7,8 @@ import com.dev_vlad.car_v.models.persistence.cars.CarEntity
 import com.dev_vlad.car_v.models.persistence.cars.CarRepo
 import com.dev_vlad.car_v.models.persistence.offers.CarOfferEntity
 import com.dev_vlad.car_v.models.persistence.offers.OffersRepo
+import com.dev_vlad.car_v.util.RECYCLER_PAGE_SIZE
+import com.dev_vlad.car_v.view_models.sellers.home.PostsStateModifiers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -37,16 +39,17 @@ class ReceivedOffersViewModel(
     fun getCurrentUser(): LiveData<UserEntity> = currentUser
 
     /***************** AUTH ************************/
-    private var currentPage = 1
+    private var loadedPage = MutableLiveData<Int>(1)
 
-    fun observeReceivedOffers(): LiveData<List<CarNReceivedOfferWrapper>> =
-        refreshPosts().asLiveData()
+    fun observeReceivedOffers(): LiveData<List<CarNReceivedOfferWrapper>> = loadedPage.switchMap {
+        refreshPosts(page = it).asLiveData()
+    }
 
-    private fun refreshPosts(): Flow<List<CarNReceivedOfferWrapper>> =
+    private fun refreshPosts(page : Int = 1): Flow<List<CarNReceivedOfferWrapper>> =
         if (currentUser.value == null) emptyFlow()
         else offersRepo.getReceivedOffers(
             userId = currentUser.value!!.userId,
-            pageNo = currentPage,
+            pageNo = page,
         ).map {
             //check if dealer has sent offer for this
             val receivedOffersWrapped = ArrayList<CarNReceivedOfferWrapper>()
@@ -64,6 +67,20 @@ class ReceivedOffersViewModel(
             }
             receivedOffersWrapped
         }
+
+
+
+    var isLoading = false
+    fun fetchMoreOffers(totalItemsInListNow: Int) {
+        if (!isLoading){
+            isLoading = true
+            val itemsLoaded = if (totalItemsInListNow > 0) totalItemsInListNow else 1
+            val currentPage = (itemsLoaded / RECYCLER_PAGE_SIZE).toInt()
+            val nextPage = currentPage + 1
+            loadedPage.value = nextPage // trigger reload
+        }
+
+    }
 
 
 }

@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.dev_vlad.car_v.CarVApp
 import com.dev_vlad.car_v.R
 import com.dev_vlad.car_v.databinding.FragmentSellersHomeBinding
@@ -60,7 +61,8 @@ class SellersHomeFragment : Fragment(), MyCarsAdapter.MyCarsActionsListener {
         sellersHomeViewModel.observeMyCarsState().observe(
             viewLifecycleOwner, Observer {
                 binding.loadingBar.isVisible = false
-                if (it == null) {
+                sellersHomeViewModel.isLoading = false
+                if (it.isNullOrEmpty()) {
                     MyLogger.logThis(
                         TAG,
                         "observeMyCars()",
@@ -89,6 +91,15 @@ class SellersHomeFragment : Fragment(), MyCarsAdapter.MyCarsActionsListener {
                 findNavController().navigate(action)
             }
             myCars.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            myCars.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (!myCars.canScrollVertically(1)){
+                        //we have reached the bottom of the list
+                        sellersHomeViewModel.fetchMoreCars(totalItemsInListNow = myCarsAdapter.itemCount)
+                    }
+                }
+            })
             myCars.adapter = myCarsAdapter
             myCars.addItemDecoration(VerticalSpacingItemDecorator(30))
         }

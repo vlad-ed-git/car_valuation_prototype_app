@@ -1,8 +1,8 @@
 package com.dev_vlad.car_v.util
 
 
-const val RECYCLER_PAGE_SIZE = 30
-const val CHATS_RECYCLER_PAGE_SIZE = 60
+const val RECYCLER_PAGE_SIZE = 1
+const val CHATS_RECYCLER_PAGE_SIZE = 1
 
 //room
 const val USER_TABLE_NAME = "users_table"

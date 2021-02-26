@@ -7,6 +7,7 @@ import com.dev_vlad.car_v.models.persistence.cars.CarEntity
 import com.dev_vlad.car_v.models.persistence.cars.CarRepo
 import com.dev_vlad.car_v.models.persistence.offers.CarOfferEntity
 import com.dev_vlad.car_v.models.persistence.offers.OffersRepo
+import com.dev_vlad.car_v.util.RECYCLER_PAGE_SIZE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -37,16 +38,17 @@ class SentOffersViewModel(
     fun getCurrentUser(): LiveData<UserEntity> = currentUser
 
     /***************** AUTH ************************/
-    private var currentPage = 1
+    private var loadedPage = MutableLiveData<Int>(1)
 
-    fun observeSentOffers(): LiveData<List<CarNSentOfferWrapper>> =
-            refreshPosts().asLiveData()
+    fun observeSentOffers(): LiveData<List<CarNSentOfferWrapper>> = loadedPage.switchMap {
+        refreshPosts(page = it).asLiveData()
+    }
 
-    private fun refreshPosts(): Flow<List<CarNSentOfferWrapper>> =
+    private fun refreshPosts(page : Int): Flow<List<CarNSentOfferWrapper>> =
             if (currentUser.value == null) emptyFlow()
             else offersRepo.getSentOffers(
                     userId = currentUser.value!!.userId,
-                    pageNo = currentPage,
+                    pageNo = page,
             ).map {
                 //check if dealer has sent offer for this
                 val sentOffersWrapped = ArrayList<CarNSentOfferWrapper>()
@@ -64,6 +66,18 @@ class SentOffersViewModel(
                 }
                 sentOffersWrapped
             }
+
+    var isLoading = false
+    fun fetchMoreCars(totalItemsInListNow: Int) {
+        if (!isLoading) {
+            isLoading = true
+            //calculate current page
+            val itemsLoaded = if (totalItemsInListNow > 0) totalItemsInListNow else 1
+            val currentPage = (itemsLoaded / RECYCLER_PAGE_SIZE).toInt()
+            val nextPage = currentPage + 1
+            loadedPage.value = nextPage
+        }
+    }
 
 
 }

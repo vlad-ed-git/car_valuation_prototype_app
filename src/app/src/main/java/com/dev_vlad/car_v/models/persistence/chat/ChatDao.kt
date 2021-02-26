@@ -15,12 +15,11 @@ interface ChatDao {
     @Delete
     suspend fun delete(vararg chats: ChatEntity)
 
-    @Query("SELECT * FROM chats WHERE ownerId =:ownerId AND carId =:carId AND dealerId =:dealerId  ORDER BY sentOn DESC LIMIT :limit OFFSET :offset")
+    @Query("SELECT * FROM chats WHERE ownerId =:ownerId AND carId =:carId AND dealerId =:dealerId  ORDER BY sentOn DESC LIMIT :limit")
     fun getMessages(
         carId: String,
         ownerId: String,
         dealerId: String,
-        limit: Int,
-        offset: Int
+        limit: Int
     ): Flow<List<ChatEntity>>
 }

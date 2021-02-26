@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -30,8 +31,6 @@ import com.dev_vlad.car_v.view_models.chat.ChatViewModel
 import com.dev_vlad.car_v.view_models.chat.ChatViewModelFactory
 import com.dev_vlad.car_v.views.adapters.chat.ChatAdapter
 import com.dev_vlad.car_v.views.dialogs.DialogFullImage
-import com.dev_vlad.car_v.views.dialogs.MakeInitialOffer
-import com.dev_vlad.car_v.views.sellers.add.AddCarImagesFragment
 import java.util.*
 
 class ChatFragment : Fragment(), ChatAdapter.ChatActionsListener {
@@ -63,10 +62,8 @@ class ChatFragment : Fragment(), ChatAdapter.ChatActionsListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        chatViewModel.initializedData(args.ChatInitializationData)
+        chatViewModel.setInitializationData(args.ChatInitializationData)
         observeCurrentUser()
-        displayInitialData()
-        observeMessages()
     }
 
     private fun observeCurrentUser() {
@@ -76,6 +73,8 @@ class ChatFragment : Fragment(), ChatAdapter.ChatActionsListener {
                 else ChatAdapter.UserType.SELLER
                 chatAdapter = ChatAdapter(this@ChatFragment, userType)
                 initRv()
+                displayInitialData()
+                observeMessages()
             }
         })
     }
@@ -127,6 +126,15 @@ class ChatFragment : Fragment(), ChatAdapter.ChatActionsListener {
         binding.apply {
             messagesRv.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
+            messagesRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (!messagesRv.canScrollVertically(1)) {
+                        //we have reached the bottom of the list
+                        chatViewModel.fetchMoreCars(totalItemsInListNow = chatAdapter.itemCount)
+                    }
+                }
+            })
             messagesRv.adapter = chatAdapter
             send.setOnClickListener {
                 val newMsg = newMessage.text.toString()
@@ -170,6 +178,7 @@ class ChatFragment : Fragment(), ChatAdapter.ChatActionsListener {
     private fun observeMessages() {
         chatViewModel.observeMessages().observe(
             viewLifecycleOwner, androidx.lifecycle.Observer {
+            chatViewModel.isLoading = false
                 if (it != null) {
                     chatAdapter.submitList(it)
                     MyLogger.logThis(

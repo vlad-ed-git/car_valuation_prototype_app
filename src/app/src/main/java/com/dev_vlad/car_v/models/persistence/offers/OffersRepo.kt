@@ -47,11 +47,11 @@ class OffersRepo(
         } else {
             PAGE_SIZE * (page - 1)
         }
-
-        MyLogger.logThis(TAG, "getReceivedOffers()", "page : $pageNo userId $userId offset $offset")
-        return carOfferEntityDao.getReceivedOffers(userId, limit = PAGE_SIZE, offset = offset)
+        val totalPostsToLoad  = RECYCLER_PAGE_SIZE + offset
+        return carOfferEntityDao.getReceivedOffers(userId, limit = totalPostsToLoad)
             .map {
-                if (it.isEmpty() && !loadReceivedOffersExhausted) {
+                MyLogger.logThis(TAG, "getReceivedOffers()", "page : $pageNo userId $userId load $totalPostsToLoad == found ${it.size}")
+                if (it.size < totalPostsToLoad && !loadReceivedOffersExhausted) {
                     loadReceivedOffersExhausted = true
                     loadReceivedOffersFromServer(sellerId = userId, pageNo = page)
                 }
@@ -70,9 +70,10 @@ class OffersRepo(
             PAGE_SIZE * (page - 1)
         }
 
-        MyLogger.logThis(TAG, "getSentOffers()", "page : $pageNo userId $userId offset $offset")
-        return carOfferEntityDao.getSentOffers(userId, limit = PAGE_SIZE, offset = offset)
+        val totalPostsToLoad  = RECYCLER_PAGE_SIZE + offset
+        return carOfferEntityDao.getSentOffers(userId, limit = PAGE_SIZE)
                 .map {
+                    MyLogger.logThis(TAG, "getSentOffers()", "page : $pageNo userId $userId load $totalPostsToLoad found ${it.size}")
                     if (it.isEmpty() && !loadSentOffersExhausted) {
                         loadSentOffersExhausted = true
                         loadOffersIMade(dealerId = userId, pageNo = page)

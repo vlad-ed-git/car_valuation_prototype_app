@@ -6,6 +6,7 @@ import com.dev_vlad.car_v.models.persistence.auth.UserRepo
 import com.dev_vlad.car_v.models.persistence.chat.ChatEntity
 import com.dev_vlad.car_v.models.persistence.chat.ChatInitiateData
 import com.dev_vlad.car_v.models.persistence.chat.ChatRepo
+import com.dev_vlad.car_v.util.RECYCLER_PAGE_SIZE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -13,13 +14,11 @@ import kotlinx.coroutines.withContext
 class ChatViewModel(private val chatRepo: ChatRepo, private val userRepo: UserRepo) : ViewModel() {
 
     lateinit var chatInitiateData: ChatInitiateData
-    fun initializedData(chatInitializationData: ChatInitiateData) {
+    fun setInitializationData(chatInitializationData: ChatInitiateData) {
         chatInitiateData = chatInitializationData
-    }
-
-    init {
         initUser()
     }
+
 
     private val currentUser = MutableLiveData<UserEntity>()
     fun observeCurrentUser(): LiveData<UserEntity> = currentUser
@@ -32,15 +31,27 @@ class ChatViewModel(private val chatRepo: ChatRepo, private val userRepo: UserRe
         }
     }
 
-    private var currentPage = 1
-    fun observeMessages(): LiveData<List<ChatEntity>> {
-        return chatRepo.fetchMessages(
-            currentPage,
+    private var loadedPage = MutableLiveData<Int>(1)
+    fun observeMessages(): LiveData<List<ChatEntity>> = loadedPage.switchMap {
+        chatRepo.fetchMessages(
+            pageNo = loadedPage.value?:1,
             carId = chatInitiateData.carId,
             ownerId = chatInitiateData.ownerId,
             dealerId = chatInitiateData.dealerId
         )
             .asLiveData()
+    }
+
+    var isLoading = false
+    fun fetchMoreCars(totalItemsInListNow: Int) {
+        if (!isLoading){
+            isLoading = true
+            val itemsLoaded = if (totalItemsInListNow > 0) totalItemsInListNow else 1
+            val currentPage = (itemsLoaded / RECYCLER_PAGE_SIZE).toInt()
+            val nextPage = currentPage + 1
+            loadedPage.value = nextPage // trigger reload
+
+        }
     }
 
 
@@ -79,5 +90,7 @@ class ChatViewModel(private val chatRepo: ChatRepo, private val userRepo: UserRe
             //serverChatId will be null if something went wrong
         }
     }
+
+
 
 }

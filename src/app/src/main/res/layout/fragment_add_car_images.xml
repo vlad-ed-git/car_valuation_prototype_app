@@ -28,7 +28,6 @@
         android:indeterminateTint="@color/accent"
         android:visibility="gone"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentStart="true"
        android:layout_below="@id/subtitle" />
 
     <androidx.recyclerview.widget.RecyclerView

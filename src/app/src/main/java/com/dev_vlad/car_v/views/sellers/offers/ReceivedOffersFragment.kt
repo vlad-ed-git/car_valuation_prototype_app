@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.dev_vlad.car_v.CarVApp
 import com.dev_vlad.car_v.R
 import com.dev_vlad.car_v.databinding.FragmentReceivedOffersBinding
@@ -61,6 +62,7 @@ class ReceivedOffersFragment : Fragment(), ReceivedOffersAdapter.ReceivedOffersA
         receivedOffersViewModel.observeReceivedOffers().observe(
             viewLifecycleOwner, Observer {
                 binding.loadingBar.isVisible = false
+                receivedOffersViewModel.isLoading = false
                 if (it == null) {
                     MyLogger.logThis(
                         TAG,
@@ -83,6 +85,15 @@ class ReceivedOffersFragment : Fragment(), ReceivedOffersAdapter.ReceivedOffersA
         binding.apply {
             receivedOffersRv.apply {
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                this.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        super.onScrollStateChanged(recyclerView, newState)
+                        if (!receivedOffersRv.canScrollVertically(1)){
+                            //we have reached the bottom of the list
+                            receivedOffersViewModel.fetchMoreOffers(totalItemsInListNow = receivedOffersAdapter.itemCount)
+                        }
+                    }
+                })
                 adapter = receivedOffersAdapter
                 addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             }

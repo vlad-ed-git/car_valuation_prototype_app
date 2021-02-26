@@ -32,28 +32,36 @@ class CarRepo(
         } else {
             RECYCLER_PAGE_SIZE * (page - 1)
         }
+        val totalPostsToLoad = RECYCLER_PAGE_SIZE + offset
         return if (query.isNullOrBlank()) {
-            MyLogger.logThis(TAG, "getAllCars()", "page : $pageNo")
-            carEntityDao.getAllCars(RECYCLER_PAGE_SIZE, offset).map {
-                if (it.isEmpty() || it.size < RECYCLER_PAGE_SIZE && !loadAllCarsExhausted) {
-                    //fetch more on time
+            MyLogger.logThis(TAG, "getAllCars()", "page : $pageNo total $totalPostsToLoad")
+            carEntityDao.getAllCars(limit =  totalPostsToLoad).map {
+                if (!loadAllCarsExhausted) {
+                    //fetch more 
                     loadMoreCarsFromServer(pageNo = pageNo)
                     loadAllCarsExhausted = true
                 }
                 it
             }
         } else {
-            MyLogger.logThis(TAG, "getAllCars()", "page : $pageNo query $query")
+            MyLogger.logThis(TAG, "getAllCars()", "page : $pageNo query $query total $totalPostsToLoad")
             carEntityDao.searchAllCarsByQuery(
-                limit = RECYCLER_PAGE_SIZE,
-                offset = offset,
+                limit = totalPostsToLoad,
                 queryParam = "%${query.replace(' ', '%')}%"
-            )
+            ).map {
+                if (!loadAllCarsExhausted) {
+                    //fetch more 
+                    searchAllCarsFromServer(pageNo = pageNo, query=query)
+                    loadAllCarsExhausted = true
+                }
+                it
+            }
         }
     }
 
+
     private var loadAllCarsByUserExhausted = false
-    fun getAllCarsByUser(pageNo: Int = 1, userId: String, query: String?): Flow<List<CarEntity>> {
+    fun getAllCarsOfUser(pageNo: Int = 1, userId: String, query: String?): Flow<List<CarEntity>> {
         loadAllCarsByUserExhausted = false
         val page = if (pageNo < 1) 1 else pageNo //safety
         val offset = if (page == 1) {
@@ -61,34 +69,42 @@ class CarRepo(
         } else {
             RECYCLER_PAGE_SIZE * (page - 1)
         }
+        val totalPostsToLoad  = RECYCLER_PAGE_SIZE + offset
         return if (query.isNullOrBlank()) {
-            MyLogger.logThis(
-                TAG,
-                "getAllCarsByUser()",
-                "page : $pageNo userId $userId offset $offset"
-            )
-            carEntityDao.getAllCarsOfUser(userId, limit = RECYCLER_PAGE_SIZE, offset = offset)
+            carEntityDao.getAllCarsOfUser(userId, limit = totalPostsToLoad)
                 .map {
-                    if (it.isEmpty() && !loadAllCarsExhausted) {
+                    MyLogger.logThis(
+                            TAG,
+                            "getAllCarsOfUser()",
+                            "page : $pageNo userId $userId found ${it.size}"
+                    )
+                    if (it.size < totalPostsToLoad && !loadAllCarsExhausted) {
                         loadAllCarsByUserExhausted = true
-                        loadUserCarsFromServer(userId = userId)
+                        loadMyCarsFromServer(userId = userId, pageNo = page)
                     }
                     it
                 }
         } else {
-            MyLogger.logThis(
-                TAG,
-                "getAllCarsByUser()",
-                "page : $pageNo userId $userId query $query offset $offset"
-            )
             carEntityDao.searchAllCarsOfUserByQuery(
                 userId,
-                limit = RECYCLER_PAGE_SIZE,
-                offset = offset,
+                limit = totalPostsToLoad,
                 queryParam = "%${query.replace(' ', '%')}%"
-            )
+            ).map {
+                MyLogger.logThis(
+                        TAG,
+                        "getAllCarsOfUser()",
+                        "page : $pageNo userId $userId query $query found ${it.size}"
+                )
+                if (it.size < totalPostsToLoad && !loadAllCarsExhausted) {
+                    loadAllCarsByUserExhausted = true
+                    searchMyCarsFromServer(userId = userId, pageNo = page, query = query)
+                }
+                it
+            }
         }
     }
+
+
 
     suspend fun deleteTmpCarAndSaveCar(car: CarEntity, oldId: String) {
         MyLogger.logThis(TAG, "deleteTmpCarAndSaveCar()", "carId : ${car.carId} oldCar $oldId")
@@ -241,29 +257,58 @@ class CarRepo(
             MyLogger.logThis(TAG, "loadMoreCarsFromServer($pageNo)", "exc ${e.message}", e)
         }
     }
-
-
-    private suspend fun loadUserCarsFromServer(userId: String) {
+    private suspend fun loadMyCarsFromServer(userId: String, pageNo: Int) {
         try {
-            MyLogger.logThis(TAG, "loadUserCarsFromServer($userId)", "called--")
-            val carsCollection = Firebase.firestore.collection(CARS_COLLECTION_NAME)
-            val prevData = carsCollection
-                .whereEqualTo(OWNER_ID_FIELD, userId)
-                .orderBy(DEFAULT_SORT_FIELD, Query.Direction.DESCENDING)
-                .get()
-                .await()
 
-            val carSnapshots = prevData.documents
+            MyLogger.logThis(TAG, "loadMyCarsFromServer($pageNo)", "called--")
+            val carsCollection = Firebase.firestore.collection(CARS_COLLECTION_NAME)
+            //first as in prev data depends on page
+            val limit = if (pageNo <= 1) RECYCLER_PAGE_SIZE else ((pageNo - 1) * RECYCLER_PAGE_SIZE)
+            val prevData = carsCollection
+                    .whereEqualTo(OWNER_ID_FIELD, userId)
+                    .orderBy(DEFAULT_SORT_FIELD, Query.Direction.DESCENDING)
+                    .limit(limit.toLong())
+                    .get()
+                    .await()
+
+            // Get the last visible document
+            var carSnapshots = prevData.documents
+            if (pageNo > 1) {
+                val lastVisible = carSnapshots[carSnapshots.size - 1]
+                val nextData = carsCollection
+                        .whereEqualTo(OWNER_ID_FIELD, userId)
+                        .orderBy(DEFAULT_SORT_FIELD, Query.Direction.DESCENDING)
+                        .startAfter(lastVisible)
+                        .limit(RECYCLER_PAGE_SIZE.toLong())
+                        .get()
+                        .await()
+                carSnapshots = nextData.documents
+            }
+
+            var i = 0 //TODO remove ...for debug only
             for (car in carSnapshots) {
                 val aCar = car.toObject<CarEntity>()
                 if (aCar != null) {
+                    i++
                     carEntityDao.insert(aCar)
                 }
             }
+
+            MyLogger.logThis(TAG, "loadMyCarsFromServer($pageNo)", "found $i cars")
         } catch (e: Exception) {
-            MyLogger.logThis(TAG, "loadMoreCarsFromServer()", "exc ${e.message}", e)
+            MyLogger.logThis(TAG, "loadMyCarsFromServer($pageNo)", "exc ${e.message}", e)
         }
     }
+
+    private fun searchMyCarsFromServer(userId: String, pageNo: Int, query: String) : Boolean {
+        //TODO searching in firebase - my cars
+        return true
+    }
+    private fun searchAllCarsFromServer(pageNo: Int, query: String) : Boolean {
+        //TODO searching in firebase - all cars
+        return true
+    }
+
 
 
 }

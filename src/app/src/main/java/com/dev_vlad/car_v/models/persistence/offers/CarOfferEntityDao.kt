@@ -23,10 +23,10 @@ interface CarOfferEntityDao {
         dealersId: String
     ): List<CarOfferEntity>
 
-    @Query("SELECT * FROM buy_offers WHERE ownerId =:userId ORDER BY offerPrice DESC LIMIT :limit OFFSET :offset")
-    fun getReceivedOffers(userId: String, limit: Int, offset: Int): Flow<List<CarOfferEntity>>
+    @Query("SELECT * FROM buy_offers WHERE ownerId =:userId ORDER BY offerPrice DESC LIMIT :limit")
+    fun getReceivedOffers(userId: String, limit: Int): Flow<List<CarOfferEntity>>
 
-    @Query("SELECT * FROM buy_offers WHERE dealerId =:userId ORDER BY offerPrice DESC LIMIT :limit OFFSET :offset")
-    fun getSentOffers(userId: String, limit: Int, offset: Int): Flow<List<CarOfferEntity>>
+    @Query("SELECT * FROM buy_offers WHERE dealerId =:userId ORDER BY offerPrice DESC LIMIT :limit")
+    fun getSentOffers(userId: String, limit: Int): Flow<List<CarOfferEntity>>
 
 }

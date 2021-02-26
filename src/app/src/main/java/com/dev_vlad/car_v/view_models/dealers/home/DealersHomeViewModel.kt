@@ -7,6 +7,7 @@ import com.dev_vlad.car_v.models.persistence.cars.CarEntity
 import com.dev_vlad.car_v.models.persistence.cars.CarRepo
 import com.dev_vlad.car_v.models.persistence.offers.CarOfferEntity
 import com.dev_vlad.car_v.models.persistence.offers.OffersRepo
+import com.dev_vlad.car_v.util.RECYCLER_PAGE_SIZE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -66,7 +67,25 @@ class DealersHomeViewModel(
         }
 
 
-    //TODO
+    var isLoading = false
+    fun fetchMoreCars(totalItemsInListNow: Int) {
+        if (!isLoading) {
+            isLoading = true
+            //calculate current page
+            val itemsLoaded = if (totalItemsInListNow > 0) totalItemsInListNow else 1
+            val currentPage = (itemsLoaded / RECYCLER_PAGE_SIZE).toInt()
+            val nextPage = currentPage + 1
+            val query = postsState.value?.query
+            val newState = PostsStateModifiers(
+                    query = query,
+                    page = nextPage
+            )
+            postsState.value = newState
+        }
+    }
+
+
+    //TODO SEARCH
     fun searchPosts(query: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             //modify query and page
@@ -77,8 +96,6 @@ class DealersHomeViewModel(
             postsState.postValue(newState)
         }
     }
-
-    //TODO
     fun clearQuery() = searchPosts(null)
 
     companion object {

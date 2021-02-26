@@ -229,12 +229,12 @@ class ChatRepo(private val chatDao: ChatDao, private val glideRequestMgr : Reque
         } else {
             CHATS_RECYCLER_PAGE_SIZE * (page - 1)
         }
+        val totalPostsToLoad =  RECYCLER_PAGE_SIZE + offset
         return chatDao.getMessages(
             carId = carId,
             ownerId = ownerId,
             dealerId = dealerId,
-            limit = CHATS_RECYCLER_PAGE_SIZE,
-            offset = offset
+            limit = totalPostsToLoad
         )
     }
 
