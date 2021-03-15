@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="std_space">8dp</dimen>
+    <dimen name="md_space">16dp</dimen>
+    <dimen name="std_clickable">48dp</dimen>
+    <dimen name="std_icon">32dp</dimen>
+    <dimen name="featured_image_height">200dp</dimen>
+    <dimen name="smd_space">12dp</dimen>
+    <dimen name="max_img_height">400dp</dimen>
+</resources>

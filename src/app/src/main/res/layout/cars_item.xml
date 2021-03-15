@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="jade_island_post"
+            type="com.dev_vlad.car_v.view_models.dealers.home.CarsWrapperForDealers" />
+    </data>
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/car_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/std_space"
+        android:layout_marginEnd="@dimen/std_space"
+        android:checkable="true"
+        android:focusable="true"
+        android:clickable="true">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:id="@+id/featured_image"
+                android:contentDescription="@string/car_img_desc"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/featured_image_height"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/featured_image"
+                android:id="@+id/title"
+                android:layout_width="0dp"
+                app:layout_constraintEnd_toStartOf="@id/has_made_offer"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/md_space"
+                android:layout_marginTop="@dimen/md_space"
+                android:layout_marginEnd="@dimen/md_space"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                />
+
+            <ImageView
+                android:id="@+id/has_made_offer"
+                android:contentDescription="@string/has_made_offer_desc"
+                android:layout_width="@dimen/std_clickable"
+                android:layout_height="@dimen/std_clickable"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_offer"
+                app:tint="@color/accent"
+                android:layout_marginTop="@dimen/std_space"
+                android:layout_marginEnd="@dimen/md_space"
+                app:layout_constraintTop_toBottomOf="@id/featured_image"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>

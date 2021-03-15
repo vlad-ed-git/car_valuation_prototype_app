@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    tools:context=".views.welcome.WelcomeFragment">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/fragment_welcome_title_lbl"
+        android:padding="@dimen/md_space"
+        android:gravity="start|center_vertical"
+        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/user_name"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/md_space"
+        app:helperText="@string/username_helper_txt"
+        app:helperTextEnabled="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/username_lbl"
+            android:inputType="textPersonName"
+            android:text="@string/default_username"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/select_title"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:fontFamily="sans-serif"
+        app:layout_constraintTop_toBottomOf="@id/user_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/md_space"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/choose_seller_or_dealer_prompt"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/seller_card"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent=".45"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/select_title"
+        android:layout_margin="@dimen/md_space"
+        android:focusable="true"
+        android:checkable="true"
+        android:clickable="true">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableTop="@drawable/ic_car"
+            android:text="@string/seller_intent"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textStyle="bold"
+            android:fontFamily="monospace"
+            android:layout_margin="@dimen/md_space"
+            android:padding="@dimen/md_space"
+            android:gravity="center"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/buyer_card"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent=".45"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/select_title"
+        android:layout_margin="@dimen/md_space"
+        android:focusable="true"
+        android:checkable="true"
+        android:clickable="true">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableTop="@drawable/ic_car_keys"
+            android:text="@string/dealer_intent"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textStyle="bold"
+            android:fontFamily="monospace"
+            android:layout_margin="@dimen/md_space"
+            android:padding="@dimen/md_space"
+            android:gravity="center"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/select_dealer_or_seller_hint"
+        android:text="@string/select_dealer_or_seller_hint"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seller_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:textStyle="bold"
+        android:layout_marginStart="@dimen/md_space"
+        android:layout_marginEnd="@dimen/md_space"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/done_btn"
+        style="@style/TextAppearance.MaterialComponents.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/md_space"
+        android:text="@string/welcome_done_btn_txt"
+        android:textColor="@color/accent"
+        app:layout_constraintTop_toBottomOf="@id/select_dealer_or_seller_hint" />
+
+    <ProgressBar
+        android:id="@+id/loading_bar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/accent"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/done_btn" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/seller_dealer_selection_terms_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/md_space"
+        android:gravity="center"
+        android:text="@string/seller_dealer_selection_terms_hint"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintTop_toBottomOf="@id/done_btn"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

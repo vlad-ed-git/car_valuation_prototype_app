@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".views.dealers.details.CarDetailsFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/images_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/smd_space" />
+
+    <ImageView
+        android:id="@+id/swipe_indicator"
+        android:contentDescription="@string/swipe_right_for_more_images_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_arrow_right"
+        android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/loading_bar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/accent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/smd_space">
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/make"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smd_space"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/model"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smd_space"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/make" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/body_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smd_space"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/model" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/year"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smd_space"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/body_style"
+                app:layout_constraintWidth_percent=".4" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/color"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smd_space"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/body_style"
+                app:layout_constraintWidth_percent=".5" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/mileage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smd_space"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/year" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/condition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smd_space"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                app:helperText="@string/add_car_condition_helper_txt"
+                app:helperTextEnabled="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mileage" />
+
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:enabled="false"
+                android:id="@+id/has_been_in_accident"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smd_space"
+                android:text="@string/car_if_accident_hint"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/condition" 
+                 />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:enabled="false"
+                android:id="@+id/has_flood_damage"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smd_space"
+                android:text="@string/car_if_flood_damage_hint"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/has_been_in_accident" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:enabled="false"
+                android:id="@+id/has_flame_damage"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smd_space"
+                android:text="@string/car_if_flame_damage_hint"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/has_flood_damage" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:enabled="false"
+                android:id="@+id/has_issues_on_dashboard"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smd_space"
+                android:text="@string/car_if_dashboard_issues_hint"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/has_flame_damage" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:enabled="false"
+                android:id="@+id/has_broken_or_replaced_odometer"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smd_space"
+                android:text="@string/car_if_odometer_issues_hint"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/has_issues_on_dashboard" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/no_of_tires_to_replace"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smd_space"
+                android:fontFamily="monospace"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/has_broken_or_replaced_odometer" />
+
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:enabled="false"
+                android:id="@+id/has_customizations"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smd_space"
+                android:text="@string/car_if_has_customizations_hint"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/no_of_tires_to_replace" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/extra_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smd_space"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                app:helperText="@string/add_car_extra_details_helper"
+                app:helperTextEnabled="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/has_customizations" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+</LinearLayout>
