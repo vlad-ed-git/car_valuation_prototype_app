@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
-            name="jade_island_post"
+            name="car_entity"
             type="com.dev_vlad.car_v.models.persistence.cars.CarEntity" />
     </data>
     <com.google.android.material.card.MaterialCardView

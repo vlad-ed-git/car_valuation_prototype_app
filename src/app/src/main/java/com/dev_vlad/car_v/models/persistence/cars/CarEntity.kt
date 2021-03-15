@@ -1,12 +1,15 @@
 package com.dev_vlad.car_v.models.persistence.cars
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.dev_vlad.car_v.util.UNSAVED_CAR_ID
+import kotlinx.parcelize.Parcelize
 
 
 @Entity(tableName = "cars")
+@Parcelize
 data class CarEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "carId") //matches constant CAR_ID_FIELD
@@ -52,7 +55,7 @@ data class CarEntity(
 
     var imageUrls: List<String>
 
-) {
+): Parcelable {
     //empty constructor for fire store
     constructor() : this(
         carId = "",

@@ -39,6 +39,6 @@ interface CarEntityDao {
     suspend fun getCarByIdNotObserved(carId: String): CarEntity?
 
     @Query("DELETE FROM cars WHERE carId =:oldId")
-    fun deleteCarById(oldId: String)
+    suspend fun deleteCarById(oldId: String)
 
 }

@@ -275,7 +275,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/add_car_extra_details"
                 android:gravity="start|top"
-                android:inputType="textLongMessage"
+                android:inputType="textLongMessage|textMultiLine"
                 android:minHeight="200dp" />
 
         </com.google.android.material.textfield.TextInputLayout>
